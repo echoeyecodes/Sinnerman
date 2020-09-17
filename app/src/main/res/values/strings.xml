@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Sinnerman</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="movie_description">Mulan is a girl, the only girl of her honoured family. When the Huns invade
+    China, one man from every family is called to arms. Mulan, who just got rejected by the matchmaker because she
+     had set her on fire, decides to prove that she is worth something and steals a way to fit her
+     father\'s place in the chinese army.</string>
+</resources>

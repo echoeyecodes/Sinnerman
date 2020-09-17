@@ -1,0 +1,32 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/movie_primary_dark</item>
+        <item name="android:navigationBarColor">@color/movie_primary_dark</item>
+    </style>
+
+    <style name="CustomRoundedButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="backgroundTint">@color/colorPrimary</item>
+    </style>
+
+    <style name="CustomRoundedButtonTransparent" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="backgroundTint">@color/white</item>
+        <item name="rippleColor">#1A000000</item>
+    </style>
+
+    <style name="TabLayoutStyle" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabIndicatorColor">@color/colorPrimary</item>
+        <item name="tabSelectedTextColor">@color/colorPrimary</item>
+        <item name="tabTextColor">@color/white</item>
+        <item name="android:backgroundTint">@color/movie_primary_dark</item>
+    </style>
+
+    <style name="SearchFieldStyle">
+        <item name="android:editTextBackground">@null</item>
+    </style>
+
+</resources>

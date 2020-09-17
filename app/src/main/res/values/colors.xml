@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#fcc401</color>
+    <color name="movie_primary_dark">#202123</color>
+    <color name="movie_secondary_yellow">#fcc401</color>
+    <color name="colorPrimaryDark">#5252d4</color>
+    <color name="colorAccent">#5252d4</color>
+    <color name="white">#ffffff</color>
+    <color name="white_light">#80ffffff</color>
+    <color name="divider_color">#4dffffff</color>
+    <color name="black">#000000</color>
+    <color name="black_light">#80000000</color>
+    <color name="transparent">#00ffffff</color>
+
+    <color name="initial_overlay_dark_color">#99000000</color>
+    <color name="darker_overlay_dark_color">#80000000</color>
+    <color name="final_overlay_dark_color">#00000000</color>
+</resources>
