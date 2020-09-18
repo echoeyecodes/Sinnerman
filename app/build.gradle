@@ -53,6 +53,7 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer-core:2.11.5'
     implementation 'com.google.android.exoplayer:exoplayer-dash:2.11.5'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.5'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.11.5'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"

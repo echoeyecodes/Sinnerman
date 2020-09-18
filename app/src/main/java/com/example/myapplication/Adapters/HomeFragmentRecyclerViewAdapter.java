@@ -12,17 +12,30 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.*;
 
+import com.example.myapplication.Interface.ToggleFullScreen;
 import com.example.myapplication.Models.MovieModel;
 import com.example.myapplication.R;
 import com.example.myapplication.Singleton.VideoCacheSingleton;
 import com.example.myapplication.Utils.CustomExoPlayerDataSourceFactory;
 import com.example.myapplication.Utils.HorizontalItemDecoration;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.example.myapplication.ViewModel.MainActivityViewModel;
+import com.google.android.exoplayer2.*;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.TrackGroup;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
+import com.google.android.exoplayer2.source.hls.HlsManifest;
+import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
+import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist;
+import com.google.android.exoplayer2.trackselection.*;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -36,15 +49,19 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
     private Context context;
     private List<MovieModel> movies;
     private static HomeFragmentRecyclerViewAdapter homeFragmentRecyclerViewAdapter;
+    private ToggleFullScreen toggleFullScreen;
+    private static MainActivityViewModel mainActivityViewModel;
 
-    public HomeFragmentRecyclerViewAdapter(Context context, List<MovieModel> movies){
+    public HomeFragmentRecyclerViewAdapter(Context context, List<MovieModel> movies, ToggleFullScreen toggleFullScreen){
         this.movies = movies;
         this.context = context;
+        this.toggleFullScreen = toggleFullScreen;
     }
 
-    public static HomeFragmentRecyclerViewAdapter getAdapter(Context context, List<MovieModel> movies){
+    public static HomeFragmentRecyclerViewAdapter getAdapter(Context context, List<MovieModel> movies, ToggleFullScreen toggleFullScreen){
         if(homeFragmentRecyclerViewAdapter == null){
-            homeFragmentRecyclerViewAdapter = new HomeFragmentRecyclerViewAdapter(context, movies);
+            homeFragmentRecyclerViewAdapter = new HomeFragmentRecyclerViewAdapter(context, movies, toggleFullScreen);
+            mainActivityViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(MainActivityViewModel.class);
         }
         return homeFragmentRecyclerViewAdapter;
     }
@@ -58,7 +75,15 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
 
     @Override
     public void onBindViewHolder(@NonNull HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder holder, int position) {
+        mainActivityViewModel.getIsFullScreen().observe((LifecycleOwner) context, v ->{
+            if(v){
+                holder.fullscreen_btn.setImageDrawable(context.getDrawable(R.drawable.exo_controls_fullscreen_exit));
+            }else {
+                holder.fullscreen_btn.setImageDrawable(context.getDrawable(R.drawable.exo_controls_fullscreen_enter));
+            }
+        });
 
+        holder.fullscreen_btn.setOnClickListener(v -> toggleFullScreen.toggleFullScreen(mainActivityViewModel.getIsFullScreen().getValue()));
         Uri uri = Uri.parse(movies.get(position).getThumbnail());
         MediaSource mediaSource = buildMediaSource(uri);
         holder.setMediaSource(mediaSource);
@@ -66,7 +91,8 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
 
     private MediaSource buildMediaSource(Uri uri){
         DataSource.Factory dataSourceFactory = new CustomExoPlayerDataSourceFactory(context, 100*1024*1024, 5*1024*1024, VideoCacheSingleton.getVideoCache(context));
-        return new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+        HlsMediaSource.Factory hlsFactory = new HlsMediaSource.Factory(dataSourceFactory);
+            return hlsFactory.createMediaSource(uri);
     }
 
     @Override
@@ -74,6 +100,8 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
         super.onViewAttachedToWindow(holder);
         holder.initializePlayer();
     }
+
+
 
     @Override
     public void onViewDetachedFromWindow(@NonNull HomeFragmentRecyclerViewItemViewHolder holder) {
@@ -84,7 +112,6 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
     @Override
     public void onViewRecycled(@NonNull HomeFragmentRecyclerViewItemViewHolder holder) {
         super.onViewRecycled(holder);
-
         holder.releasePlayer();
     }
 
@@ -112,10 +139,6 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
             overlay_layout = itemView.findViewById(R.id.video_play_view_overlay);
             fullscreen_btn = itemView.findViewById(R.id.exo_fullscreen);
             progressBar = itemView.findViewById(R.id.exo_buffering);
-
-            fullscreen_btn.setOnClickListener(v -> {
-
-            });
         }
 
         public void releasePlayer(){
@@ -123,6 +146,7 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
                 currentWindow = player.getCurrentWindowIndex();
                 playBackPosition = player.getCurrentPosition();
                 player.release();
+                player.removeListener(this);
                 player = null;
             }
         }
@@ -132,7 +156,9 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
         }
 
         public void initializePlayer(){
-            player = new SimpleExoPlayer.Builder(context).build();
+            DefaultTrackSelector defaultTrackSelector = new DefaultTrackSelector(context);
+            defaultTrackSelector.setParameters(defaultTrackSelector.buildUponParameters().setMaxVideoSize(144, 144));
+            player = new SimpleExoPlayer.Builder(context).setTrackSelector(defaultTrackSelector).build();
             playerView.setPlayer(player);
             player.setPlayWhenReady(false);
             player.seekTo(currentWindow, playBackPosition);
@@ -152,5 +178,34 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
             }
         }
 
+        @Override
+        public void onTracksChanged(@NonNull TrackGroupArray trackGroups, @NonNull TrackSelectionArray trackSelections) {
+//                for(int i = 0; i<trackGroups.length; i++){
+//                    TrackGroup trackGroup = trackGroups.get(i);
+//                    for(int j=0; j<trackGroup.length; j++){
+//                        Log.d("VIDEOSSS", ""+trackGroup.getFormat(j));
+//                    }
+//                }
+
+            for(int i = 0; i<trackSelections.length; i++){
+                TrackSelection trackSelection = trackSelections.get(i);
+                if(trackSelection != null) {
+                    for(int j =0; j< trackSelection.length(); j++){
+                        Log.d("VIDEOSSS", ""+trackSelection.getFormat(j).height);
+                    }
+                }
+            }
+        }
+
+
+        //Called when the manifest is loaded
+        @Override
+        public void onTimelineChanged(Timeline timeline, int reason) {
+
+                Object manifest = player.getCurrentManifest();
+                if(manifest != null){
+                    HlsManifest hlsManifest = (HlsManifest) manifest;
+                }
+        }
     }
 }
