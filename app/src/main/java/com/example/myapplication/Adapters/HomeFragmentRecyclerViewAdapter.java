@@ -26,6 +26,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -56,17 +57,11 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
     }
 
     @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
-    @Override
     public void onBindViewHolder(@NonNull HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder holder, int position) {
 
         Uri uri = Uri.parse(movies.get(position).getThumbnail());
         MediaSource mediaSource = buildMediaSource(uri);
         holder.setMediaSource(mediaSource);
-
     }
 
     private MediaSource buildMediaSource(Uri uri){
@@ -77,9 +72,7 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
     @Override
     public void onViewAttachedToWindow(@NonNull HomeFragmentRecyclerViewItemViewHolder holder) {
         super.onViewAttachedToWindow(holder);
-
         holder.initializePlayer();
-
     }
 
     @Override
@@ -125,7 +118,7 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
             });
         }
 
-        private void releasePlayer(){
+        public void releasePlayer(){
             if(player != null){
                 currentWindow = player.getCurrentWindowIndex();
                 playBackPosition = player.getCurrentPosition();
@@ -138,7 +131,7 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
             this.mediaSource = mediaSource;
         }
 
-        private void initializePlayer(){
+        public void initializePlayer(){
             player = new SimpleExoPlayer.Builder(context).build();
             playerView.setPlayer(player);
             player.setPlayWhenReady(false);

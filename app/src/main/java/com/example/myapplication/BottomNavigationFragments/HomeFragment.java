@@ -27,6 +27,7 @@ public class HomeFragment extends Fragment  {
 
     private static HomeFragment homeFragment;
     private RecyclerView recyclerView;
+    private HomeFragmentRecyclerViewAdapter adapter;
 
     public static HomeFragment newInstance(){
         if(homeFragment == null){
@@ -51,11 +52,40 @@ public class HomeFragment extends Fragment  {
         assert homeVideoAdapterFactory != null;
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-        HomeFragmentRecyclerViewAdapter adapter = homeVideoAdapterFactory.getHomeFragmentAdapter(getContext(), Arrays.asList(movieModel, movieModel1));
+        adapter = homeVideoAdapterFactory.getHomeFragmentAdapter(getContext(), Arrays.asList(movieModel, movieModel1));
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(adapter != null){
+            int size = adapter.getItemCount();
+            for(int item = 0; item< size; item++){
+                HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder viewHolder = (HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder) recyclerView.findViewHolderForAdapterPosition(item);
+                if(viewHolder != null){
+                    viewHolder.releasePlayer();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(adapter != null){
+            int size = adapter.getItemCount();
+            for(int item = 0; item< size; item++){
+                HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder viewHolder = (HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder) recyclerView.findViewHolderForAdapterPosition(item);
+                if(viewHolder != null){
+                    viewHolder.initializePlayer();
+                }
+            }
+        }
     }
 }
