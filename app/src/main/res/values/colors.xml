@@ -11,8 +11,13 @@
     <color name="black">#000000</color>
     <color name="black_light">#80000000</color>
     <color name="transparent">#00ffffff</color>
+    <color name="bottom_navigation_color">#33000000</color>
 
     <color name="initial_overlay_dark_color">#99000000</color>
     <color name="darker_overlay_dark_color">#80000000</color>
     <color name="final_overlay_dark_color">#00000000</color>
+
+    <color name="grey">#80000000</color>
+    <color name="light_grey">#1A000000</color>
+    <color name="darker_grey">#BF000000</color>
 </resources>

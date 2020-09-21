@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/avatar"
+    />
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="10dp"
+    >
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ranya_hoshan_syrian"
+                android:textSize="12sp"
+                android:textColor="@color/darker_grey"
+                style="@style/MediumText"
+        />
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+        >
+            <TextView
+                    android:id="@+id/comment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/RegularText"
+                    android:text="Bruh wish it was that easy to score a winstreak without leveraging those opportunities"
+                    android:layout_marginVertical="5dp"
+            />
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/RegularText"
+                    android:text="08:30"
+                    android:layout_below="@id/comment"
+                    android:textColor="@color/grey"
+            />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+    >
+        <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:tint="@color/grey"
+                android:src="@drawable/ic_baseline_favorite_border_24"
+                android:background="?attr/selectableItemBackgroundBorderless"
+        />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="576"
+                android:textColor="@color/grey"
+        />
+
+    </LinearLayout>
+
+</LinearLayout>

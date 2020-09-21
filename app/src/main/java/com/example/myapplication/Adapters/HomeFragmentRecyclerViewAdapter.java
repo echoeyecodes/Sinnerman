@@ -6,10 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LifecycleOwner;
@@ -17,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.*;
 
+import com.example.myapplication.Fragments.CommentsDialogFragment;
 import com.example.myapplication.Interface.ToggleFullScreen;
 import com.example.myapplication.Models.MovieModel;
 import com.example.myapplication.R;
@@ -84,6 +82,7 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
         });
 
         holder.fullscreen_btn.setOnClickListener(v -> toggleFullScreen.toggleFullScreen(mainActivityViewModel.getIsFullScreen().getValue()));
+        holder.comment_btn.setOnClickListener(v -> toggleFullScreen.openComments());
         Uri uri = Uri.parse(movies.get(position).getThumbnail());
         MediaSource mediaSource = buildMediaSource(uri);
         holder.setMediaSource(mediaSource);
@@ -122,11 +121,11 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
 
     public static class HomeFragmentRecyclerViewItemViewHolder extends RecyclerView.ViewHolder implements Player.EventListener{
         private PlayerView playerView;
-        private RelativeLayout overlay_layout;
         private SimpleExoPlayer player;
         private ImageView fullscreen_btn;
         private ProgressBar progressBar;
         private MediaSource mediaSource;
+        private ImageButton comment_btn;
         private int currentWindow = 0;
         private long playBackPosition = 0;
         Context context;
@@ -136,8 +135,8 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
             this.context = context;
 
             playerView = itemView.findViewById(R.id.video_play_view);
-            overlay_layout = itemView.findViewById(R.id.video_play_view_overlay);
             fullscreen_btn = itemView.findViewById(R.id.exo_fullscreen);
+            comment_btn = itemView.findViewById(R.id.comment_btn);
             progressBar = itemView.findViewById(R.id.exo_buffering);
         }
 
@@ -200,7 +199,7 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
 
         //Called when the manifest is loaded
         @Override
-        public void onTimelineChanged(Timeline timeline, int reason) {
+        public void onTimelineChanged(@NonNull Timeline timeline, int reason) {
 
                 Object manifest = player.getCurrentManifest();
                 if(manifest != null){

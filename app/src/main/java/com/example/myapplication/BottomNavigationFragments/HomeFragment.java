@@ -67,12 +67,14 @@ public class HomeFragment extends Fragment  {
         MovieModel movieModel = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1598001691/t5kq8fodguw1khit88hc.mp4");
         MovieModel movieModel1 = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/q_50/v1600014910/qefhiqfksi6mwrvdxxau.mp4");
 
-        MovieModel test = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1600014910/qefhiqfksi6mwrvdxxau.m3u8");
-        MovieModel test1 = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1600349759/lbznfgkewkthl0gkrclf.m3u8");
+        MovieModel test = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1600686480/xf6knnaxf6yca9lzgz7d.m3u8");
+        MovieModel test1 = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1600686482/eib6rz0mzjlqw0rp1vfc.m3u8");
+        MovieModel test3 = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1600686490/dzikdq9z8gfs6x40osyt.m3u8");
+
         assert homeVideoAdapterFactory != null;
         SnapHelper snapHelper = new LinearSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-        adapter = homeVideoAdapterFactory.getHomeFragmentAdapter(getContext(), Arrays.asList(test, test1), toggleFullScreen);
+        adapter = homeVideoAdapterFactory.getHomeFragmentAdapter(getContext(), Arrays.asList(test, test1, test3), toggleFullScreen);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
