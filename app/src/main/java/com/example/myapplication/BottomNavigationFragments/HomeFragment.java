@@ -2,19 +2,16 @@ package com.example.myapplication.BottomNavigationFragments;
 
 import android.content.Context;
 import android.os.Bundle;
-
 import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSnapHelper;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SnapHelper;
+import androidx.recyclerview.widget.*;
 import com.example.myapplication.Adapters.HomeFragmentRecyclerViewAdapter;
 import com.example.myapplication.Factory.Factories.HomeVideoAdapterFactory;
 import com.example.myapplication.Factory.FactoryGenerator;
@@ -72,7 +69,7 @@ public class HomeFragment extends Fragment  {
         MovieModel test3 = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1600686490/dzikdq9z8gfs6x40osyt.m3u8");
 
         assert homeVideoAdapterFactory != null;
-        SnapHelper snapHelper = new LinearSnapHelper();
+        SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
         adapter = homeVideoAdapterFactory.getHomeFragmentAdapter(getContext(), Arrays.asList(test, test1, test3), toggleFullScreen);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -85,6 +82,7 @@ public class HomeFragment extends Fragment  {
     @Override
     public void onStop() {
         super.onStop();
+        Log.d("CARRR", "STOPEED");
         adapter = null;
         toggleFullScreen = null;
     }
@@ -92,6 +90,7 @@ public class HomeFragment extends Fragment  {
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("CARRR", "PAUSED");
         if(adapter != null){
             int size = adapter.getItemCount();
             for(int item = 0; item< size; item++){

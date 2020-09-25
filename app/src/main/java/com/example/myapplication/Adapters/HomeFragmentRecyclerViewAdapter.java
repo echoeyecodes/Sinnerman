@@ -48,7 +48,6 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
     private List<MovieModel> movies;
     private static HomeFragmentRecyclerViewAdapter homeFragmentRecyclerViewAdapter;
     private ToggleFullScreen toggleFullScreen;
-    private static MainActivityViewModel mainActivityViewModel;
 
     public HomeFragmentRecyclerViewAdapter(Context context, List<MovieModel> movies, ToggleFullScreen toggleFullScreen){
         this.movies = movies;
@@ -59,7 +58,6 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
     public static HomeFragmentRecyclerViewAdapter getAdapter(Context context, List<MovieModel> movies, ToggleFullScreen toggleFullScreen){
         if(homeFragmentRecyclerViewAdapter == null){
             homeFragmentRecyclerViewAdapter = new HomeFragmentRecyclerViewAdapter(context, movies, toggleFullScreen);
-            mainActivityViewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(MainActivityViewModel.class);
         }
         return homeFragmentRecyclerViewAdapter;
     }
@@ -73,15 +71,6 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
 
     @Override
     public void onBindViewHolder(@NonNull HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder holder, int position) {
-        mainActivityViewModel.getIsFullScreen().observe((LifecycleOwner) context, v ->{
-            if(v){
-                holder.fullscreen_btn.setImageDrawable(context.getDrawable(R.drawable.exo_controls_fullscreen_exit));
-            }else {
-                holder.fullscreen_btn.setImageDrawable(context.getDrawable(R.drawable.exo_controls_fullscreen_enter));
-            }
-        });
-
-        holder.fullscreen_btn.setOnClickListener(v -> toggleFullScreen.toggleFullScreen(mainActivityViewModel.getIsFullScreen().getValue()));
         holder.comment_btn.setOnClickListener(v -> toggleFullScreen.openComments());
         Uri uri = Uri.parse(movies.get(position).getThumbnail());
         MediaSource mediaSource = buildMediaSource(uri);
@@ -100,8 +89,6 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
         holder.initializePlayer();
     }
 
-
-
     @Override
     public void onViewDetachedFromWindow(@NonNull HomeFragmentRecyclerViewItemViewHolder holder) {
         super.onViewDetachedFromWindow(holder);
@@ -115,6 +102,16 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
     }
 
     @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+    }
+
+    @Override
     public int getItemCount() {
         return movies.size();
     }
@@ -122,7 +119,6 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
     public static class HomeFragmentRecyclerViewItemViewHolder extends RecyclerView.ViewHolder implements Player.EventListener{
         private PlayerView playerView;
         private SimpleExoPlayer player;
-        private ImageView fullscreen_btn;
         private ProgressBar progressBar;
         private MediaSource mediaSource;
         private ImageButton comment_btn;
@@ -135,7 +131,6 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
             this.context = context;
 
             playerView = itemView.findViewById(R.id.video_play_view);
-            fullscreen_btn = itemView.findViewById(R.id.exo_fullscreen);
             comment_btn = itemView.findViewById(R.id.comment_btn);
             progressBar = itemView.findViewById(R.id.exo_buffering);
         }
@@ -144,29 +139,30 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
             if(player != null){
                 currentWindow = player.getCurrentWindowIndex();
                 playBackPosition = player.getCurrentPosition();
+                player.stop(true);
                 player.release();
                 player.removeListener(this);
                 player = null;
             }
         }
-
         public void setMediaSource(MediaSource mediaSource) {
             this.mediaSource = mediaSource;
         }
 
         public void initializePlayer(){
-            DefaultTrackSelector defaultTrackSelector = new DefaultTrackSelector(context);
-            defaultTrackSelector.setParameters(defaultTrackSelector.buildUponParameters().setMaxVideoSize(144, 144));
-            player = new SimpleExoPlayer.Builder(context).setTrackSelector(defaultTrackSelector).build();
+            player = new SimpleExoPlayer.Builder(context).build();
             playerView.setPlayer(player);
-            player.setPlayWhenReady(false);
+            player.setPlayWhenReady(true);
             player.seekTo(currentWindow, playBackPosition);
             player.addListener(this);
-            player.prepare(mediaSource, false, false);
+            player.prepare(mediaSource, true, true);
         }
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            if(playbackState == Player.STATE_ENDED){
+                player.prepare(mediaSource, true, true);
+            }
             if(playbackState == Player.STATE_BUFFERING){
                 playerView.showController();
                 progressBar.setVisibility(View.VISIBLE);

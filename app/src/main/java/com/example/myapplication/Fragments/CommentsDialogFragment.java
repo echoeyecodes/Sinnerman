@@ -3,6 +3,9 @@ package com.example.myapplication.Fragments;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import com.example.myapplication.Adapters.CommentsAdapter;
+import com.example.myapplication.Models.CommentModel;
 import com.example.myapplication.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,39 +47,23 @@ public class CommentsDialogFragment extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         final RecyclerView recyclerView = view.findViewById(R.id.comments_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new ItemAdapter());
+
+        final DiffUtil.ItemCallback<CommentModel> commentModelItemCallback = new CommentItemCallback();
+        recyclerView.setAdapter(new CommentsAdapter(commentModelItemCallback));
     }
 
-    private static class ViewHolder extends RecyclerView.ViewHolder {
+    private static class CommentItemCallback extends DiffUtil.ItemCallback<CommentModel>{
 
-        ViewHolder(LayoutInflater inflater, ViewGroup parent) {
-            // TODO: Customize the item layout
-            super(inflater.inflate(R.layout.layout_comment_item, parent, false));
-        }
-    }
-
-    private static class ItemAdapter extends RecyclerView.Adapter<ViewHolder> {
-
-        public ItemAdapter() {
-
-        }
-
-        @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ViewHolder(LayoutInflater.from(parent.getContext()), parent);
+        public boolean areItemsTheSame(@NonNull CommentModel oldItem, @NonNull CommentModel newItem) {
+            return oldItem.getId().equals(newItem.getId());
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-
+        public boolean areContentsTheSame(@NonNull CommentModel oldItem, @NonNull CommentModel newItem) {
+            return oldItem.getComment().equals(newItem.getComment());
         }
-
-        @Override
-        public int getItemCount() {
-            return 5;
-        }
-
     }
+
 
 }

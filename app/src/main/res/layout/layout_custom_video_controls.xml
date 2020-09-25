@@ -12,6 +12,8 @@
     >
     </RelativeLayout>
 
+    <include layout="@layout/layout_video_profile_header" />
+
     <include layout="@layout/layout_reactions" />
 
     <include layout="@layout/layout_video_details" />
