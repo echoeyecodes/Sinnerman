@@ -9,57 +9,34 @@ import android.view.ViewGroup;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.*;
 
-import com.example.myapplication.Fragments.CommentsDialogFragment;
-import com.example.myapplication.Interface.ToggleFullScreen;
+import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.MovieModel;
 import com.example.myapplication.R;
 import com.example.myapplication.Singleton.VideoCacheSingleton;
 import com.example.myapplication.Utils.CustomExoPlayerDataSourceFactory;
-import com.example.myapplication.Utils.HorizontalItemDecoration;
-import com.example.myapplication.ViewModel.MainActivityViewModel;
 import com.google.android.exoplayer2.*;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.source.dash.DashMediaSource;
-import com.google.android.exoplayer2.source.dash.manifest.DashManifest;
 import com.google.android.exoplayer2.source.hls.HlsManifest;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
-import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist;
 import com.google.android.exoplayer2.trackselection.*;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> {
-    private Context context;
-    private List<MovieModel> movies;
-    private static HomeFragmentRecyclerViewAdapter homeFragmentRecyclerViewAdapter;
-    private ToggleFullScreen toggleFullScreen;
+    private final Context context;
+    private final List<MovieModel> movies;
+    private HomeFragmentRecyclerViewAdapter homeFragmentRecyclerViewAdapter;
+    private final MainActivityContext mainActivityContext;
 
-    public HomeFragmentRecyclerViewAdapter(Context context, List<MovieModel> movies, ToggleFullScreen toggleFullScreen){
+    public HomeFragmentRecyclerViewAdapter(Context context, List<MovieModel> movies, MainActivityContext mainActivityContext){
         this.movies = movies;
         this.context = context;
-        this.toggleFullScreen = toggleFullScreen;
-    }
-
-    public static HomeFragmentRecyclerViewAdapter getAdapter(Context context, List<MovieModel> movies, ToggleFullScreen toggleFullScreen){
-        if(homeFragmentRecyclerViewAdapter == null){
-            homeFragmentRecyclerViewAdapter = new HomeFragmentRecyclerViewAdapter(context, movies, toggleFullScreen);
-        }
-        return homeFragmentRecyclerViewAdapter;
+        this.mainActivityContext = mainActivityContext;
     }
 
     @NonNull
@@ -71,7 +48,7 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
 
     @Override
     public void onBindViewHolder(@NonNull HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder holder, int position) {
-        holder.comment_btn.setOnClickListener(v -> toggleFullScreen.openComments());
+        holder.comment_btn.setOnClickListener(v -> mainActivityContext.openComments());
         Uri uri = Uri.parse(movies.get(position).getThumbnail());
         MediaSource mediaSource = buildMediaSource(uri);
         holder.setMediaSource(mediaSource);

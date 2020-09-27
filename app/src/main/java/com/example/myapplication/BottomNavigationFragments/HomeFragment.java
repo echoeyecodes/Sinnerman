@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -16,7 +15,7 @@ import com.example.myapplication.Adapters.HomeFragmentRecyclerViewAdapter;
 import com.example.myapplication.Factory.Factories.HomeVideoAdapterFactory;
 import com.example.myapplication.Factory.FactoryGenerator;
 import com.example.myapplication.Factory.TYPE;
-import com.example.myapplication.Interface.ToggleFullScreen;
+import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.Models.MovieModel;
 import com.example.myapplication.R;
@@ -28,7 +27,7 @@ public class HomeFragment extends Fragment  {
     private static HomeFragment homeFragment;
     private RecyclerView recyclerView;
     private HomeFragmentRecyclerViewAdapter adapter;
-    private ToggleFullScreen toggleFullScreen;
+    private MainActivityContext mainActivityContext;
 
     public static HomeFragment newInstance(){
         if(homeFragment == null){
@@ -45,8 +44,8 @@ public class HomeFragment extends Fragment  {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        toggleFullScreen = (ToggleFullScreen) context;
-        if(!(toggleFullScreen instanceof MainActivity)){
+        mainActivityContext = (MainActivityContext) context;
+        if(!(mainActivityContext instanceof MainActivity)){
             try {
                 throw new Exception("You need to implement Toggle Full Screen");
             } catch (Exception e) {
@@ -71,7 +70,7 @@ public class HomeFragment extends Fragment  {
         assert homeVideoAdapterFactory != null;
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-        adapter = homeVideoAdapterFactory.getHomeFragmentAdapter(getContext(), Arrays.asList(test, test1, test3), toggleFullScreen);
+        adapter = homeVideoAdapterFactory.getHomeFragmentAdapter(getContext(), Arrays.asList(test, test1, test3), mainActivityContext);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
@@ -84,7 +83,7 @@ public class HomeFragment extends Fragment  {
         super.onStop();
         Log.d("CARRR", "STOPEED");
         adapter = null;
-        toggleFullScreen = null;
+        mainActivityContext = null;
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.example.myapplication.Factory.Factories;
 import android.content.Context;
 import com.example.myapplication.Adapters.HomeFragmentRecyclerViewAdapter;
 import com.example.myapplication.Factory.CustomAdapters;
-import com.example.myapplication.Interface.ToggleFullScreen;
+import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.MovieModel;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.List;
 public class HomeVideoAdapterFactory extends CustomAdapters {
 
     @Override
-    public HomeFragmentRecyclerViewAdapter getHomeFragmentAdapter(Context context, List<MovieModel> movies, ToggleFullScreen toggleFullScreen) {
-        return HomeFragmentRecyclerViewAdapter.getAdapter(context, movies, toggleFullScreen);
+    public HomeFragmentRecyclerViewAdapter getHomeFragmentAdapter(Context context, List<MovieModel> movies, MainActivityContext mainActivityContext) {
+        return new HomeFragmentRecyclerViewAdapter(context, movies, mainActivityContext);
     }
 }

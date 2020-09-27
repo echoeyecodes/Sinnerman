@@ -11,6 +11,7 @@ import com.example.myapplication.R;
 
 
 public class ExploreFragment extends Fragment {
+    private static ExploreFragment exploreFragment;
 
     public ExploreFragment() {
         // Required empty public constructor
@@ -18,7 +19,10 @@ public class ExploreFragment extends Fragment {
 
 
     public static ExploreFragment newInstance() {
-        return new ExploreFragment();
+        if(exploreFragment == null){
+            exploreFragment = new ExploreFragment();
+        }
+        return exploreFragment;
     }
 
     @Override
