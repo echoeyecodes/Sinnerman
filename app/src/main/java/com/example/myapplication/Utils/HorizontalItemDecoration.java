@@ -11,7 +11,7 @@ public class HorizontalItemDecoration extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         if(parent.getChildAdapterPosition(view) == 0){
-            outRect.left = IntegerToDp.intToDp(20);
+            outRect.left = IntegerToDp.intToDp(10);
         }
         outRect.right = IntegerToDp.intToDp(15);
     }

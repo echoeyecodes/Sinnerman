@@ -9,9 +9,10 @@ import android.view.MenuItem;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.myapplication.BottomNavigationFragments.ExploreFragment;
+import com.example.myapplication.BottomNavigationFragments.LibraryFragment;
 import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 import com.example.myapplication.Fragments.CommentsDialogFragment;
+import com.example.myapplication.Fragments.VideoFragment;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.util.BottomNavigationHandler;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -42,9 +43,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void setBottomViewTint(Fragment fragment){
         if(fragment instanceof HomeFragment){
+            showSystemUI();
             bottomNavigationView.getMenu().getItem(0).setChecked(true);
-        }else {
+        }else if (fragment instanceof LibraryFragment){
+            showSystemUI();
             bottomNavigationView.getMenu().getItem(1).setChecked(true);
+        }else{
+            hideSystemUI();
+        }
+    }
+
+    private void hideSystemUI(){
+        bottomNavigationView.setVisibility(View.GONE);
+    }
+
+    private void showSystemUI(){
+        if(bottomNavigationView.getVisibility() == View.GONE){
+            bottomNavigationView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -72,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     navigateToFragment(HomeFragment.newInstance());
                 return true;
             case R.id.action_search:
-                    navigateToFragment(ExploreFragment.newInstance());
+                    navigateToFragment(LibraryFragment.newInstance());
                 return true;
         }
         return false;
@@ -85,5 +100,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public void openComments() {
         CommentsDialogFragment.newInstance().show(getSupportFragmentManager(), "comments_dialog");
+    }
+
+    @Override
+    public void openVideoFragment() {
+        navigateToFragment(VideoFragment.newInstance());
     }
 }

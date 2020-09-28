@@ -4,4 +4,5 @@ import androidx.fragment.app.Fragment;
 
 public interface MainActivityContext {
     void openComments();
+    void openVideoFragment();
 }

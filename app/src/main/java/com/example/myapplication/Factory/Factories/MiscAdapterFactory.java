@@ -11,11 +11,11 @@ import com.example.myapplication.Models.MovieModel;
 
 import java.util.List;
 
-public class HomeVideoAdapterFactory extends CustomAdapters {
+public class MiscAdapterFactory extends CustomAdapters {
 
     @Override
     public HomeFragmentRecyclerViewAdapter getHomeFragmentAdapter(Context context, List<MovieModel> movies, MainActivityContext mainActivityContext) {
-        return new HomeFragmentRecyclerViewAdapter(context, movies, mainActivityContext);
+        return null;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class HomeVideoAdapterFactory extends CustomAdapters {
 
     @Override
     public MiscellaneousAdapter getMiscAdapter(Context context) {
-        return null;
+        return new MiscellaneousAdapter(context);
     }
 
 }
