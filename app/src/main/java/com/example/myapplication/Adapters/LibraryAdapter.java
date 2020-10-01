@@ -10,16 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.myapplication.Factory.Factories.RecentAdapterFactory;
-import com.example.myapplication.Factory.FactoryGenerator;
-import com.example.myapplication.Factory.TYPE;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.MovieModel;
 import com.example.myapplication.R;
 import com.example.myapplication.Utils.HorizontalItemDecoration;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Objects;
 
 public class LibraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final Context context;
@@ -54,14 +49,14 @@ public class LibraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         switch (position){
             case 0:
                 RecentsViewHolder recentsViewHolder = (RecentsViewHolder) holder;
-                RecentsAdapter adapter = (Objects.requireNonNull(FactoryGenerator.getFactory(TYPE.RECENTS))).getRecentAdapter(new ItemCallBack(), mainActivityContext);
+                RecentsAdapter adapter = new RecentsAdapter(new ItemCallBack(), mainActivityContext);
                 recentsViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                 recentsViewHolder.recyclerView.addItemDecoration(new HorizontalItemDecoration());
                 recentsViewHolder.recyclerView.setAdapter(adapter);
                 break;
             case 1:
                 MiscViewHolder miscViewHolder = (MiscViewHolder) holder;
-                MiscellaneousAdapter miscAdapter = (Objects.requireNonNull(FactoryGenerator.getFactory(TYPE.MISC))).getMiscAdapter(context);
+                MiscellaneousAdapter miscAdapter = new MiscellaneousAdapter(context, mainActivityContext);
                 miscViewHolder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
                 miscViewHolder.recyclerView.setAdapter(miscAdapter);
                 miscAdapter.notifyDataSetChanged();

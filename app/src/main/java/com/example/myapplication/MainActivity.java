@@ -13,7 +13,10 @@ import com.example.myapplication.BottomNavigationFragments.LibraryFragment;
 import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 import com.example.myapplication.Fragments.CommentsDialogFragment;
 import com.example.myapplication.Fragments.VideoFragment;
+import com.example.myapplication.Fragments.YourVideosFragment;
 import com.example.myapplication.Interface.MainActivityContext;
+import com.example.myapplication.Models.MovieModel;
+import com.example.myapplication.ViewModel.MainActivityViewModel;
 import com.example.myapplication.util.BottomNavigationHandler;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -21,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private BottomNavigationView bottomNavigationView;
     private BottomNavigationHandler bottomNavigationHandler;
+    private MainActivityViewModel mainActivityViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         bottomNavigationHandler = new ViewModelProvider(this).get(BottomNavigationHandler.class);
+        mainActivityViewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
         bottomNavigationHandler.getFragmentLiveData().observe(this, fragment ->{
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -43,13 +48,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void setBottomViewTint(Fragment fragment){
         if(fragment instanceof HomeFragment){
-            showSystemUI();
             bottomNavigationView.getMenu().getItem(0).setChecked(true);
         }else if (fragment instanceof LibraryFragment){
-            showSystemUI();
             bottomNavigationView.getMenu().getItem(1).setChecked(true);
-        }else{
+        }
+
+        if(fragment instanceof VideoFragment){
             hideSystemUI();
+        }else{
+            showSystemUI();
         }
     }
 
@@ -86,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.action_home:
                     navigateToFragment(HomeFragment.newInstance());
                 return true;
-            case R.id.action_search:
+            case R.id.action_library:
                     navigateToFragment(LibraryFragment.newInstance());
                 return true;
         }
@@ -105,5 +112,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public void openVideoFragment() {
         navigateToFragment(VideoFragment.newInstance());
+    }
+
+    @Override
+    public void openYourVideosFragment() {
+        navigateToFragment(YourVideosFragment.newInstance());
+    }
+
+    @Override
+    public void likeVideo(MovieModel movieModel) {
+        mainActivityViewModel.likeVideo(movieModel);
     }
 }

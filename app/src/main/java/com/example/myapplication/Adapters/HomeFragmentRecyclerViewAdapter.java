@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.*;
 
+import androidx.recyclerview.widget.ListAdapter;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.MovieModel;
 import com.example.myapplication.R;
@@ -24,17 +26,18 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.*;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> {
-    private final Context context;
-    private final List<MovieModel> movies;
-    private HomeFragmentRecyclerViewAdapter homeFragmentRecyclerViewAdapter;
-    private final MainActivityContext mainActivityContext;
+public class HomeFragmentRecyclerViewAdapter extends ListAdapter<MovieModel, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
+    private transient final Context context;
+    private transient final MainActivityContext mainActivityContext;
 
-    public HomeFragmentRecyclerViewAdapter(Context context, List<MovieModel> movies, MainActivityContext mainActivityContext){
-        this.movies = movies;
+    public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<MovieModel> itemCallback, Context context, MainActivityContext mainActivityContext) {
+        super(itemCallback);
         this.context = context;
         this.mainActivityContext = mainActivityContext;
     }
@@ -42,16 +45,19 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
     @NonNull
     @Override
     public HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_home_recycler_view_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_home_recycler_view_item, parent, false);
         return new HomeFragmentRecyclerViewItemViewHolder(view, context);
     }
 
     @Override
     public void onBindViewHolder(@NonNull HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder holder, int position) {
+        holder.like_count.setText(String.valueOf(getItem(position).getLike_count()));
         holder.comment_btn.setOnClickListener(v -> mainActivityContext.openComments());
-        Uri uri = Uri.parse(movies.get(position).getThumbnail());
+        Uri uri = Uri.parse(getItem(position).getThumbnail());
         MediaSource mediaSource = buildMediaSource(uri);
         holder.setMediaSource(mediaSource);
+
+        holder.like_btn.setOnClickListener(v -> mainActivityContext.likeVideo(getItem(position)));
     }
 
     private MediaSource buildMediaSource(Uri uri){
@@ -88,17 +94,14 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
         super.onDetachedFromRecyclerView(recyclerView);
     }
 
-    @Override
-    public int getItemCount() {
-        return movies.size();
-    }
-
     public static class HomeFragmentRecyclerViewItemViewHolder extends RecyclerView.ViewHolder implements Player.EventListener{
-        private PlayerView playerView;
+        private final PlayerView playerView;
         private SimpleExoPlayer player;
-        private ProgressBar progressBar;
+        private final ProgressBar progressBar;
         private MediaSource mediaSource;
-        private ImageButton comment_btn;
+        private final ImageButton comment_btn;
+        private final ImageButton like_btn;
+        private final TextView like_count;
         private int currentWindow = 0;
         private long playBackPosition = 0;
         Context context;
@@ -109,6 +112,8 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
 
             playerView = itemView.findViewById(R.id.video_play_view);
             comment_btn = itemView.findViewById(R.id.comment_btn);
+            like_btn = itemView.findViewById(R.id.like_btn);
+            like_count = itemView.findViewById(R.id.like_count);
             progressBar = itemView.findViewById(R.id.exo_buffering);
         }
 
@@ -116,7 +121,6 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
             if(player != null){
                 currentWindow = player.getCurrentWindowIndex();
                 playBackPosition = player.getCurrentPosition();
-                player.stop(true);
                 player.release();
                 player.removeListener(this);
                 player = null;
@@ -148,36 +152,6 @@ public class HomeFragmentRecyclerViewAdapter extends RecyclerView.Adapter<HomeFr
                     progressBar.setVisibility(View.GONE);
                 }
             }
-        }
-
-        @Override
-        public void onTracksChanged(@NonNull TrackGroupArray trackGroups, @NonNull TrackSelectionArray trackSelections) {
-//                for(int i = 0; i<trackGroups.length; i++){
-//                    TrackGroup trackGroup = trackGroups.get(i);
-//                    for(int j=0; j<trackGroup.length; j++){
-//                        Log.d("VIDEOSSS", ""+trackGroup.getFormat(j));
-//                    }
-//                }
-
-            for(int i = 0; i<trackSelections.length; i++){
-                TrackSelection trackSelection = trackSelections.get(i);
-                if(trackSelection != null) {
-                    for(int j =0; j< trackSelection.length(); j++){
-                        Log.d("VIDEOSSS", ""+trackSelection.getFormat(j).height);
-                    }
-                }
-            }
-        }
-
-
-        //Called when the manifest is loaded
-        @Override
-        public void onTimelineChanged(@NonNull Timeline timeline, int reason) {
-
-                Object manifest = player.getCurrentManifest();
-                if(manifest != null){
-                    HlsManifest hlsManifest = (HlsManifest) manifest;
-                }
         }
     }
 }

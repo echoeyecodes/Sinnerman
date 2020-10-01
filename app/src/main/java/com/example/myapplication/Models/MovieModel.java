@@ -5,6 +5,7 @@ public class MovieModel {
     private String id;
     private String title;
     private String thumbnail;
+    private int like_count = 0;
 
     public MovieModel(String id, String title, String thumbnail) {
         this.id = id;
@@ -35,4 +36,13 @@ public class MovieModel {
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
+
+    public int getLike_count() {
+        return like_count;
+    }
+
+    public void setLike_count(int like_count) {
+        this.like_count = this.like_count + like_count;
+    }
+
 }

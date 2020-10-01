@@ -5,19 +5,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.R;
 import org.jetbrains.annotations.NotNull;
 
 public class MiscellaneousAdapter extends RecyclerView.Adapter<MiscellaneousAdapter.MiscellaneousViewHolder> {
 
     private final Context context;
+    private final MainActivityContext mainActivityContext;
     private final String[] misc = {"History", "Downloads", "Your videos", "Liked Videos"};
 
-    public MiscellaneousAdapter(Context context){
+    public MiscellaneousAdapter(Context context, MainActivityContext mainActivityContext){
         this.context = context;
+        this.mainActivityContext = mainActivityContext;
     }
 
     @NonNull
@@ -39,6 +43,7 @@ public class MiscellaneousAdapter extends RecyclerView.Adapter<MiscellaneousAdap
                 holder.misc_icon.setBackground(context.getDrawable(R.drawable.ic_baseline_cloud_download_24));
                 break;
             case 2:
+                holder.linearLayout.setOnClickListener(v -> mainActivityContext.openYourVideosFragment());
                 holder.misc_icon.setBackground(context.getDrawable(R.drawable.ic_baseline_live_tv_24));
                 break;
             case 3:
@@ -56,11 +61,13 @@ public class MiscellaneousAdapter extends RecyclerView.Adapter<MiscellaneousAdap
 
         private final TextView misc_text_view;
         private final ImageView misc_icon;
+        private final LinearLayout linearLayout;
         public MiscellaneousViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
             misc_text_view = itemView.findViewById(R.id.miscellaneous_text);
             misc_icon = itemView.findViewById(R.id.miscellaneous_icon);
+            linearLayout = itemView.findViewById(R.id.misc_item_container);
         }
     }
 }

@@ -15,6 +15,7 @@
             android:orientation="vertical">
 
         <ImageButton
+                android:id="@+id/like_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:tint="@color/white"
@@ -23,6 +24,7 @@
         />
 
         <TextView
+                android:id="@+id/like_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="3328"

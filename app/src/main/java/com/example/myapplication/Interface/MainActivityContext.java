@@ -1,8 +1,11 @@
 package com.example.myapplication.Interface;
 
-import androidx.fragment.app.Fragment;
+import com.example.myapplication.Models.MovieModel;
 
 public interface MainActivityContext {
     void openComments();
     void openVideoFragment();
+    void openYourVideosFragment();
+
+    void likeVideo(MovieModel movieModel);
 }

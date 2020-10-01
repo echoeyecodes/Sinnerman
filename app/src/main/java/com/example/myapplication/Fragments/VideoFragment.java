@@ -14,14 +14,11 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 import com.example.myapplication.Adapters.HomeFragmentRecyclerViewAdapter;
-import com.example.myapplication.BottomNavigationFragments.HomeFragment;
-import com.example.myapplication.Factory.Factories.HomeVideoAdapterFactory;
-import com.example.myapplication.Factory.FactoryGenerator;
-import com.example.myapplication.Factory.TYPE;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.Models.MovieModel;
 import com.example.myapplication.R;
+import com.example.myapplication.Utils.VideosItemCallback;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -54,16 +51,14 @@ public class VideoFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.fragment_video_recycler_view);
-        HomeVideoAdapterFactory homeVideoAdapterFactory = (HomeVideoAdapterFactory) FactoryGenerator.getFactory(TYPE.VIDEOS);
 
         MovieModel test = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1600686480/xf6knnaxf6yca9lzgz7d.m3u8");
         MovieModel test1 = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1600686482/eib6rz0mzjlqw0rp1vfc.m3u8");
         MovieModel test3 = new MovieModel("123456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1600686490/dzikdq9z8gfs6x40osyt.m3u8");
 
-        assert homeVideoAdapterFactory != null;
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
-        adapter = homeVideoAdapterFactory.getHomeFragmentAdapter(getContext(), Arrays.asList(test, test1, test3), mainActivityContext);
+        adapter = new HomeFragmentRecyclerViewAdapter(VideosItemCallback.newInstance(), getContext(), mainActivityContext);
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
