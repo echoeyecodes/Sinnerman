@@ -14,8 +14,7 @@
 
     <include layout="@layout/layout_video_profile_header" />
 
-    <include layout="@layout/layout_reactions" />
-
+    <include layout="@layout/layout_video_retry" />
     <include layout="@layout/layout_video_details" />
 
     <LinearLayout
@@ -41,22 +40,6 @@
                     android:indeterminateBehavior="repeat"
                     android:progressTint="@color/colorPrimary"
                     />
-
-            <ImageButton
-                    android:id="@+id/exo_play"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/exo_controls_play"
-                    android:background="?attr/selectableItemBackground"
-                    />
-
-            <ImageButton
-                    android:id="@+id/exo_pause"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:src="@drawable/exo_controls_pause"
-                    android:background="?attr/selectableItemBackground"
-                    />
         </FrameLayout>
     </LinearLayout>
 
@@ -67,19 +50,57 @@
             android:layout_gravity="bottom"
             android:gravity="center_vertical"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="10dp"
             >
+        <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            <ImageButton
+                    android:id="@+id/exo_play"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/exo_controls_play"
+                    android:background="?attr/selectableItemBackground"
+            />
+
+            <ImageButton
+                    android:id="@+id/exo_pause"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/exo_controls_pause"
+                    android:background="?attr/selectableItemBackground"
+            />
+        </FrameLayout>
+
+        <com.google.android.exoplayer2.ui.DefaultTimeBar
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:played_color="@color/white"
+                app:buffered_color="@color/light_grey"
+                android:id="@+id/exo_progress_placeholder"
+ />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:id="@+id/exo_position"
+                android:textColor="@color/white"
+                style="@style/RegularText"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+        />
 
         <ImageButton
-                android:id="@+id/exo_fullscreen"
+                android:id="@+id/full_screen_btn"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/exo_controls_fullscreen_enter"
+                android:src="@drawable/exo_icon_fullscreen_enter"
                 android:background="?attr/selectableItemBackground"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:visibility="gone"
-                />
-
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+        />
     </LinearLayout>
 </FrameLayout>

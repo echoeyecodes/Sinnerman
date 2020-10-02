@@ -2,6 +2,7 @@ package com.example.myapplication.util;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +11,10 @@ public class BottomNavigationHandler extends ViewModel {
     private final List<Fragment> fragments;
     private final MutableLiveData<Fragment> fragmentLiveData = new MutableLiveData<>();
 
-
     public BottomNavigationHandler() {
         fragments = new ArrayList<>();
+        Fragment fragment = new HomeFragment();
+        addFragment(fragment);
     }
 
     public void addFragment(Fragment fragment){
@@ -33,6 +35,10 @@ public class BottomNavigationHandler extends ViewModel {
 
     public MutableLiveData<Fragment> getFragmentLiveData() {
         return fragmentLiveData;
+    }
+
+    public Fragment getCurrentFragment(){
+        return fragments.get(fragments.size() - 1);
     }
 
     public void popBackStack(){

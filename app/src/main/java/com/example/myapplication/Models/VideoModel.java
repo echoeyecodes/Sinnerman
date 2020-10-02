@@ -1,15 +1,17 @@
 package com.example.myapplication.Models;
 
-public class MovieModel {
+public class VideoModel {
 
     private String id;
     private String title;
     private String thumbnail;
     private int like_count = 0;
+    private String video_url;
 
-    public MovieModel(String id, String title, String thumbnail) {
+    public VideoModel(String id, String title, String thumbnail, String video_url) {
         this.id = id;
         this.title = title;
+        this.video_url = video_url;
         this.thumbnail = thumbnail;
     }
 
@@ -23,6 +25,14 @@ public class MovieModel {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getVideo_url() {
+        return video_url;
+    }
+
+    public void setVideo_url(String video_url) {
+        this.video_url = video_url;
     }
 
     public void setTitle(String title) {

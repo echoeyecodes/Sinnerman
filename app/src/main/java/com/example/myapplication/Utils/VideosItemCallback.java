@@ -1,12 +1,11 @@
 package com.example.myapplication.Utils;
 
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
-import com.example.myapplication.Models.MovieModel;
+import com.example.myapplication.Models.VideoModel;
 import org.jetbrains.annotations.NotNull;
 
-public final class VideosItemCallback extends DiffUtil.ItemCallback<MovieModel> {
+public final class VideosItemCallback extends DiffUtil.ItemCallback<VideoModel> {
     private static VideosItemCallback videosItemCallback;
 
     private VideosItemCallback(){
@@ -21,12 +20,12 @@ public final class VideosItemCallback extends DiffUtil.ItemCallback<MovieModel> 
     }
 
     @Override
-    public boolean areItemsTheSame(@NonNull @NotNull MovieModel oldItem, @NonNull @NotNull MovieModel newItem) {
+    public boolean areItemsTheSame(@NonNull @NotNull VideoModel oldItem, @NonNull @NotNull VideoModel newItem) {
         return oldItem.getId().equals(newItem.getId());
     }
 
     @Override
-    public boolean areContentsTheSame(@NonNull @NotNull MovieModel oldItem, @NonNull @NotNull MovieModel newItem) {
+    public boolean areContentsTheSame(@NonNull @NotNull VideoModel oldItem, @NonNull @NotNull VideoModel newItem) {
         return oldItem.getLike_count() == newItem.getLike_count();
     }
 }

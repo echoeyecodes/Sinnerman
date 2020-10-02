@@ -12,6 +12,7 @@
     <color name="black_light">#80000000</color>
     <color name="transparent">#00ffffff</color>
     <color name="bottom_navigation_color">#33000000</color>
+    <color name="google_blue_color_code">#4688f4</color>
 
     <color name="initial_overlay_dark_color">#99000000</color>
     <color name="darker_overlay_dark_color">#80000000</color>

@@ -1,35 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="horizontal" android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:gravity="center_vertical"
         android:padding="10dp"
-        tools:showIn="@layout/fragment_library"
-        android:layout_marginTop="20dp"
+        tools:showIn="@layout/activity_main"
 >
-    <ImageView
+    <ImageButton
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@drawable/ic_baseline_airplay_24"
-            android:tint="@color/colorPrimary"
+            android:src="@drawable/ic_baseline_menu_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/initial_overlay_dark_color"
     />
     <TextView
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Sinnerman"
+            android:layout_height="match_parent"
+            android:text="Search video titles, authors"
             android:layout_weight="1"
-            android:textSize="20sp"
-            android:textColor="@color/white"
+            android:gravity="center_vertical"
+            android:textSize="12sp"
+            android:clickable="true"
+            android:textColor="@color/grey"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            android:textStyle="bold"
+            style="@style/RegularText"
     />
 
-    <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_notifications_24"
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/avatar"
             android:tint="@color/white"
             android:padding="5dp"
             android:background="?attr/selectableItemBackground"

@@ -1,4 +1,4 @@
-package com.example.myapplication.BottomNavigationFragments;
+package com.example.myapplication.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -23,20 +23,20 @@ import com.example.myapplication.Utils.VideosItemCallback;
 import com.example.myapplication.ViewModel.MainActivityViewModel;
 import org.jetbrains.annotations.NotNull;
 
-public class HomeFragment extends Fragment {
+public class DefaultFragment extends Fragment {
     private RecyclerView recyclerView;
     private HomeFragmentRecyclerViewAdapter adapter;
     private MainActivityContext mainActivityContext;
     private MainActivityViewModel viewModel;
     LinearLayoutManager linearLayoutManager;
 
-    public HomeFragment(){
+    public DefaultFragment(){
 
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_default, container, false);
     }
 
     @Override
