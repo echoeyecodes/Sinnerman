@@ -34,6 +34,7 @@ public class VideoFragment extends Fragment implements Player.EventListener {
     private PlayerView playerView;
     private MainActivityContext mainActivityContext;
     private ImageButton fullscreen_btn;
+    private ImageButton comment_btn;
     private LinearLayout reload_btn;
     MainActivityViewModel mainActivityViewModel;
     private SimpleExoPlayer player;
@@ -66,12 +67,15 @@ public class VideoFragment extends Fragment implements Player.EventListener {
         playerView = view.findViewById(R.id.video_player_view);
         progressBar = view.findViewById(R.id.exo_buffering);
         fullscreen_btn = view.findViewById(R.id.full_screen_btn);
+        comment_btn = view.findViewById(R.id.comment_btn);
         reload_btn = view.findViewById(R.id.retry_btn);
         mainActivityViewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
 
         fullscreen_btn.setOnClickListener(v -> {
             mainActivityContext.toggleFullScreen(!mainActivityViewModel.getIsFullScreenValue());
         });
+
+        comment_btn.setOnClickListener(v -> mainActivityContext.navigateToComments());
         reload_btn.setOnClickListener(v -> {
             refresh();
         });
@@ -131,9 +135,9 @@ public class VideoFragment extends Fragment implements Player.EventListener {
     @Override
     public void onResume() {
         super.onResume();
+        mainActivityContext.hideStatusBarAndNavigation();
         initializePlayer();
     }
-
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {

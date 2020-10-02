@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import com.example.myapplication.Activities.CommentActivity;
 import com.example.myapplication.BottomNavigationFragments.LibraryFragment;
 import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 import com.example.myapplication.Fragments.CommentsDialogFragment;
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private void handleSystemUI(Fragment fragment){
         if(fragment instanceof VideoFragment){
-            hideSystemUI();
+//            hideSystemUI();
             hideViews();
         }else{
             showSystemUI();
@@ -106,11 +108,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onResume() {
         super.onResume();
 
-        if(bottomNavigationHandler.getCurrentFragment() instanceof VideoFragment){
-            hideSystemUI();
-        }else{
-            showSystemUI();
-        }
+//        if(bottomNavigationHandler.getCurrentFragment() instanceof VideoFragment){
+//            hideSystemUI();
+//        }else{
+//            showSystemUI();
+//        }
     }
 
     @Override
@@ -143,11 +145,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     @Override
-    public void openComments() {
-        CommentsDialogFragment.newInstance().show(getSupportFragmentManager(), "comments_dialog");
-    }
-
-    @Override
     public void openVideoFragment(String video_url) {
         Fragment fragment = new VideoFragment(video_url);
         navigateToFragment(fragment);
@@ -164,7 +161,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     @Override
-    public void likeVideo(VideoModel videoModel) {
-        mainActivityViewModel.likeVideo(videoModel);
+    public void hideStatusBarAndNavigation() {
+        hideSystemUI();
+    }
+
+    @Override
+    public void navigateToComments() {
+        Intent intent = new Intent(this, CommentActivity.class);
+        startActivity(intent);
     }
 }

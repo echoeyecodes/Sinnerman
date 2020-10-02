@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardElevation="0dp"
         android:background="@color/black"
         xmlns:app="http://schemas.android.com/apk/res-auto"
 >
-    <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
         <com.google.android.exoplayer2.ui.PlayerView
                 android:id="@+id/video_player_view"
                 app:auto_show="true"
@@ -22,6 +17,5 @@
                 app:use_artwork="true"
                 app:controller_layout_id="@layout/layout_custom_video_controls"
         />
-    </RelativeLayout>
 
-</androidx.cardview.widget.CardView>
+</RelativeLayout>

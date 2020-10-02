@@ -21,14 +21,18 @@ import com.example.myapplication.Utils.CustomItemDecoration;
 import com.example.myapplication.Utils.IntegerToDp;
 import com.example.myapplication.Utils.VideosItemCallback;
 import com.example.myapplication.ViewModel.MainActivityViewModel;
+import com.google.android.material.chip.Chip;
 import org.jetbrains.annotations.NotNull;
 
 public class HomeFragment extends Fragment {
     private RecyclerView recyclerView;
+    private RecyclerView chipsRecyclerView;
     private HomeFragmentRecyclerViewAdapter adapter;
     private MainActivityContext mainActivityContext;
     private MainActivityViewModel viewModel;
     LinearLayoutManager linearLayoutManager;
+    private LinearLayoutManager chipsLayoutManager;
+    private static final String[] items = {"Recent", "Most Liked", "Most Comment", "Top Views"};
 
     public HomeFragment(){
 
@@ -57,15 +61,23 @@ public class HomeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
+        chipsRecyclerView = view.findViewById(R.id.video_filters);
         viewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
 
         final VideosItemCallback videosItemCallback = VideosItemCallback.newInstance();
 
         adapter = new HomeFragmentRecyclerViewAdapter(videosItemCallback, getContext(), mainActivityContext);
+        ChipsAdapter chipsAdapter = new ChipsAdapter(items);
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        chipsLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        chipsRecyclerView.setLayoutManager(chipsLayoutManager);
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        chipsRecyclerView.addItemDecoration(new CustomItemDecoration(IntegerToDp.intToDp(0), IntegerToDp.intToDp(5)));
         recyclerView.addItemDecoration(new CustomItemDecoration(IntegerToDp.intToDp(10)));
+        chipsRecyclerView.setAdapter(chipsAdapter);
         recyclerView.setAdapter(adapter);
+        chipsAdapter.notifyDataSetChanged();
 
         viewModel.getVideos().observe(getViewLifecycleOwner(), videos ->{
             adapter.submitList(videos);
@@ -76,13 +88,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if(savedInstanceState != null){
-//            adapter = (HomeFragmentRecyclerViewAdapter) savedInstanceState.getSerializable("TEST");
-//        }
-    }
-
-    private void initData(){
-//        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -93,19 +98,44 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-//        if(adapter != null){
-//            int size = adapter.getItemCount();
-//            for(int item = 0; item< size; item++){
-//                HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder viewHolder = (HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder) recyclerView.findViewHolderForAdapterPosition(item);
-//                if(viewHolder != null){
-//                    viewHolder.releasePlayer();
-//                }
-//            }
-//        }
     }
     @Override
     public void onResume() {
         super.onResume();
-        initData();
+    }
+
+    private static class ChipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+        private String[] items;
+
+        public ChipsAdapter(String[] items){
+            this.items = items;
+        }
+
+        @NonNull
+        @NotNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_home_chips_item, parent, false);
+            return new ChipsViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
+            ((ChipsViewHolder) holder).chip.setText(items[position]);
+        }
+
+        @Override
+        public int getItemCount() {
+            return items.length;
+        }
+
+        private static class ChipsViewHolder extends RecyclerView.ViewHolder{
+            Chip chip;
+            public ChipsViewHolder(@NonNull @NotNull View itemView) {
+                super(itemView);
+
+                chip = itemView.findViewById(R.id.home_chips_item);
+            }
+        }
     }
 }

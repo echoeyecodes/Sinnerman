@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#fcc401</color>
+    <color name="colorPrimary">#4688f4</color>
     <color name="movie_primary_dark">#202123</color>
     <color name="movie_secondary_yellow">#fcc401</color>
     <color name="colorPrimaryDark">#5252d4</color>

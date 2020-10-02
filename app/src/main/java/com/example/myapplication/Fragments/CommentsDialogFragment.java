@@ -24,17 +24,6 @@ import android.widget.TextView;
  */
 public class CommentsDialogFragment extends BottomSheetDialogFragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_ITEM_COUNT = "item_count";
-    private static CommentsDialogFragment commentsDialogFragment;
-
-    // TODO: Customize parameters
-    public static CommentsDialogFragment newInstance() {
-        if(commentsDialogFragment == null){
-            commentsDialogFragment = new CommentsDialogFragment();
-        }
-        return commentsDialogFragment;
-    }
 
     @Nullable
     @Override
@@ -47,22 +36,6 @@ public class CommentsDialogFragment extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         final RecyclerView recyclerView = view.findViewById(R.id.comments_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        final DiffUtil.ItemCallback<CommentModel> commentModelItemCallback = new CommentItemCallback();
-        recyclerView.setAdapter(new CommentsAdapter(commentModelItemCallback));
-    }
-
-    private static class CommentItemCallback extends DiffUtil.ItemCallback<CommentModel>{
-
-        @Override
-        public boolean areItemsTheSame(@NonNull CommentModel oldItem, @NonNull CommentModel newItem) {
-            return oldItem.getId().equals(newItem.getId());
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull CommentModel oldItem, @NonNull CommentModel newItem) {
-            return oldItem.getComment().equals(newItem.getComment());
-        }
     }
 
 

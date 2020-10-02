@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@color/white"
+        android:layout_height="match_parent"
+        tools:context="com.example.myapplication.Activities.CommentActivity">
+
+    <include android:id="@+id/comments_toolbar" layout="@layout/layout_sub_activity_action_bar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/comments_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/comments_toolbar"
+                android:layout_above="@+id/comments_divider"
+                android:paddingBottom="@dimen/list_item_spacing_half"
+                android:paddingTop="@dimen/list_item_spacing_half"
+                tools:context="com.example.myapplication.Fragments.CommentsDialogFragment"
+        />
+
+        <include layout="@layout/layout_divider" />
+        <include layout="@layout/layout_comment_area" />
+</RelativeLayout>

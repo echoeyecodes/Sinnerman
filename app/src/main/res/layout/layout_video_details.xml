@@ -31,4 +31,6 @@
             android:textSize="12sp"
     />
 
+    <include layout="@layout/layout_reactions" />
+
 </LinearLayout>

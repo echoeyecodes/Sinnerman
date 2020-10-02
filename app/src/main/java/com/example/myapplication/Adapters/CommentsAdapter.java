@@ -29,7 +29,7 @@ public class CommentsAdapter extends ListAdapter<CommentModel, CommentsAdapter.V
 
         @Override
         public int getItemCount() {
-            return 7;
+            return 10;
         }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

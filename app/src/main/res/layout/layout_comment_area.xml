@@ -29,7 +29,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_baseline_send_24"
             android:padding="10dp"
-            android:tint="@color/colorPrimaryDark"
+            android:tint="@color/colorPrimary"
             android:background="?attr/selectableItemBackground"
     />
 
