@@ -8,32 +8,26 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.Adapters.LibraryAdapter;
+import com.example.myapplication.Adapters.NotificationsAdapter;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.MainActivity;
+import com.example.myapplication.Models.NotificationModel;
 import com.example.myapplication.R;
+import com.example.myapplication.RootBottomFragment;
 import com.example.myapplication.Utils.CustomItemDecoration;
 import com.example.myapplication.Utils.IntegerToDp;
 import org.jetbrains.annotations.NotNull;
 
 
-public class LibraryFragment extends Fragment {
-    private static LibraryFragment libraryFragment;
+public class LibraryFragment extends RootBottomFragment {
     private RecyclerView recyclerView;
-    private MainActivityContext mainActivityContext;
 
     public LibraryFragment() {
         // Required empty public constructor
-    }
-
-
-    public static LibraryFragment newInstance() {
-        if(libraryFragment == null){
-            libraryFragment = new LibraryFragment();
-        }
-        return libraryFragment;
     }
 
     @Override
@@ -60,12 +54,25 @@ public class LibraryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        recyclerView = view.findViewById(R.id.fragment_library_recycler_view);
+        recyclerView = view.findViewById(R.id.fragment_notifications_recycler_view);
+        final NotificationItemCallback notificationItemCallback = new NotificationItemCallback();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        LibraryAdapter adapter = new LibraryAdapter(getContext(), mainActivityContext);
-        recyclerView.addItemDecoration(new CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(0)));
+        NotificationsAdapter adapter = new NotificationsAdapter(notificationItemCallback, mainActivityContext);
+        recyclerView.addItemDecoration(new CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)));
         recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+    }
+
+    private static class NotificationItemCallback extends DiffUtil.ItemCallback<NotificationModel>{
+
+        @Override
+        public boolean areItemsTheSame(@NonNull @NotNull NotificationModel oldItem, @NonNull @NotNull NotificationModel newItem) {
+            return oldItem.getId().equals(newItem.getId());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull @NotNull NotificationModel oldItem, @NonNull @NotNull NotificationModel newItem) {
+            return oldItem.getTitle().equals(newItem.getTitle());
+        }
     }
 }

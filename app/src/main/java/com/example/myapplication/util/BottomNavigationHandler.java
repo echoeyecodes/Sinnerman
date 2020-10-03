@@ -4,8 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class BottomNavigationHandler extends ViewModel {
     private final List<Fragment> fragments;
@@ -22,15 +21,14 @@ public class BottomNavigationHandler extends ViewModel {
         if(index == -1){
             fragments.add(fragment);
         }else{
-            Fragment frag = fragments.get(index);
-            fragments.remove(frag);
-            fragments.add(frag);
+            Collections.swap(fragments, index, fragments.size() - 1);
         }
         showFragment();
     }
 
     private void showFragment(){
-        fragmentLiveData.setValue(fragments.get(fragments.size() - 1));
+        Fragment fragment = fragments.get(fragments.size() - 1);
+        fragmentLiveData.setValue(fragment);
     }
 
     public MutableLiveData<Fragment> getFragmentLiveData() {
@@ -41,9 +39,10 @@ public class BottomNavigationHandler extends ViewModel {
         return fragments.get(fragments.size() - 1);
     }
 
-    public void popBackStack(){
-        fragments.remove(fragments.size() - 1);
+    public Fragment popBackStack(){
+        Fragment fragment = fragments.remove(fragments.size() - 1);
         showFragment();
+        return fragment;
     }
 
     public int getFragmentSize(){

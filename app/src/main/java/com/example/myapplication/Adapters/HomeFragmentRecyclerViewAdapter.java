@@ -17,12 +17,6 @@ import androidx.recyclerview.widget.ListAdapter;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.VideoModel;
 import com.example.myapplication.R;
-import com.example.myapplication.Singleton.VideoCacheSingleton;
-import com.example.myapplication.Utils.CustomExoPlayerDataSourceFactory;
-import com.google.android.exoplayer2.*;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.upstream.DataSource;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
@@ -48,13 +42,14 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoModel, Hom
     public void onBindViewHolder(@NonNull HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder holder, int position) {
         Picasso.get().load(Uri.parse(getItem(position).getThumbnail())).into(holder.imageView);
 
-        holder.linearLayout.setOnClickListener(v -> mainActivityContext.openVideoFragment(getItem(position).getVideo_url()));
+        holder.linearLayout.setOnClickListener(v -> {
+            mainActivityContext.navigateToVideos(getItem(position).getVideo_url());
+        });
     }
 
     @Override
     public void onViewAttachedToWindow(@NonNull HomeFragmentRecyclerViewItemViewHolder holder) {
         super.onViewAttachedToWindow(holder);
-//        holder.initializePlayer();
     }
 
     @Override

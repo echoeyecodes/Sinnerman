@@ -10,11 +10,9 @@ import java.util.List;
 
 public class MainActivityViewModel extends ViewModel {
     private MutableLiveData<List<VideoModel>> videos = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isFullScreen = new MutableLiveData<>();
 
     public MainActivityViewModel(){
         videos.setValue(fetchVideos());
-        isFullScreen.setValue(false);
     }
 
     private List<VideoModel> fetchVideos(){
@@ -32,22 +30,9 @@ public class MainActivityViewModel extends ViewModel {
         videoModel.setLike_count(1);
     }
 
-    public MutableLiveData<Boolean> getIsFullScreen() {
-        return isFullScreen;
-    }
-
     @Override
     protected void onCleared() {
         super.onCleared();
         videos = null;
-    }
-
-    public boolean getIsFullScreenValue(){
-        assert isFullScreen.getValue() != null;
-        return isFullScreen.getValue();
-    }
-
-    public void toggleFullScreen(boolean value){
-        isFullScreen.setValue(value);
     }
 }

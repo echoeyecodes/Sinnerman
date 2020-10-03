@@ -1,6 +1,7 @@
 package com.example.myapplication.BottomNavigationFragments;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ import com.example.myapplication.Adapters.HomeFragmentRecyclerViewAdapter;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
+import com.example.myapplication.RootBottomFragment;
 import com.example.myapplication.Utils.CustomItemDecoration;
 import com.example.myapplication.Utils.IntegerToDp;
 import com.example.myapplication.Utils.VideosItemCallback;
@@ -24,11 +26,10 @@ import com.example.myapplication.ViewModel.MainActivityViewModel;
 import com.google.android.material.chip.Chip;
 import org.jetbrains.annotations.NotNull;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends RootBottomFragment {
     private RecyclerView recyclerView;
     private RecyclerView chipsRecyclerView;
     private HomeFragmentRecyclerViewAdapter adapter;
-    private MainActivityContext mainActivityContext;
     private MainActivityViewModel viewModel;
     LinearLayoutManager linearLayoutManager;
     private LinearLayoutManager chipsLayoutManager;
@@ -46,14 +47,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        mainActivityContext = (MainActivityContext) context;
-        if(!(mainActivityContext instanceof MainActivity)){
-            try {
-                throw new Exception("You need to implement Toggle Full Screen");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     @Override
@@ -63,7 +56,6 @@ public class HomeFragment extends Fragment {
         recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
         chipsRecyclerView = view.findViewById(R.id.video_filters);
         viewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
-
         final VideosItemCallback videosItemCallback = VideosItemCallback.newInstance();
 
         adapter = new HomeFragmentRecyclerViewAdapter(videosItemCallback, getContext(), mainActivityContext);
@@ -73,8 +65,8 @@ public class HomeFragment extends Fragment {
         chipsRecyclerView.setLayoutManager(chipsLayoutManager);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        chipsRecyclerView.addItemDecoration(new CustomItemDecoration(IntegerToDp.intToDp(0), IntegerToDp.intToDp(5)));
-        recyclerView.addItemDecoration(new CustomItemDecoration(IntegerToDp.intToDp(10)));
+        chipsRecyclerView.addItemDecoration(new CustomItemDecoration(0, IntegerToDp.intToDp(5)));
+        recyclerView.addItemDecoration(new CustomItemDecoration(IntegerToDp.intToDp(15), IntegerToDp.intToDp(10)));
         chipsRecyclerView.setAdapter(chipsAdapter);
         recyclerView.setAdapter(adapter);
         chipsAdapter.notifyDataSetChanged();

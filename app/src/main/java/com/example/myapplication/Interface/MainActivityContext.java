@@ -1,11 +1,10 @@
 package com.example.myapplication.Interface;
 
+import androidx.fragment.app.Fragment;
 import com.example.myapplication.Models.VideoModel;
 
 public interface MainActivityContext {
-    void openVideoFragment(String video_url);
+    void openFragment(Fragment fragment);
     void openYourVideosFragment();
-    void toggleFullScreen(boolean value);
-    void hideStatusBarAndNavigation();
-    void navigateToComments();
+    void navigateToVideos(String video_url);
 }

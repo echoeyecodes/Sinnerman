@@ -13,15 +13,16 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.Interface.MainActivityContext;
+import com.example.myapplication.Models.NotificationModel;
 import com.example.myapplication.Models.VideoModel;
 import com.example.myapplication.R;
 import com.squareup.picasso.Picasso;
 import org.jetbrains.annotations.NotNull;
 
-public class RecentsAdapter extends ListAdapter<VideoModel, RecentsAdapter.RecentsViewHolder> {
+public class NotificationsAdapter extends ListAdapter<NotificationModel, NotificationsAdapter.RecentsViewHolder> {
 private final MainActivityContext mainActivityContext;
 
-    public RecentsAdapter(@NonNull @NotNull DiffUtil.ItemCallback<VideoModel> diffCallback, MainActivityContext mainActivityContext) {
+    public NotificationsAdapter(@NonNull @NotNull DiffUtil.ItemCallback<NotificationModel> diffCallback, MainActivityContext mainActivityContext) {
         super(diffCallback);
         this.mainActivityContext = mainActivityContext;
     }
@@ -29,36 +30,26 @@ private final MainActivityContext mainActivityContext;
     @NotNull
     @Override
     public RecentsViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_home_product_item, parent, false);
-        DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
-
-        RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) view.getLayoutParams();
-        layoutParams.width = displayMetrics.widthPixels / 3;
-        layoutParams.height = displayMetrics.heightPixels / 3;
-        view.setLayoutParams(layoutParams);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_notification_item, parent, false);
         return new RecentsViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull RecentsViewHolder holder, int position) {
-
-        Picasso.get().load(Uri.parse("https://res.cloudinary.com/echoeyecodes/video/upload/v1600686482/eib6rz0mzjlqw0rp1vfc.jpg")).into(holder.imageView);
-
+        Picasso.get().load(Uri.parse("https://res.cloudinary.com/echoeyecodes/video/upload/v1600686482/eypac8l0uvf5m9rtkqpf.jpg")).into(holder.image_thumbnail);
     }
 
     @Override
     public int getItemCount() {
-        return 7;
+        return 10;
     }
 
     protected static class RecentsViewHolder extends RecyclerView.ViewHolder{
-        private ImageView imageView;
-        private CardView cardView;
+        private ImageView image_thumbnail;
         public RecentsViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
-            imageView = itemView.findViewById(R.id.recents_image_placeholder);
-            cardView = itemView.findViewById(R.id.recents_videos_item);
+            image_thumbnail = itemView.findViewById(R.id.notifications_thumbnail);
         }
     }
 
