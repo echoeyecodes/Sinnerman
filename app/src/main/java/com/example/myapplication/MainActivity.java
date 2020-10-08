@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import com.example.myapplication.Activities.LoginActivity;
 import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 import com.example.myapplication.BottomNavigationFragments.LibraryFragment;
 import com.example.myapplication.Activities.VideoActivity;
@@ -66,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     protected void onResume() {
         super.onResume();
         showSystemUI();
+
+        startActivity(new Intent(this, LoginActivity.class));
+
     }
 
     private void showSystemUI(){

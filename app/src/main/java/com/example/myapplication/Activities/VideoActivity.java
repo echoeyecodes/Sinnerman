@@ -178,6 +178,12 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        hideSystemUI();
+    }
+
+    @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         if (playbackState == Player.STATE_ENDED) {
             player.prepare(mediaSource, true, true);

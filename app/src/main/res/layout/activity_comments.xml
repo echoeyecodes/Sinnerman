@@ -17,7 +17,7 @@
                 android:layout_above="@+id/comments_divider"
                 android:paddingBottom="@dimen/list_item_spacing_half"
                 android:paddingTop="@dimen/list_item_spacing_half"
-                tools:context="com.example.myapplication.Fragments.CommentsDialogFragment"
+                tools:context="com.example.myapplication.Fragments.OtpDialogFragment"
         />
 
         <include layout="@layout/layout_divider" />
