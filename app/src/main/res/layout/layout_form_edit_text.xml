@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.textfield.TextInputLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:boxStrokeColor="@color/colorPrimary"
+        app:boxBackgroundMode="outline"
+        app:boxBackgroundColor="@color/white"
+        app:boxStrokeWidth="0.3dp"
+        app:hintTextColor="@color/grey"
+        app:boxCornerRadiusTopEnd="5dp"
+        app:boxCornerRadiusBottomEnd="5dp"
+        app:boxCornerRadiusBottomStart="5dp"
+        app:boxCornerRadiusTopStart="5dp"
+        android:layout_marginVertical="15dp"
+        app:boxCollapsedPaddingTop="0dp"
+        android:id="@+id/form_text_input_layout"
+        app:boxStrokeErrorColor="@color/red"
+        android:layout_height="wrap_content">
+
+    <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:id="@+id/form_text_input"
+            android:padding="15dp"
+            android:textSize="12sp"
+            android:layout_gravity="center_vertical"
+            android:layout_height="wrap_content"/>
+
+</com.google.android.material.textfield.TextInputLayout>

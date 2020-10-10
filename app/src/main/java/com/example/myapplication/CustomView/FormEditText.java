@@ -5,14 +5,17 @@ import android.content.res.TypedArray;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import com.example.myapplication.R;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import static com.google.android.material.textfield.TextInputLayout.END_ICON_NONE;
+import static com.google.android.material.textfield.TextInputLayout.END_ICON_PASSWORD_TOGGLE;
 
 public class FormEditText extends RelativeLayout {
 
+    private TextInputLayout textInputLayout;
     private TextInputEditText textInputEditText;
-    private TextView textView;
 
     public FormEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -20,20 +23,20 @@ public class FormEditText extends RelativeLayout {
     }
 
     private void init(Context context, AttributeSet attributeSet){
-        inflate(context, R.layout.form_edit_text, this);
+        inflate(context, R.layout.layout_form_edit_text, this);
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.FormEditText, 0, 0);
         initViews();
 
         try{
             String name = typedArray.getString(R.styleable.FormEditText_text);
-            String header = typedArray.getString(R.styleable.FormEditText_header);
-            String placeholder = typedArray.getString(R.styleable.FormEditText_placeholder);
-            boolean type = typedArray.getBoolean(R.styleable.FormEditText_isSecure, false);
+            String hint = typedArray.getString(R.styleable.FormEditText_hint);
+            int type = typedArray.getInt(R.styleable.FormEditText_inputType, 0);
+            boolean isSecure = typedArray.getBoolean(R.styleable.FormEditText_isSecure, false);
 
-            setTitle(name);
-            setHeader(header);
-            setPlaceholder(placeholder);
+            setText(name);
+            setHint(hint);
             setInputType(type);
+            setEndIconMode(isSecure);
 
         }finally {
             {
@@ -47,29 +50,44 @@ public class FormEditText extends RelativeLayout {
         requestLayout();
     }
 
-    private void initViews(){
-        textView = findViewById(R.id.form_text_header);
-        textInputEditText = findViewById(R.id.form_edit_text);
+    private void setEndIconMode(boolean value){
+        textInputLayout.setEndIconMode(value ? END_ICON_PASSWORD_TOGGLE : END_ICON_NONE);
     }
 
-    public void setTitle(CharSequence charSequence){
+    private void initViews(){
+        textInputLayout = findViewById(R.id.form_text_input_layout);
+        textInputEditText = findViewById(R.id.form_text_input);
+    }
+
+    public void setHint(CharSequence charSequence){
+        textInputLayout.setHint(charSequence);
+        refreshLayout();
+    }
+
+    public void setText(CharSequence charSequence){
         textInputEditText.setText(charSequence);
         refreshLayout();
     }
 
-    public void setHeader(CharSequence charSequence){
-        textView.setText(charSequence);
+    public void setErrorEnabled(boolean value){
+        textInputLayout.setErrorEnabled(value);
         refreshLayout();
     }
 
-    public void setPlaceholder(CharSequence charSequence){
-        textInputEditText.setHint(charSequence);
-        refreshLayout();
-    }
-
-    public void setInputType(boolean type){
-        if(type){
-            textInputEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+    public void setInputType(int type){
+        switch (type){
+            case 0:
+                textInputEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+                break;
+            case 1:
+                textInputEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                break;
+            case 2:
+                textInputEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+                break;
+            case 3:
+                textInputEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                break;
         }
         refreshLayout();
     }

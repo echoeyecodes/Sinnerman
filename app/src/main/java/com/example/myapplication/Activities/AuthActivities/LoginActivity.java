@@ -1,8 +1,7 @@
-package com.example.myapplication.Activities;
+package com.example.myapplication.Activities.AuthActivities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.R;

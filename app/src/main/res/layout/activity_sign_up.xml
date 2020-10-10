@@ -1,29 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:fitsSystemWindows="false"
-        android:padding="10dp"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
 >
-    <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none"
-    >
 
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginTop="70dp"
         >
-            <ImageView
+            <TextView
                     android:id="@+id/login_form_logo"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/logo"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="70dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/BoldText"
+                    android:text="SIGN UP"
+                    android:layout_marginHorizontal="20dp"
+                    android:textSize="30sp"
             />
 
             <LinearLayout
@@ -37,29 +33,32 @@
                 <com.example.myapplication.CustomView.FormEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:placeholder="e.g John"
-                        app:header="First Name"
+                        app:hint="First Name"
                 />
 
                 <com.example.myapplication.CustomView.FormEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:placeholder="e.g Doe"
-                        app:header="Last Name"
+                        app:hint="Lastname"
                 />
 
                 <com.example.myapplication.CustomView.FormEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:placeholder="e.g john_doe"
-                        app:header="Preferred Username"
+                        app:hint="Username"
                 />
 
                 <com.example.myapplication.CustomView.FormEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:placeholder="123456"
-                        app:header="Password"
+                        app:hint="Email"
+                        app:inputType="2"
+                />
+
+                <com.example.myapplication.CustomView.FormEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:hint="Password"
                         app:isSecure="true"
                 />
 
@@ -85,5 +84,3 @@
             />
         </LinearLayout>
     </ScrollView>
-
-</RelativeLayout>

@@ -1,5 +1,7 @@
 package com.example.myapplication.Activities;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -27,14 +29,16 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import org.jetbrains.annotations.NotNull;
 
-public class VideoActivity extends AppCompatActivity implements Player.EventListener {
+public class VideoActivity extends AppCompatActivity implements Player.EventListener, ValueAnimator.AnimatorUpdateListener {
     private PlayerView playerView;
     private ImageButton fullscreen_btn;
     private ImageButton comment_btn;
+    private ImageButton like_btn;
     private LinearLayout reload_btn;
     private SimpleExoPlayer player;
     private VideoActivityViewModel videoActivityViewModel;
     private ProgressBar progressBar;
+    private ValueAnimator valueAnimator;
     private MediaSource mediaSource;
     private int currentWindow = 0;
     private long playBackPosition = 0;
@@ -50,8 +54,14 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         progressBar = findViewById(R.id.exo_buffering);
         fullscreen_btn = findViewById(R.id.full_screen_btn);
         comment_btn = findViewById(R.id.comment_btn);
+        like_btn = findViewById(R.id.like_btn);
         reload_btn = findViewById(R.id.retry_btn);
         video_url = Uri.parse(getIntent().getStringExtra("video_url"));
+
+        valueAnimator = ValueAnimator.ofFloat(1,1.5f,1);
+        valueAnimator.setDuration(500);
+
+        valueAnimator.addUpdateListener(this);
 
         videoActivityViewModel.getIsFullScreen().observe(this, (isFullScreen) -> {
             if (isFullScreen) {
@@ -71,6 +81,9 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         fullscreen_btn.setOnClickListener(v -> {
             toggleFullScreen(!videoActivityViewModel.getIsFullScreenValue());
         });
+
+        like_btn.setOnClickListener(v -> animateLikeButton());
+
         mediaSource = buildMediaSource(video_url);
     }
 
@@ -83,6 +96,10 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         return 0;
     }
 
+    private void animateLikeButton(){
+        valueAnimator.start();
+        like_btn.setColorFilter(R.color.colorPrimary);
+    }
     private void adjustPlayerViewMargins(int margin){
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) playerView.getLayoutParams();
         params.setMargins(0,0,0, margin);
@@ -201,5 +218,12 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
     @Override
     public void onPlayerError(@NotNull ExoPlaybackException error) {
         reload_btn.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onAnimationUpdate(ValueAnimator animation) {
+            float value = (float) animation.getAnimatedValue();
+            like_btn.setScaleX(value);
+            like_btn.setScaleY(value);
     }
 }

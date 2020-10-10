@@ -16,6 +16,7 @@
             android:tint="@color/initial_overlay_dark_color"
     />
     <TextView
+            android:id="@+id/search_input_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:text="Search video titles, authors"

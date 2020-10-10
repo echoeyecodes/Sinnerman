@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,7 +11,8 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.myapplication.Activities.LoginActivity;
+import com.example.myapplication.Activities.AuthActivities.OtpVerificationActivity;
+import com.example.myapplication.Activities.SearchActivity;
 import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 import com.example.myapplication.BottomNavigationFragments.LibraryFragment;
 import com.example.myapplication.Activities.VideoActivity;
@@ -21,10 +23,11 @@ import com.example.myapplication.util.BottomNavigationHandler;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.jetbrains.annotations.NotNull;
 
-public class MainActivity extends AppCompatActivity implements MainActivityContext, BottomNavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements MainActivityContext, BottomNavigationView.OnNavigationItemSelectedListener{
     private BottomNavigationHandler bottomNavigationHandler;
     private MainActivityViewModel mainActivityViewModel;
     private BottomNavigationView bottomNavigationView;
+    private TextView search_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +39,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
 
         bottomNavigationHandler = new ViewModelProvider(this).get(BottomNavigationHandler.class);
         mainActivityViewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        search_btn = findViewById(R.id.search_input_button);
+
+        search_btn.setOnClickListener(v -> {
+            startActivity(new Intent(this, SearchActivity.class));
+        });
 
         bottomNavigationHandler.getFragmentLiveData().observe(this, this::bottomHandler);
-
     }
 
     private void bottomHandler(Fragment fragment){
@@ -62,13 +69,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         }
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         showSystemUI();
-
-        startActivity(new Intent(this, LoginActivity.class));
 
     }
 

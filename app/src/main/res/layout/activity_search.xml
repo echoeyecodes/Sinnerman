@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include
+            android:id="@+id/search_tool_bar"
+            layout="@layout/fragment_search_toolbar" />
+
+    <com.google.android.material.tabs.TabLayout
+            android:id="@+id/search_tab_layout"
+            android:layout_below="@id/search_tool_bar"
+            android:layout_width="match_parent"
+            app:tabTextColor="@color/grey"
+            android:layout_height="wrap_content" />
+
+    <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/search_view_pager"
+            android:layout_below="@id/search_tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+</RelativeLayout>

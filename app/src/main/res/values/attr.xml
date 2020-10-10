@@ -2,8 +2,8 @@
 <resources>
     <declare-styleable name="FormEditText">
         <attr name="text" format="string" />
-        <attr name="placeholder" format="string" />
-        <attr name="header" format="string" />
+        <attr name="hint" format="string" />
+        <attr name="inputType" format="integer" />
         <attr name="isSecure" format="boolean" />
     </declare-styleable>
 </resources>

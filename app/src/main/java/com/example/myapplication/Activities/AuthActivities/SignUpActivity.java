@@ -1,7 +1,6 @@
-package com.example.myapplication.Activities;
+package com.example.myapplication.Activities.AuthActivities;
 
 import android.os.Bundle;
-import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.myapplication.Fragments.OtpDialogFragment;
@@ -20,7 +19,6 @@ public class SignUpActivity extends AppCompatActivity {
         super.onResume();
         OtpDialogFragment otpDialogFragment = new OtpDialogFragment();
         otpDialogFragment.show(getSupportFragmentManager(), "OTP_DIALOG_FRAGMENT");
-
     }
 
 }
