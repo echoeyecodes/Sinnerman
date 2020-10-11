@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     private MainActivityViewModel mainActivityViewModel;
     private BottomNavigationView bottomNavigationView;
     private TextView search_btn;
-    private Fragment active_fragment;
+    private RootBottomFragment active_fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,19 +46,21 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
             startActivity(new Intent(this, SearchActivity.class));
         });
 
-        active_fragment = HomeFragment.newInstance();
-        navigateToBottomFragment(active_fragment, HomeFragment.TAG);
+        navigateToBottomFragment(HomeFragment.newInstance());
     }
 
-    private void navigateToBottomFragment(Fragment fragment, String tag) {
+    private void navigateToBottomFragment(RootBottomFragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        Fragment existingFragment = getSupportFragmentManager().findFragmentByTag(tag);
+        Fragment existingFragment = getSupportFragmentManager().findFragmentByTag(fragment.getTAG());
         if (existingFragment != null) {
-            fragmentTransaction.replace(R.id.bottom_navigation_fragment_container, existingFragment, tag);
+            fragmentTransaction.replace(R.id.bottom_navigation_fragment_container, existingFragment, fragment.getTAG());
         } else {
-            fragmentTransaction.replace(R.id.bottom_navigation_fragment_container, fragment, tag);
+            fragmentTransaction.replace(R.id.bottom_navigation_fragment_container, fragment, fragment.getTAG());
         }
-        fragmentTransaction.addToBackStack(null);
+
+        if(active_fragment == null || !fragment.getTAG().equals(active_fragment.getTAG())){
+            fragmentTransaction.addToBackStack(null);
+        }
         active_fragment = fragment;
         fragmentTransaction.commit();
     }
@@ -86,7 +88,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
 
     @Override
     public void openFragment(Fragment fragment, String tag) {
-        navigateToBottomFragment(fragment, tag);
+        if (fragment instanceof RootBottomFragment) {
+            navigateToBottomFragment((RootBottomFragment) fragment);
+        }
     }
 
     @Override
@@ -103,15 +107,19 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
 
     @Override
     public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
+        RootBottomFragment fragment;
         switch (item.getItemId()) {
             case R.id.action_home:
-                openFragment(HomeFragment.newInstance(), HomeFragment.TAG);
+                fragment = HomeFragment.newInstance();
+                openFragment(fragment, fragment.getTAG());
                 return true;
             case R.id.action_notifications:
-                openFragment(LibraryFragment.newInstance(), LibraryFragment.TAG);
+                fragment = LibraryFragment.newInstance();
+                openFragment(fragment, fragment.getTAG());
                 return true;
             case R.id.action_explore:
-                openFragment(ExploreFragment.newInstance(), ExploreFragment.TAG);
+                fragment = ExploreFragment.newInstance();
+                openFragment(fragment, fragment.getTAG());
                 return true;
         }
         return false;

@@ -33,11 +33,11 @@ public class ExploreFragment extends RootBottomFragment {
     private RecyclerView recyclerView;
     private static ExploreFragment exploreFragment;
     private MainActivityViewModel mainActivityViewModel;
-    public static final String TAG = "EXPLORE_FRAGMENT";
     private LinearLayoutManager linearLayoutManager;
     private ExploreAdapter exploreAdapter;
 
     public ExploreFragment() {
+        TAG = "EXPLORE_FRAGMENT";
         // Required empty public constructor
     }
 

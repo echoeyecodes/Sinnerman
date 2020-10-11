@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 public class HomeFragment extends RootBottomFragment {
     private RecyclerView recyclerView;
     private RecyclerView chipsRecyclerView;
-    public static final String TAG = "HOME_FRAGMENT";
     private HomeFragmentRecyclerViewAdapter adapter;
     private static HomeFragment homeFragment;
     private MainActivityViewModel viewModel;
@@ -39,7 +38,7 @@ public class HomeFragment extends RootBottomFragment {
     private static final String[] items = {"Recent", "Most Liked", "Most Comment", "Top Views"};
 
     public HomeFragment(){
-
+        TAG = "HOME_FRAGMENT";
     }
 
     public static HomeFragment newInstance() {
