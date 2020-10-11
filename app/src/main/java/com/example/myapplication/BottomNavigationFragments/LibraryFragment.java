@@ -25,9 +25,18 @@ import org.jetbrains.annotations.NotNull;
 
 public class LibraryFragment extends RootBottomFragment {
     private RecyclerView recyclerView;
+    private static LibraryFragment libraryFragment;
+    public static final String TAG = "LIBRARY_FRAGMENT";
 
     public LibraryFragment() {
         // Required empty public constructor
+    }
+
+    public static LibraryFragment newInstance() {
+        if(libraryFragment == null){
+            libraryFragment = new LibraryFragment();
+        }
+        return libraryFragment;
     }
 
     @Override
@@ -74,5 +83,18 @@ public class LibraryFragment extends RootBottomFragment {
         public boolean areContentsTheSame(@NonNull @NotNull NotificationModel oldItem, @NonNull @NotNull NotificationModel newItem) {
             return oldItem.getTitle().equals(newItem.getTitle());
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mainActivityContext.setActiveBottomViewFragment(2);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        libraryFragment = null;
     }
 }

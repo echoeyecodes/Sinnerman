@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -29,7 +30,9 @@ import org.jetbrains.annotations.NotNull;
 public class HomeFragment extends RootBottomFragment {
     private RecyclerView recyclerView;
     private RecyclerView chipsRecyclerView;
+    public static final String TAG = "HOME_FRAGMENT";
     private HomeFragmentRecyclerViewAdapter adapter;
+    private static HomeFragment homeFragment;
     private MainActivityViewModel viewModel;
     LinearLayoutManager linearLayoutManager;
     private LinearLayoutManager chipsLayoutManager;
@@ -37,6 +40,13 @@ public class HomeFragment extends RootBottomFragment {
 
     public HomeFragment(){
 
+    }
+
+    public static HomeFragment newInstance() {
+        if(homeFragment == null){
+            homeFragment = new HomeFragment();
+        }
+        return homeFragment;
     }
 
     @Override
@@ -66,7 +76,7 @@ public class HomeFragment extends RootBottomFragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         chipsRecyclerView.addItemDecoration(new CustomItemDecoration(0, IntegerToDp.intToDp(5)));
-        recyclerView.addItemDecoration(new CustomItemDecoration(IntegerToDp.intToDp(15), IntegerToDp.intToDp(10)));
+        recyclerView.addItemDecoration(new CustomItemDecoration(IntegerToDp.intToDp(15), IntegerToDp.intToDp(15)));
         chipsRecyclerView.setAdapter(chipsAdapter);
         recyclerView.setAdapter(adapter);
         chipsAdapter.notifyDataSetChanged();
@@ -94,6 +104,13 @@ public class HomeFragment extends RootBottomFragment {
     @Override
     public void onResume() {
         super.onResume();
+        mainActivityContext.setActiveBottomViewFragment(0);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        homeFragment = null;
     }
 
     private static class ChipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{

@@ -18,30 +18,43 @@ import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.VideoModel;
 import com.example.myapplication.R;
 import com.squareup.picasso.Picasso;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
-public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoModel, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
+public class ExploreItemAdapter extends ListAdapter<VideoModel, ExploreItemAdapter.ExploreItemViewHolder> implements Serializable {
     private final Context context;
     private final MainActivityContext mainActivityContext;
-    private HomeFragmentRecyclerViewItemViewHolder homeFragmentRecyclerViewItemViewHolder;
+    private ExploreItemViewHolder exploreItemViewHolder;
 
-    public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<VideoModel> itemCallback, Context context, MainActivityContext mainActivityContext) {
+    public ExploreItemAdapter(DiffUtil.ItemCallback<VideoModel> itemCallback, Context context, MainActivityContext mainActivityContext) {
         super(itemCallback);
         this.context = context;
         this.mainActivityContext = mainActivityContext;
+
     }
 
     @NonNull
     @Override
-    public HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ExploreItemAdapter.ExploreItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_feed_item, parent, false);
-        homeFragmentRecyclerViewItemViewHolder = new HomeFragmentRecyclerViewItemViewHolder(view);
-        return homeFragmentRecyclerViewItemViewHolder;
+        DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
+        LinearLayout linearLayout = view.findViewById(R.id.video_item);
+        CardView cardView = view.findViewById(R.id.video_card_frame);
+
+        RecyclerView.LayoutParams layoutParams = (RecyclerView.LayoutParams) linearLayout.getLayoutParams();
+        LinearLayout.LayoutParams cardViewLayoutParams = (LinearLayout.LayoutParams) cardView.getLayoutParams();
+        layoutParams.width = (int) (displayMetrics.widthPixels * 0.8);
+        cardViewLayoutParams.height = (int) (displayMetrics.heightPixels / 3.5);
+
+        cardView.setLayoutParams(cardViewLayoutParams);
+        linearLayout.setLayoutParams(layoutParams);
+        exploreItemViewHolder = new ExploreItemViewHolder(view);
+        return exploreItemViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ExploreItemAdapter.ExploreItemViewHolder holder, int position) {
         Picasso.get().load(Uri.parse(getItem(position).getThumbnail())).into(holder.imageView);
 
         holder.linearLayout.setOnClickListener(v -> {
@@ -49,27 +62,18 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoModel, Hom
         });
     }
 
-    public HomeFragmentRecyclerViewItemViewHolder getHomeAdapterViewHolder(){
-        return homeFragmentRecyclerViewItemViewHolder;
-    }
-
-
-    public static class HomeFragmentRecyclerViewItemViewHolder extends RecyclerView.ViewHolder {
+    public static class ExploreItemViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
         private CardView cardView;
         private LinearLayout linearLayout;
-        DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
 
-        public HomeFragmentRecyclerViewItemViewHolder(@NonNull View itemView) {
+        public ExploreItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
             linearLayout = itemView.findViewById(R.id.video_item);
             imageView = itemView.findViewById(R.id.video_thumbnail);
             cardView = itemView.findViewById(R.id.video_card_frame);
 
-            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) cardView.getLayoutParams();
-            layoutParams.height = (int) (displayMetrics.heightPixels / 3.5);
-            cardView.setLayoutParams(layoutParams);
         }
     }
 }

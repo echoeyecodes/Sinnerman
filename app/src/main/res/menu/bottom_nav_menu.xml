@@ -5,13 +5,14 @@
         android:icon="@drawable/ic_home"
         />
 
+    <item android:id="@+id/action_explore"
+          android:title="Explore"
+          android:icon="@drawable/ic_baseline_search_24"
+    />
+
     <item android:id="@+id/action_notifications"
         android:title="Notifications"
         android:icon="@drawable/ic_baseline_notifications_none_24"
         />
 
-<!--    <item android:id="@+id/action_profile"-->
-<!--        android:title="Profile"-->
-<!--        android:icon="@drawable/ic_profile"-->
-<!--        />-->
 </menu>
