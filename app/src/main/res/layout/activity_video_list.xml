@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <include android:id="@+id/video_list_toolbar" layout="@layout/layout_sub_activity_action_bar" />
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/video_list_recycler_view"
+            android:layout_below="@+id/video_list_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+</RelativeLayout>
