@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,7 +17,7 @@ import com.example.myapplication.Activities.ProfileActivity;
 import com.example.myapplication.Activities.SearchActivity;
 import com.example.myapplication.BottomNavigationFragments.ExploreFragment;
 import com.example.myapplication.BottomNavigationFragments.HomeFragment;
-import com.example.myapplication.BottomNavigationFragments.LibraryFragment;
+import com.example.myapplication.BottomNavigationFragments.NotificationFragment;
 import com.example.myapplication.Activities.VideoActivity;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.ViewModel.MainActivityViewModel;
@@ -129,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
                 openFragment(fragment, fragment.getTAG());
                 return true;
             case R.id.action_notifications:
-                fragment = LibraryFragment.newInstance();
+                fragment = NotificationFragment.newInstance();
                 openFragment(fragment, fragment.getTAG());
                 return true;
             case R.id.action_explore:

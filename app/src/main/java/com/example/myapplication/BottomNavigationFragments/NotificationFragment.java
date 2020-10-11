@@ -21,20 +21,20 @@ import com.example.myapplication.Utils.IntegerToDp;
 import org.jetbrains.annotations.NotNull;
 
 
-public class LibraryFragment extends RootBottomFragment {
+public class NotificationFragment extends RootBottomFragment {
     private RecyclerView recyclerView;
-    private static LibraryFragment libraryFragment;
+    private static NotificationFragment notificationFragment;
 
-    public LibraryFragment() {
+    public NotificationFragment() {
         TAG = "LIBRARY_FRAGMENT";
         // Required empty public constructor
     }
 
-    public static LibraryFragment newInstance() {
-        if(libraryFragment == null){
-            libraryFragment = new LibraryFragment();
+    public static NotificationFragment newInstance() {
+        if(notificationFragment == null){
+            notificationFragment = new NotificationFragment();
         }
-        return libraryFragment;
+        return notificationFragment;
     }
 
     @Override
@@ -93,6 +93,6 @@ public class LibraryFragment extends RootBottomFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        libraryFragment = null;
+        notificationFragment = null;
     }
 }
