@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.myapplication.Activities.SearchActivity;
@@ -23,7 +24,9 @@ import com.example.myapplication.util.BottomNavigationHandler;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.jetbrains.annotations.NotNull;
 
-public class MainActivity extends AppCompatActivity implements MainActivityContext, BottomNavigationView.OnNavigationItemSelectedListener {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements MainActivityContext, BottomNavigationView.OnNavigationItemSelectedListener, FragmentManager.OnBackStackChangedListener {
     private BottomNavigationHandler bottomNavigationHandler;
     private MainActivityViewModel mainActivityViewModel;
     private BottomNavigationView bottomNavigationView;
@@ -45,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         search_btn.setOnClickListener(v -> {
             startActivity(new Intent(this, SearchActivity.class));
         });
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this);
 
         navigateToBottomFragment(HomeFragment.newInstance());
     }
@@ -124,5 +129,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         }
         return false;
 
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        List<Fragment> fragments = getSupportFragmentManager().getFragments();
+        Fragment fragment = fragments.get(fragments.size() -1);
+        if(fragment instanceof RootBottomFragment){
+            active_fragment  = (RootBottomFragment) fragment;
+        }
     }
 }

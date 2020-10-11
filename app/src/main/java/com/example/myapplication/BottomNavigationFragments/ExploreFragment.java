@@ -95,6 +95,7 @@ public class ExploreFragment extends RootBottomFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        exploreAdapter.resetRecyclerStates();
         exploreFragment = null;
     }
 }

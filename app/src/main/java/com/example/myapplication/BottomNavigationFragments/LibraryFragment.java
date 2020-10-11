@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 public class LibraryFragment extends RootBottomFragment {
     private RecyclerView recyclerView;
     private static LibraryFragment libraryFragment;
-    public String TAG = "LIBRARY_FRAGMENT";
 
     public LibraryFragment() {
         TAG = "LIBRARY_FRAGMENT";

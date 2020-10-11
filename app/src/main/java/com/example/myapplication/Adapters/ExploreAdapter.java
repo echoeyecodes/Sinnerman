@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.*;
 import com.example.myapplication.Interface.MainActivityContext;
@@ -25,9 +24,12 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreV
     private final List<String> keys;
     private final MainActivityContext mainActivityContext;
     private final VideosItemCallback videosItemCallback = VideosItemCallback.newInstance();
-    private static final Map<String, Parcelable> recycler_states = new HashMap<>();
+    private static Map<String, Parcelable> recycler_states = null;
 
     public ExploreAdapter(Map<String, List<VideoModel>> data, Context context, MainActivityContext mainActivityContext) {
+        if(recycler_states == null){
+            recycler_states = new HashMap<>();
+        }
         this.data = data;
         this.context = context;
         keys = new ArrayList<>(data.keySet());
@@ -42,6 +44,10 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreV
         if (linearLayoutManager != null) {
             recycler_states.put(holder.recycler_header.getText().toString(), linearLayoutManager.onSaveInstanceState());
         }
+    }
+
+    public void resetRecyclerStates(){
+        recycler_states = null;
     }
 
     @Override
