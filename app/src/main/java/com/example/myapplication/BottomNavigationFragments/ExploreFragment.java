@@ -56,19 +56,6 @@ public class ExploreFragment extends RootBottomFragment {
     }
 
     @Override
-    public void onAttach(@NonNull @NotNull Context context) {
-        super.onAttach(context);
-        mainActivityContext = (MainActivityContext) context;
-        if(!(mainActivityContext instanceof MainActivity)){
-            try {
-                throw new Exception("You need to implement Toggle Full Screen");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
