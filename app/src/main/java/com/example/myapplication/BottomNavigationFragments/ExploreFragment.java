@@ -1,6 +1,7 @@
 package com.example.myapplication.BottomNavigationFragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
@@ -12,8 +13,10 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.example.myapplication.Activities.VideoListActivity;
 import com.example.myapplication.Adapters.ExploreAdapter;
 import com.example.myapplication.Adapters.ExploreItemAdapter;
+import com.example.myapplication.Interface.ExploreFragmentContext;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.MainActivity;
 import com.example.myapplication.Models.VideoModel;
@@ -29,7 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public class ExploreFragment extends RootBottomFragment {
+public class ExploreFragment extends RootBottomFragment implements ExploreFragmentContext {
     private RecyclerView recyclerView;
     private static ExploreFragment exploreFragment;
     private MainActivityViewModel mainActivityViewModel;
@@ -75,8 +78,7 @@ public class ExploreFragment extends RootBottomFragment {
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
         recyclerView.setLayoutManager(linearLayoutManager);
-        exploreAdapter = new ExploreAdapter(mock_data, getContext(), mainActivityContext);
-        recyclerView.addItemDecoration(new CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(0)));
+        exploreAdapter = new ExploreAdapter(mock_data, getContext(), mainActivityContext, this);
         recyclerView.setAdapter(exploreAdapter);
     }
 
@@ -97,5 +99,12 @@ public class ExploreFragment extends RootBottomFragment {
         super.onDestroy();
         exploreAdapter.resetRecyclerStates();
         exploreFragment = null;
+    }
+
+    @Override
+    public void navigateToVideoListActivity(String title) {
+        Intent intent = new Intent(getContext(), VideoListActivity.class);
+        intent.putExtra("title", title);
+        startActivity(intent);
     }
 }

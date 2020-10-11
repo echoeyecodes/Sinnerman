@@ -3,7 +3,6 @@ package com.example.myapplication.Utils;
 import android.graphics.Rect;
 import android.view.View;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class HorizontalItemDecoration extends RecyclerView.ItemDecoration {

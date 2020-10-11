@@ -3,6 +3,8 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -13,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import com.example.myapplication.Activities.ProfileActivity;
 import com.example.myapplication.Activities.SearchActivity;
 import com.example.myapplication.BottomNavigationFragments.ExploreFragment;
 import com.example.myapplication.BottomNavigationFragments.HomeFragment;
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     private BottomNavigationView bottomNavigationView;
     private TextView search_btn;
     private RootBottomFragment active_fragment;
+    private ImageView user_profile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         setContentView(R.layout.activity_main);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+        user_profile = findViewById(R.id.user_profile_btn);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
         bottomNavigationHandler = new ViewModelProvider(this).get(BottomNavigationHandler.class);
@@ -47,6 +53,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
 
         search_btn.setOnClickListener(v -> {
             startActivity(new Intent(this, SearchActivity.class));
+        });
+
+        user_profile.setOnClickListener(v ->{
+            startActivity(new Intent(this, ProfileActivity.class));
         });
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);

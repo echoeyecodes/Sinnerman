@@ -1,13 +1,16 @@
 package com.example.myapplication.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.*;
+import com.example.myapplication.Interface.ExploreFragmentContext;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.VideoModel;
 import com.example.myapplication.R;
@@ -19,14 +22,15 @@ import java.util.*;
 
 public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreViewHolder> {
 
-    private final Context context;
-    private final Map<String, List<VideoModel>> data;
-    private final List<String> keys;
-    private final MainActivityContext mainActivityContext;
+    private Context context;
+    private Map<String, List<VideoModel>> data;
+    private List<String> keys;
+    private MainActivityContext mainActivityContext;
     private final VideosItemCallback videosItemCallback = VideosItemCallback.newInstance();
     private static Map<String, Parcelable> recycler_states = null;
+    private ExploreFragmentContext exploreFragmentContext;
 
-    public ExploreAdapter(Map<String, List<VideoModel>> data, Context context, MainActivityContext mainActivityContext) {
+    public ExploreAdapter(Map<String, List<VideoModel>> data, Context context, MainActivityContext mainActivityContext, ExploreFragmentContext exploreFragmentContext) {
         if(recycler_states == null){
             recycler_states = new HashMap<>();
         }
@@ -34,6 +38,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreV
         this.context = context;
         keys = new ArrayList<>(data.keySet());
         this.mainActivityContext = mainActivityContext;
+        this.exploreFragmentContext = exploreFragmentContext;
     }
 
     @Override
@@ -83,6 +88,10 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreV
         ExploreItemAdapter adapter = new ExploreItemAdapter(videosItemCallback, context, mainActivityContext);
         adapter.submitList(data.get(keys.get(position)));
         holder.recycler_view.setAdapter(adapter);
+
+        holder.imageButton.setOnClickListener(v ->{
+            exploreFragmentContext.navigateToVideoListActivity(keys.get(position));
+        });
     }
 
     @Override
@@ -99,12 +108,14 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreV
 
         private TextView recycler_header;
         private RecyclerView recycler_view;
+        private ImageButton imageButton;
 
         public ExploreViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
             recycler_header = itemView.findViewById(R.id.explore_recycler_item_text_view);
             recycler_view = itemView.findViewById(R.id.explore_recycler_item_recycler_view);
+            imageButton = itemView.findViewById(R.id.explore_recycler_more_btn);
         }
     }
 }

@@ -22,6 +22,8 @@
         <activity android:name=".Activities.AuthActivities.SignUpActivity" />
         <activity android:name=".Activities.AuthActivities.OtpVerificationActivity" />
         <activity android:name=".Activities.SearchActivity" />
+        <activity android:name=".Activities.VideoListActivity" />
+        <activity android:name=".Activities.ProfileActivity" />
     </application>
 
 </manifest>
