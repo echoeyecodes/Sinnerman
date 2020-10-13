@@ -10,6 +10,7 @@
         app:hintTextColor="@color/grey"
         app:boxCornerRadiusTopEnd="5dp"
         app:boxCornerRadiusBottomEnd="5dp"
+        app:errorTextColor="@color/red"
         app:boxCornerRadiusBottomStart="5dp"
         app:boxCornerRadiusTopStart="5dp"
         android:layout_marginVertical="15dp"

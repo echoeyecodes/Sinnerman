@@ -33,14 +33,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:isSecure="false"
-                        app:hint="Email"
-                        app:inputType="2"
+                        app:form_type="username"
+                        app:hint="Username"
+                        android:id="@+id/sign_in_username"
+                        app:inputType="0"
                 />
 
                 <com.example.myapplication.CustomView.FormEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:hint="Password"
+                        app:form_type="password"
+                        android:id="@+id/sign_in_password"
                         app:inputType="3"
                         app:isSecure="true"
                 />
@@ -48,6 +52,7 @@
                 <com.google.android.material.button.MaterialButton
                         android:layout_width="match_parent"
                         android:text="Login"
+                        android:id="@+id/sign_in_btn"
                         android:fontFamily="@font/raleway_regular"
                         android:padding="15dp"
                         android:layout_marginVertical="15dp"

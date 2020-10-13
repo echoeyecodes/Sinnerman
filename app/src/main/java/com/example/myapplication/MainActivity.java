@@ -1,10 +1,14 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import com.example.myapplication.Activities.AuthActivities.SignUpActivity;
 import com.example.myapplication.Activities.ProfileActivity;
 import com.example.myapplication.Activities.SearchActivity;
 import com.example.myapplication.BottomNavigationFragments.ExploreFragment;
@@ -20,6 +25,7 @@ import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 import com.example.myapplication.BottomNavigationFragments.NotificationFragment;
 import com.example.myapplication.Activities.VideoActivity;
 import com.example.myapplication.Interface.MainActivityContext;
+import com.example.myapplication.Utils.AuthenticationManager;
 import com.example.myapplication.ViewModel.MainActivityViewModel;
 import com.example.myapplication.util.BottomNavigationHandler;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -38,8 +44,19 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
+        AuthenticationManager authenticationManager = new AuthenticationManager();
+        String token = authenticationManager.checkToken(this);
+        if(token == null){
+            authenticationManager.startAuthActivity(this);
+        }else {
+            setContentView(R.layout.activity_main);
+            initViews();
+        }
+
+    }
+
+    private void initViews(){
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         user_profile = findViewById(R.id.user_profile_btn);
 
@@ -62,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         navigateToBottomFragment(HomeFragment.newInstance());
     }
 
+
     private void navigateToBottomFragment(RootBottomFragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         Fragment existingFragment = getSupportFragmentManager().findFragmentByTag(fragment.getTAG());
@@ -83,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     protected void onResume() {
         super.onResume();
         showSystemUI();
-
     }
 
     private void showSystemUI() {

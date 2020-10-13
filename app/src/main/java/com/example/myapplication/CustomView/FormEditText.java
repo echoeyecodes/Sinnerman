@@ -2,8 +2,11 @@ package com.example.myapplication.CustomView;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.RelativeLayout;
 import com.example.myapplication.R;
 import com.google.android.material.textfield.TextInputEditText;
@@ -16,9 +19,12 @@ public class FormEditText extends RelativeLayout {
 
     private TextInputLayout textInputLayout;
     private TextInputEditText textInputEditText;
+    private final FormEditTextListener formEditTextListener;
+    private String form_type;
 
     public FormEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
+        formEditTextListener = (FormEditTextListener) context;
         init(context, attrs);
     }
 
@@ -29,6 +35,7 @@ public class FormEditText extends RelativeLayout {
 
         try{
             String name = typedArray.getString(R.styleable.FormEditText_text);
+            form_type = typedArray.getString(R.styleable.FormEditText_form_type);
             String hint = typedArray.getString(R.styleable.FormEditText_hint);
             int type = typedArray.getInt(R.styleable.FormEditText_inputType, 0);
             boolean isSecure = typedArray.getBoolean(R.styleable.FormEditText_isSecure, false);
@@ -57,6 +64,25 @@ public class FormEditText extends RelativeLayout {
     private void initViews(){
         textInputLayout = findViewById(R.id.form_text_input_layout);
         textInputEditText = findViewById(R.id.form_text_input);
+
+        textInputEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                formEditTextListener.onTextInput(form_type, s.toString());
+            }
+        });
+
+        textInputEditText.setOnFocusChangeListener((v, hasFocus) -> formEditTextListener.onFocused(form_type, hasFocus));
     }
 
     public void setHint(CharSequence charSequence){
@@ -69,8 +95,9 @@ public class FormEditText extends RelativeLayout {
         refreshLayout();
     }
 
-    public void setErrorEnabled(boolean value){
-        textInputLayout.setErrorEnabled(value);
+    public void setError(boolean enable, String message){
+        textInputLayout.setErrorEnabled(enable);
+        textInputLayout.setError(message);
         refreshLayout();
     }
 

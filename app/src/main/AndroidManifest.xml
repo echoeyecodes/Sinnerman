@@ -19,8 +19,8 @@
         <activity android:name=".Activities.VideoActivity" android:configChanges="orientation|screenSize|screenLayout" android:screenOrientation="portrait" />
         <activity android:name=".Activities.CommentActivity" />
         <activity android:windowSoftInputMode="adjustResize" android:name=".Activities.AuthActivities.LoginActivity" />
-        <activity android:name=".Activities.AuthActivities.SignUpActivity" />
-        <activity android:name=".Activities.AuthActivities.OtpVerificationActivity" />
+        <activity android:windowSoftInputMode="adjustResize" android:name=".Activities.AuthActivities.SignUpActivity" />
+        <activity android:windowSoftInputMode="adjustResize" android:name=".Activities.AuthActivities.OtpVerificationActivity" />
         <activity android:name=".Activities.SearchActivity" />
         <activity android:name=".Activities.VideoListActivity" />
         <activity android:name=".Activities.ProfileActivity" />
