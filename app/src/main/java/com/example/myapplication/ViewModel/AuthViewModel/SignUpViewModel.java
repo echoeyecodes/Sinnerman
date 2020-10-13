@@ -32,8 +32,7 @@ public class SignUpViewModel extends AuthViewModel {
 
     @Override
     public void submitForm() {
-        validateFields();
-
+        super.submitForm();
         if(isValid){
             createAccount();
         }

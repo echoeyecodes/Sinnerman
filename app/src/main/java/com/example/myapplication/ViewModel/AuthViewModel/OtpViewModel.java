@@ -30,6 +30,7 @@ public class OtpViewModel extends AuthViewModel {
 
     @Override
     public void submitForm() {
+        super.submitForm();
         if (isValid) {
             verify();
         }

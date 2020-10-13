@@ -15,7 +15,7 @@ import java.util.Map;
 public abstract class AuthViewModel extends ViewModel {
     public HandlerThread handlerThread;
     public Handler handler;
-    public ApiClient apiClient = new ApiClient();;
+    public ApiClient apiClient = new ApiClient();
     public AuthDao authDao;
     public boolean isValid = true;
     private String token;
@@ -86,5 +86,7 @@ public abstract class AuthViewModel extends ViewModel {
         form_fields.put(key, value);
     }
 
-    public abstract void submitForm();
+    public void submitForm(){
+        validateFields();
+    }
 }
