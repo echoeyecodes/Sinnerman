@@ -23,7 +23,6 @@ public class OtpVerificationActivity extends AppCompatActivity implements FormEd
     private OtpViewModel otpViewModel;
     private MaterialButton otp_verify_btn;
     private FormEditText otp_field;
-    private String email;
 
     @Override
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
@@ -37,9 +36,7 @@ public class OtpVerificationActivity extends AppCompatActivity implements FormEd
             otp_field.setError(true, value.getMessage());
         });
 
-        email = getIntent().getStringExtra("email");
-        Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
-        otpViewModel.setEmail(email);
+        otpViewModel.setVerification_response(getIntent().getStringExtra("verification_response"));
         otp_verify_btn = findViewById(R.id.otp_verify_button);
 
         otpViewModel.getRequestStatusObserver().observe(this, (value) -> {

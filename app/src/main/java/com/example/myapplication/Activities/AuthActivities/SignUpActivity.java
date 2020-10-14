@@ -47,7 +47,7 @@ public class SignUpActivity extends AppCompatActivity implements FormEditTextLis
 
             if(value == RequestStatus.SUCCESS){
                 Intent intent = new Intent(this, OtpVerificationActivity.class);
-                intent.putExtra("email", signUpViewModel.getForm_fields().get("email"));
+                intent.putExtra("verification_response", signUpViewModel.getVerification_response());
                 startActivity(intent);
                 signUpViewModel.setRequestStatus(RequestStatus.NONE);
             }else if (value == RequestStatus.EXISTS){

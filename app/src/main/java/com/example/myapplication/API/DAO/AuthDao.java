@@ -13,7 +13,7 @@ public interface AuthDao {
     Call<String> createUser(@Body UserModel userModel);
 
     @POST("api/v1/auth/login")
-    Call<ResponseBody> login(@Body UserModel userModel);
+    Call<String> login(@Body UserModel userModel);
 
     @POST("api/v1/otp/verify")
     Call<ResponseBody> verify(@Body OtpModel otpModel);

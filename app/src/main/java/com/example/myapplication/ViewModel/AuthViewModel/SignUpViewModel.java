@@ -50,17 +50,18 @@ public class SignUpViewModel extends AuthViewModel {
                 Response<String> response = call.execute();
 
                 if(response.isSuccessful() && response.body() != null){
-                    if(response.body().equals("ok")){
+                    Log.d("CARRR", response.body());
+                    int status = response.code();
+                    if(status == 200){
+                        signUpViewModel.setVerification_response(response.body());
                         requestStatusObserver.postValue(RequestStatus.SUCCESS);
-                    }else{
+                    }else if(status == 202){
                         requestStatusObserver.postValue(RequestStatus.EXISTS);
                     }
 
                 }else{
-                    requestStatusObserver.postValue(RequestStatus.ERROR);
-
                     if(response.errorBody() != null){
-                        //Internal Server error
+                        signUpViewModel.setMessage(response.errorBody().string());
                         Log.d("CARRR", response.errorBody().string());
                     }
                     requestStatusObserver.postValue(RequestStatus.ERROR);

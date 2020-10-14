@@ -2,12 +2,12 @@ package com.example.myapplication.Models;
 
 public class OtpModel {
     private String otp;
-    private String email;
+    private String verification_response;
     private String token;
 
-    public OtpModel(String otp, String email) {
+    public OtpModel(String otp, String verification_response) {
         this.otp = otp;
-        this.email = email;
+        this.verification_response = verification_response;
     }
 
     public OtpModel(String token){

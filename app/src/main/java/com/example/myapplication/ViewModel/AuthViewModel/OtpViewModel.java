@@ -31,13 +31,8 @@ public class OtpViewModel extends AuthViewModel {
         }
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
     private void verify() {
-        OtpModel otpModel = new OtpModel(form_fields.get("otp"), "femiobajuluwa@gmail.com");
+        OtpModel otpModel = new OtpModel(form_fields.get("otp"), getVerification_response());
         Call<ResponseBody> call = authDao.verify(otpModel);
 
         handler.post(new OtpViewModel.ApiExecutor(call, this));

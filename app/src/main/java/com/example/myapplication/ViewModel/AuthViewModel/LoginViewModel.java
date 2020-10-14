@@ -27,9 +27,17 @@ public class LoginViewModel extends AuthViewModel {
 
     private void login() {
         UserModel userModel = new UserModel(form_fields.get("username"), form_fields.get("password"));
-        Call<ResponseBody> call = authDao.login(userModel);
+        Call<String> call = authDao.login(userModel);
 
         handler.post(new LoginViewModel.ApiExecutor(call, this));
+    }
+
+    public String getVerification_response() {
+        return verification_response;
+    }
+
+    public void setVerification_response(String verification_response) {
+        this.verification_response = verification_response;
     }
 
     @Override
@@ -41,10 +49,10 @@ public class LoginViewModel extends AuthViewModel {
     }
 
     private static class ApiExecutor implements Runnable {
-        private Call<ResponseBody> call;
+        private Call<String> call;
         private LoginViewModel loginViewModel;
 
-        public ApiExecutor(Call<ResponseBody> call, LoginViewModel loginViewModel) {
+        public ApiExecutor(Call<String> call, LoginViewModel loginViewModel) {
             this.call = call;
             this.loginViewModel = loginViewModel;
         }
@@ -53,14 +61,16 @@ public class LoginViewModel extends AuthViewModel {
         public void run() {
             try {
                 requestStatusObserver.postValue(RequestStatus.LOADING);
-                Response<ResponseBody> response = call.execute();
+                Response<String> response = call.execute();
 
                 if (response.isSuccessful() && response.body() != null) {
                     if (response.code() == 200) {
-                        String token = new AuthenticationManager().tokenExtractor(response.body().string());
+                        String token = response.body();
                         loginViewModel.setToken(token);
                         requestStatusObserver.postValue(RequestStatus.SUCCESS);
                     } else if (response.code() == 202) {
+                        //extract email from response body here
+                        loginViewModel.setVerification_response(response.body());
                         requestStatusObserver.postValue(RequestStatus.NOT_VERIFIED);
                     }
 

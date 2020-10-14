@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity implements FormEditTextList
 
             if(value == RequestStatus.NOT_VERIFIED){
                 Intent intent = new Intent(this, OtpVerificationActivity.class);
-                intent.putExtra("email", loginViewModel.getForm_fields().get("email"));
+                intent.putExtra("verification_response", loginViewModel.getVerification_response());
                 startActivity(intent);
                 loginViewModel.setRequestStatus(RequestStatus.NONE);
             }else if(value == RequestStatus.ERROR){
