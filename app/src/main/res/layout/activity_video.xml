@@ -19,4 +19,6 @@
                 app:controller_layout_id="@layout/layout_custom_video_controls"
         />
 
+        <include android:id="@+id/video_activity_loading_layout" layout="@layout/layout_loading" />
+
 </RelativeLayout>

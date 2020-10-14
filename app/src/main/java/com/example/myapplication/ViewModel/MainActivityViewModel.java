@@ -2,21 +2,10 @@ package com.example.myapplication.ViewModel;
 
 import android.app.Application;
 
-import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import com.example.myapplication.API.DAO.ApiClient;
-import com.example.myapplication.API.DAO.VideosDao;
 import com.example.myapplication.Models.VideoModel;
-import com.example.myapplication.Models.VideoResponseBody;
-import com.example.myapplication.Utils.VideoThreadHandler;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Response;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 

@@ -1,26 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context=".BottomNavigationFragments.HomeFragment"
-                android:orientation="vertical">
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".BottomNavigationFragments.HomeFragment"
+        android:orientation="vertical">
 
     <RelativeLayout
             android:id="@+id/home_fragment_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <include android:id="@+id/video_filters" layout="@layout/layout_home_chips" />
+        <include android:id="@+id/video_filters" layout="@layout/layout_home_chips"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/fragment_home_recycler_view"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/home_swipe_refresh"
                 android:layout_width="match_parent"
                 android:layout_below="@+id/video_filters"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/fragment_home_recycler_view"
+                    android:layout_width="match_parent"
+                    android:overScrollMode="never"
+                    android:layout_height="match_parent"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     </RelativeLayout>
 
-    <include android:id="@+id/home_fragment_loading_layout" layout="@layout/layout_loading" />
+    <include android:id="@+id/home_fragment_loading_layout" layout="@layout/layout_loading"/>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

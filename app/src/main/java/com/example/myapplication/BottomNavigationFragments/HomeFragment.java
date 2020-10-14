@@ -1,14 +1,11 @@
 package com.example.myapplication.BottomNavigationFragments;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,26 +13,26 @@ import android.view.ViewGroup;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.*;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.myapplication.Adapters.HomeFragmentRecyclerViewAdapter;
-import com.example.myapplication.Interface.MainActivityContext;
-import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.RootBottomFragment;
 import com.example.myapplication.Utils.CustomItemDecoration;
 import com.example.myapplication.Utils.IntegerToDp;
 import com.example.myapplication.Utils.VideosItemCallback;
-import com.example.myapplication.ViewModel.MainActivityViewModel;
+import com.example.myapplication.ViewModel.BottomFragmentViewModel.HomeFragmentViewModel;
 import com.example.myapplication.ViewModel.NetworkState;
 import com.google.android.material.chip.Chip;
 import org.jetbrains.annotations.NotNull;
 
-public class HomeFragment extends RootBottomFragment {
+public class HomeFragment extends RootBottomFragment implements SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView recyclerView;
     private RecyclerView chipsRecyclerView;
     private RelativeLayout loading_screen;
     private HomeFragmentRecyclerViewAdapter adapter;
     private static HomeFragment homeFragment;
-    private MainActivityViewModel viewModel;
+    private HomeFragmentViewModel viewModel;
+    private SwipeRefreshLayout swipeRefreshLayout;
     LinearLayoutManager linearLayoutManager;
     private LinearLayoutManager chipsLayoutManager;
     private static final String[] items = {"Recent", "Most Liked", "Most Comment", "Top Views"};
@@ -53,7 +50,7 @@ public class HomeFragment extends RootBottomFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        viewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(HomeFragmentViewModel.class);
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -66,15 +63,20 @@ public class HomeFragment extends RootBottomFragment {
     public void onViewCreated(@NonNull View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        swipeRefreshLayout = view.findViewById(R.id.home_swipe_refresh);
         loading_screen = view.findViewById(R.id.home_fragment_loading_layout);
         recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
         chipsRecyclerView = view.findViewById(R.id.video_filters);
 
-        viewModel.getIsLoadingHomeFragment().observe(requireActivity(), (value) ->{
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        viewModel.getRequest_status().observe(requireActivity(), (value) ->{
             loading_screen.setVisibility(value == NetworkState.LOADING ? View.VISIBLE : View.GONE);
 
-            if(value == NetworkState.LOADING){
-                loading_screen.setVisibility(View.VISIBLE);
+            if(value == NetworkState.ERROR){
+                Toast.makeText(getContext(), viewModel.getMessage(), Toast.LENGTH_SHORT).show();
+                viewModel.resetRequestStatus();
+                swipeRefreshLayout.setRefreshing(false);
             }else{
                 loading_screen.setVisibility(View.GONE);
             }
@@ -95,19 +97,10 @@ public class HomeFragment extends RootBottomFragment {
         recyclerView.setAdapter(adapter);
         chipsAdapter.notifyDataSetChanged();
 
-        viewModel.getVideos().observe(getViewLifecycleOwner(), videos ->{
+        viewModel.getVideosObserver().observe(getViewLifecycleOwner(), videos ->{
             adapter.submitList(videos);
+            swipeRefreshLayout.setRefreshing(false);
         });
-
-        viewModel.getIsLoadingHomeFragment().observe(requireActivity(), (state) ->{
-            if(state == NetworkState.ERROR){
-                Toast.makeText(getContext(), viewModel.getMessage(), Toast.LENGTH_LONG).show();
-            }else if(state == NetworkState.SUCCESS){
-                Toast.makeText(getContext(), "SUCCESS", Toast.LENGTH_LONG).show();
-            }
-        });
-
-        viewModel.fetchVideos();
 
     }
 
@@ -135,6 +128,11 @@ public class HomeFragment extends RootBottomFragment {
     public void onDestroy() {
         super.onDestroy();
         homeFragment = null;
+    }
+
+    @Override
+    public void onRefresh() {
+        viewModel.fetchVideos();
     }
 
     private static class ChipsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{

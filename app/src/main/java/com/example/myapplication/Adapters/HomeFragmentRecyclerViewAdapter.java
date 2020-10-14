@@ -52,7 +52,7 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
         holder.author.setText(getItem(position).getUser().getUsername());
 
         holder.linearLayout.setOnClickListener(v -> {
-            mainActivityContext.navigateToVideos(getItem(position).getVideo().getVideo_url());
+            mainActivityContext.navigateToVideos(getItem(position).getVideo().getId());
         });
     }
 

@@ -1,14 +1,10 @@
 package com.example.myapplication;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.myapplication.Activities.AuthActivities.SignUpActivity;
 import com.example.myapplication.Activities.ProfileActivity;
 import com.example.myapplication.Activities.SearchActivity;
 import com.example.myapplication.BottomNavigationFragments.ExploreFragment;
@@ -131,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     @Override
     public void navigateToVideos(String video_url) {
         Intent intent = new Intent(this, VideoActivity.class);
-        intent.putExtra("video_url", video_url);
+        intent.putExtra("video_id", video_url);
         startActivity(intent);
     }
 

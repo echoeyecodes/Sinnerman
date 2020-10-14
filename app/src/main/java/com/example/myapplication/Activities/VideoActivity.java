@@ -1,6 +1,5 @@
 package com.example.myapplication.Activities;
 
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -13,10 +12,12 @@ import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import com.example.myapplication.Models.UserModel;
+import com.example.myapplication.Models.VideoModel;
 import com.example.myapplication.R;
 import com.example.myapplication.Singleton.VideoCacheSingleton;
 import com.example.myapplication.Utils.CustomExoPlayerDataSourceFactory;
-import com.example.myapplication.Utils.IntegerToDp;
+import com.example.myapplication.ViewModel.NetworkState;
 import com.example.myapplication.ViewModel.VideoActivityViewModel;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
@@ -25,24 +26,30 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
+import de.hdodenhof.circleimageview.CircleImageView;
 import org.jetbrains.annotations.NotNull;
 
 public class VideoActivity extends AppCompatActivity implements Player.EventListener, ValueAnimator.AnimatorUpdateListener {
     private PlayerView playerView;
     private ImageButton fullscreen_btn;
+    private CircleImageView video_author_image;
+    private TextView video_author_username;
+    private TextView video_title;
+    private TextView video_description;
     private ImageButton comment_btn;
     private ImageButton like_btn;
     private LinearLayout reload_btn;
     private SimpleExoPlayer player;
+    private RelativeLayout loading_layout;
     private VideoActivityViewModel videoActivityViewModel;
     private ProgressBar progressBar;
     private ValueAnimator valueAnimator;
     private MediaSource mediaSource;
     private int currentWindow = 0;
     private long playBackPosition = 0;
-    private Uri video_url;
+    private String video_id;
 
     @Override
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
@@ -51,12 +58,22 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         setContentView(R.layout.activity_video);
         videoActivityViewModel = new ViewModelProvider(this).get(VideoActivityViewModel.class);
         playerView = findViewById(R.id.video_player_view);
+
+        loading_layout = findViewById(R.id.video_activity_loading_layout);
+        loading_layout.setBackgroundColor(R.color.black);
+
+        video_author_image = findViewById(R.id.video_author_image);
+        video_author_username = findViewById(R.id.video_author_username);
+        video_title = findViewById(R.id.video_title);
+        video_description = findViewById(R.id.video_description);
+
         progressBar = findViewById(R.id.exo_buffering);
         fullscreen_btn = findViewById(R.id.full_screen_btn);
         comment_btn = findViewById(R.id.comment_btn);
         like_btn = findViewById(R.id.like_btn);
         reload_btn = findViewById(R.id.retry_btn);
-        video_url = Uri.parse(getIntent().getStringExtra("video_url"));
+
+        video_id = getIntent().getStringExtra("video_id");
 
         valueAnimator = ValueAnimator.ofFloat(1,1.5f,1);
         valueAnimator.setDuration(500);
@@ -84,7 +101,30 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
 
         like_btn.setOnClickListener(v -> animateLikeButton());
 
-        mediaSource = buildMediaSource(video_url);
+        videoActivityViewModel.getVideoObserver().observe(this, (video) ->{
+            if(video != null){
+                UserModel userModel = video.getUser();
+                VideoModel videoModel = video.getVideo();
+
+                Picasso.get().load(Uri.parse(userModel.getProfile_url())).into(video_author_image);
+                video_author_username.setText("@".concat(userModel.getUsername()));
+                video_title.setText(videoModel.getTitle());
+                video_description.setText(videoModel.getDescription());
+
+                mediaSource = buildMediaSource(Uri.parse(video.getVideo().getVideo_url()));
+                initializePlayer();
+            }
+        });
+
+        videoActivityViewModel.getRequest_status().observe(this, (status) ->{
+            if(status == NetworkState.LOADING){
+                loading_layout.setVisibility(View.VISIBLE);
+            }else{
+                loading_layout.setVisibility(View.GONE);
+            }
+        });
+
+        videoActivityViewModel.setVideo_id(video_id);
     }
 
     private int getNavigationBarHeight(){
@@ -181,7 +221,9 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
     protected void onStart() {
         super.onStart();
         if(Util.SDK_INT >= 24){
-            initializePlayer();
+            if(mediaSource != null){
+                initializePlayer();
+            }
         }
     }
 
@@ -190,7 +232,9 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         super.onResume();
         hideSystemUI();
         if(Util.SDK_INT < 24 || player == null){
-            initializePlayer();
+            if(mediaSource != null){
+                initializePlayer();
+            }
         }
     }
 
