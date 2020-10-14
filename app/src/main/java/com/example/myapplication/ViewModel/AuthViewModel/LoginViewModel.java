@@ -18,13 +18,11 @@ import java.util.Objects;
 
 public class LoginViewModel extends AuthViewModel {
 
-    public LoginViewModel() {
-        handlerThread = new HandlerThread("LOGIN_THREAD");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
+    private String verification_response;
 
-        authDao = apiClient.getClient(AuthDao.class);
-        initRequiredFields("username", "password");
+    public LoginViewModel() {
+       super();
+       initRequiredFields("username", "password");
     }
 
     private void login() {

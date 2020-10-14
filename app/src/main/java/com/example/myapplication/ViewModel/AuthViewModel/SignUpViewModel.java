@@ -15,11 +15,7 @@ import java.util.Objects;
 public class SignUpViewModel extends AuthViewModel {
 
     public SignUpViewModel() {
-        handlerThread = new HandlerThread("SIGN_UP_THREAD");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
-
-        authDao = apiClient.getClient(AuthDao.class);
+        super();
         initRequiredFields("username", "password", "firstname", "lastname", "email");
     }
 
@@ -39,8 +35,8 @@ public class SignUpViewModel extends AuthViewModel {
     }
 
     private static class ApiExecutor implements Runnable{
-        private Call<String> call;
-        private SignUpViewModel signUpViewModel;
+        private final Call<String> call;
+        private final SignUpViewModel signUpViewModel;
 
         public ApiExecutor(Call<String> call, SignUpViewModel signUpViewModel){
             this.call = call;
@@ -67,6 +63,7 @@ public class SignUpViewModel extends AuthViewModel {
                         //Internal Server error
                         Log.d("CARRR", response.errorBody().string());
                     }
+                    requestStatusObserver.postValue(RequestStatus.ERROR);
                 }
             } catch (IOException e) {
                 signUpViewModel.setMessage("Something went wrong with the request. Try again later");

@@ -17,14 +17,9 @@ import java.io.IOException;
 
 public class OtpViewModel extends AuthViewModel {
 
-    private String email;
-
     public OtpViewModel() {
-        handlerThread = new HandlerThread("OTP_THREAD");
-        handlerThread.start();
-        handler = new Handler(handlerThread.getLooper());
+       super();
 
-        authDao = apiClient.getClient(AuthDao.class);
         initRequiredFields("otp");
     }
 

@@ -12,17 +12,27 @@ import com.example.myapplication.Utils.FieldErrorStatus;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AuthViewModel extends ViewModel {
-    public HandlerThread handlerThread;
-    public Handler handler;
-    public ApiClient apiClient = new ApiClient();
-    public AuthDao authDao;
+public class AuthViewModel extends ViewModel {
+    public static HandlerThread handlerThread;
+    public static Handler handler;
+    public static ApiClient apiClient = new ApiClient();
+    public static AuthDao authDao;
     public boolean isValid = true;
     private String token;
     private String message ="";
+    private String verification_response = "";
     public final Map<String, String> form_fields = new HashMap<>();
     public final MutableLiveData<FieldErrorStatus> errorObserver = new MutableLiveData<>();
     public static final MutableLiveData<RequestStatus> requestStatusObserver = new MutableLiveData<>();
+
+    public AuthViewModel(){
+        if(handlerThread == null){
+            handlerThread = new HandlerThread("AUTH_THREAD");
+            handlerThread.start();
+        }
+        handler = new Handler(handlerThread.getLooper());
+        authDao = apiClient.getClient(AuthDao.class);
+    }
 
     public void validateFields() {
         for (Map.Entry<String, String> entry : form_fields.entrySet()) {
@@ -76,6 +86,14 @@ public abstract class AuthViewModel extends ViewModel {
 
     public MutableLiveData<RequestStatus> getRequestStatusObserver() {
         return requestStatusObserver;
+    }
+
+    public String getVerification_response() {
+        return verification_response;
+    }
+
+    public void setVerification_response(String verification_response) {
+        this.verification_response = verification_response;
     }
 
     public void setRequestStatus(RequestStatus requestStatus){
