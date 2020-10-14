@@ -35,14 +35,14 @@ public class OtpViewModel extends AuthViewModel {
         OtpModel otpModel = new OtpModel(form_fields.get("otp"), getVerification_response());
         Call<ResponseBody> call = authDao.verify(otpModel);
 
-        handler.post(new OtpViewModel.ApiExecutor(call, this));
+        handler.post(new OtpViewModel.OtpApiExecutor(call, this));
     }
 
-    private static class ApiExecutor implements Runnable {
+    private static class OtpApiExecutor implements Runnable {
         private Call<ResponseBody> call;
         private OtpViewModel otpViewModel;
 
-        public ApiExecutor(Call<ResponseBody> call, OtpViewModel otpViewModel) {
+        public OtpApiExecutor(Call<ResponseBody> call, OtpViewModel otpViewModel) {
             this.call = call;
             this.otpViewModel = otpViewModel;
         }

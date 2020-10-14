@@ -3,9 +3,10 @@ package com.example.myapplication.Utils;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import com.example.myapplication.Models.VideoModel;
+import com.example.myapplication.Models.VideoResponseBody;
 import org.jetbrains.annotations.NotNull;
 
-public final class VideosItemCallback extends DiffUtil.ItemCallback<VideoModel> {
+public final class VideosItemCallback extends DiffUtil.ItemCallback<VideoResponseBody> {
     private static VideosItemCallback videosItemCallback;
 
     private VideosItemCallback(){
@@ -20,12 +21,12 @@ public final class VideosItemCallback extends DiffUtil.ItemCallback<VideoModel> 
     }
 
     @Override
-    public boolean areItemsTheSame(@NonNull @NotNull VideoModel oldItem, @NonNull @NotNull VideoModel newItem) {
-        return oldItem.getId().equals(newItem.getId());
+    public boolean areItemsTheSame(@NonNull @NotNull VideoResponseBody oldItem, @NonNull @NotNull VideoResponseBody newItem) {
+        return oldItem.getVideo().getId().equals(newItem.getVideo().getId());
     }
 
     @Override
-    public boolean areContentsTheSame(@NonNull @NotNull VideoModel oldItem, @NonNull @NotNull VideoModel newItem) {
-        return oldItem.getLike_count() == newItem.getLike_count();
+    public boolean areContentsTheSame(@NonNull @NotNull VideoResponseBody oldItem, @NonNull @NotNull VideoResponseBody newItem) {
+        return oldItem.getVideo().getThumbnail().equals(newItem.getVideo().getVideo_url());
     }
 }

@@ -86,7 +86,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreV
         holder.recycler_header.setText(keys.get(position));
 
         ExploreItemAdapter adapter = new ExploreItemAdapter(videosItemCallback, context, mainActivityContext);
-        adapter.submitList(data.get(keys.get(position)));
+//        adapter.submitList(data.get(keys.get(position)));
         holder.recycler_view.setAdapter(adapter);
 
         holder.imageButton.setOnClickListener(v ->{

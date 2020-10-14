@@ -6,6 +6,7 @@ import android.util.Log;
 import com.example.myapplication.API.DAO.RequestStatus;
 import com.example.myapplication.API.DAO.AuthDao;
 import com.example.myapplication.Models.UserModel;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -20,10 +21,10 @@ public class SignUpViewModel extends AuthViewModel {
     }
 
     private void createAccount(){
-        UserModel userModel = new UserModel(form_fields.get("firstname").concat(" ").concat(form_fields.get("lastname")), form_fields.get("username"), form_fields.get("email"), form_fields.get("password"));
-        Call<String> call = authDao.createUser(userModel);
+        UserModel userModel = new UserModel(form_fields.get("firstname").concat(" ").concat(form_fields.get("lastname")), form_fields.get("username"), form_fields.get("email"), form_fields.get("password"), "");
+        Call<ResponseBody> call = authDao.createUser(userModel);
 
-        handler.post(new ApiExecutor(call, this));
+        handler.post(new SignUpApiExecutor(call, this));
     }
 
     @Override
@@ -34,11 +35,11 @@ public class SignUpViewModel extends AuthViewModel {
         }
     }
 
-    private static class ApiExecutor implements Runnable{
-        private final Call<String> call;
+    private static class SignUpApiExecutor implements Runnable{
+        private final Call<ResponseBody> call;
         private final SignUpViewModel signUpViewModel;
 
-        public ApiExecutor(Call<String> call, SignUpViewModel signUpViewModel){
+        public SignUpApiExecutor(Call<ResponseBody> call, SignUpViewModel signUpViewModel){
             this.call = call;
             this.signUpViewModel = signUpViewModel;
         }
@@ -47,13 +48,12 @@ public class SignUpViewModel extends AuthViewModel {
         public void run() {
             try {
                 requestStatusObserver.postValue(RequestStatus.LOADING);
-                Response<String> response = call.execute();
+                Response<ResponseBody> response = call.execute();
 
                 if(response.isSuccessful() && response.body() != null){
-                    Log.d("CARRR", response.body());
                     int status = response.code();
                     if(status == 200){
-                        signUpViewModel.setVerification_response(response.body());
+                        signUpViewModel.setVerification_response(response.body().string());
                         requestStatusObserver.postValue(RequestStatus.SUCCESS);
                     }else if(status == 202){
                         requestStatusObserver.postValue(RequestStatus.EXISTS);
@@ -62,7 +62,6 @@ public class SignUpViewModel extends AuthViewModel {
                 }else{
                     if(response.errorBody() != null){
                         signUpViewModel.setMessage(response.errorBody().string());
-                        Log.d("CARRR", response.errorBody().string());
                     }
                     requestStatusObserver.postValue(RequestStatus.ERROR);
                 }

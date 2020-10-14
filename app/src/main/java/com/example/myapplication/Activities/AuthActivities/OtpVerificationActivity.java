@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,7 +37,11 @@ public class OtpVerificationActivity extends AppCompatActivity implements FormEd
             otp_field.setError(true, value.getMessage());
         });
 
-        otpViewModel.setVerification_response(getIntent().getStringExtra("verification_response"));
+
+        String verification_response = getIntent().getStringExtra("verification_response");
+        otpViewModel.setVerification_response(verification_response);
+
+        Toast.makeText(this, verification_response, Toast.LENGTH_LONG).show();
         otp_verify_btn = findViewById(R.id.otp_verify_button);
 
         otpViewModel.getRequestStatusObserver().observe(this, (value) -> {

@@ -1,5 +1,8 @@
 package com.example.myapplication.API.DAO;
 
+import android.content.Context;
+import android.util.Log;
+import com.example.myapplication.Utils.AuthenticationManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import okhttp3.Interceptor;
@@ -12,10 +15,17 @@ public class ApiClient{
     private Retrofit.Builder retrofitBuilder;
     private static final String BASE_URL = "https://sinnerman-291514.uc.r.appspot.com/";
     private Retrofit retrofit;
+    private Context context;
 
     public ApiClient(){
         init();
     }
+
+    public ApiClient(Context context){
+        this.context = context;
+        init();
+    }
+
 
     public void init(){
         Gson gson = new GsonBuilder().setLenient().create();
@@ -23,10 +33,14 @@ public class ApiClient{
         OkHttpClient.Builder httpclient = new OkHttpClient.Builder();
         httpclient.addInterceptor(chain -> {
             Request originalRequest = chain.request();
-            Request request = originalRequest.newBuilder().header("x-api-key", "123456789")
-                    .header("Content-Type", "application/json").build();
+            Request.Builder builder = originalRequest.newBuilder().header("x-api-key", "123456789").header("Content-Type", "application/json");
 
-            return chain.proceed(request);
+            if(context != null){
+                String token = new AuthenticationManager().checkToken(context);
+                builder.header("token", token);
+            }
+
+            return chain.proceed(builder.build());
         });
 
         retrofitBuilder = new Retrofit.Builder().baseUrl(BASE_URL)

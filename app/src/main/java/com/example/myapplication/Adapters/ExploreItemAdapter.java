@@ -16,18 +16,19 @@ import androidx.recyclerview.widget.*;
 import androidx.recyclerview.widget.ListAdapter;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.VideoModel;
+import com.example.myapplication.Models.VideoResponseBody;
 import com.example.myapplication.R;
 import com.squareup.picasso.Picasso;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 
-public class ExploreItemAdapter extends ListAdapter<VideoModel, ExploreItemAdapter.ExploreItemViewHolder> implements Serializable {
+public class ExploreItemAdapter extends ListAdapter<VideoResponseBody, ExploreItemAdapter.ExploreItemViewHolder> implements Serializable {
     private final Context context;
     private final MainActivityContext mainActivityContext;
     private ExploreItemViewHolder exploreItemViewHolder;
 
-    public ExploreItemAdapter(DiffUtil.ItemCallback<VideoModel> itemCallback, Context context, MainActivityContext mainActivityContext) {
+    public ExploreItemAdapter(DiffUtil.ItemCallback<VideoResponseBody> itemCallback, Context context, MainActivityContext mainActivityContext) {
         super(itemCallback);
         this.context = context;
         this.mainActivityContext = mainActivityContext;
@@ -55,10 +56,10 @@ public class ExploreItemAdapter extends ListAdapter<VideoModel, ExploreItemAdapt
 
     @Override
     public void onBindViewHolder(@NonNull ExploreItemAdapter.ExploreItemViewHolder holder, int position) {
-        Picasso.get().load(Uri.parse(getItem(position).getThumbnail())).into(holder.imageView);
+        Picasso.get().load(Uri.parse(getItem(position).getVideo().getThumbnail())).into(holder.imageView);
 
         holder.linearLayout.setOnClickListener(v -> {
-            mainActivityContext.navigateToVideos(getItem(position).getVideo_url());
+            mainActivityContext.navigateToVideos(getItem(position).getVideo().getVideo_url());
         });
     }
 

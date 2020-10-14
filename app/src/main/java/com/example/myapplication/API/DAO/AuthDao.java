@@ -10,10 +10,10 @@ import retrofit2.http.POST;
 public interface AuthDao {
 
     @POST("api/v1/auth/signup")
-    Call<String> createUser(@Body UserModel userModel);
+    Call<ResponseBody> createUser(@Body UserModel userModel);
 
     @POST("api/v1/auth/login")
-    Call<String> login(@Body UserModel userModel);
+    Call<ResponseBody> login(@Body UserModel userModel);
 
     @POST("api/v1/otp/verify")
     Call<ResponseBody> verify(@Body OtpModel otpModel);

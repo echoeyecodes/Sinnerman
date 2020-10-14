@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,12 +25,14 @@ import com.example.myapplication.Utils.CustomItemDecoration;
 import com.example.myapplication.Utils.IntegerToDp;
 import com.example.myapplication.Utils.VideosItemCallback;
 import com.example.myapplication.ViewModel.MainActivityViewModel;
+import com.example.myapplication.ViewModel.NetworkState;
 import com.google.android.material.chip.Chip;
 import org.jetbrains.annotations.NotNull;
 
 public class HomeFragment extends RootBottomFragment {
     private RecyclerView recyclerView;
     private RecyclerView chipsRecyclerView;
+    private RelativeLayout loading_screen;
     private HomeFragmentRecyclerViewAdapter adapter;
     private static HomeFragment homeFragment;
     private MainActivityViewModel viewModel;
@@ -50,6 +53,7 @@ public class HomeFragment extends RootBottomFragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        viewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
@@ -62,9 +66,20 @@ public class HomeFragment extends RootBottomFragment {
     public void onViewCreated(@NonNull View view,Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        loading_screen = view.findViewById(R.id.home_fragment_loading_layout);
         recyclerView = view.findViewById(R.id.fragment_home_recycler_view);
         chipsRecyclerView = view.findViewById(R.id.video_filters);
-        viewModel = new ViewModelProvider(requireActivity()).get(MainActivityViewModel.class);
+
+        viewModel.getIsLoadingHomeFragment().observe(requireActivity(), (value) ->{
+            loading_screen.setVisibility(value == NetworkState.LOADING ? View.VISIBLE : View.GONE);
+
+            if(value == NetworkState.LOADING){
+                loading_screen.setVisibility(View.VISIBLE);
+            }else{
+                loading_screen.setVisibility(View.GONE);
+            }
+        });
+
         final VideosItemCallback videosItemCallback = VideosItemCallback.newInstance();
 
         adapter = new HomeFragmentRecyclerViewAdapter(videosItemCallback, getContext(), mainActivityContext);
@@ -83,6 +98,16 @@ public class HomeFragment extends RootBottomFragment {
         viewModel.getVideos().observe(getViewLifecycleOwner(), videos ->{
             adapter.submitList(videos);
         });
+
+        viewModel.getIsLoadingHomeFragment().observe(requireActivity(), (state) ->{
+            if(state == NetworkState.ERROR){
+                Toast.makeText(getContext(), viewModel.getMessage(), Toast.LENGTH_LONG).show();
+            }else if(state == NetworkState.SUCCESS){
+                Toast.makeText(getContext(), "SUCCESS", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        viewModel.fetchVideos();
 
     }
 
