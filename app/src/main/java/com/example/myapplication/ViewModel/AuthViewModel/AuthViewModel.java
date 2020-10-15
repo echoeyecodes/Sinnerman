@@ -107,4 +107,9 @@ public class AuthViewModel extends ViewModel {
     public void submitForm(){
         validateFields();
     }
+
+    public void dispose(){
+        handlerThread.quit();
+        handlerThread = null;
+    }
 }

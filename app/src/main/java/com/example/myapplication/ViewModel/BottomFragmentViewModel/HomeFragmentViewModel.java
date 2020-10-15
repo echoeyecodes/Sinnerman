@@ -13,6 +13,7 @@ import com.example.myapplication.API.DAO.ApiClient;
 import com.example.myapplication.API.DAO.VideosDao;
 import com.example.myapplication.Models.VideoResponseBody;
 import com.example.myapplication.ViewModel.NetworkState;
+import com.example.myapplication.util.AppHandlerThread;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -27,6 +28,7 @@ public class HomeFragmentViewModel extends AndroidViewModel {
     private MutableLiveData<List<VideoResponseBody>> videosObserver = new MutableLiveData<>();
     private List<VideoResponseBody> videos = new ArrayList<>();
     private HandlerThread handlerThread;
+    private AppHandlerThread appHandlerThread = AppHandlerThread.getInstance();
     private HomeFragmentThreadCustomHandler customHandler;
     private final VideosDao videosDao;
     private ApiClient apiClient;
@@ -36,19 +38,18 @@ public class HomeFragmentViewModel extends AndroidViewModel {
 
     public HomeFragmentViewModel(Application application){
         super(application);
+        request_status.setValue(NetworkState.LOADING);
         apiClient = new ApiClient(application);
         videosDao = apiClient.getClient(VideosDao.class);
 
         if(handlerThread == null){
-            handlerThread = new HandlerThread("HOME_FRAGMENT_THREAD");
-            handlerThread.start();
+            handlerThread = appHandlerThread.getHandlerThread();
         }
         customHandler = new HomeFragmentThreadCustomHandler(handlerThread.getLooper(), videosDao, this);
         fetchVideos();
     }
 
     public void fetchVideos(){
-        request_status.setValue(NetworkState.LOADING);
         Message message = Message.obtain(customHandler);
         message.what = 0;
         message.sendToTarget();
@@ -126,7 +127,6 @@ public class HomeFragmentViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        handlerThread.quit();
-        handlerThread = null;
+        appHandlerThread.dispose();
     }
 }

@@ -41,7 +41,7 @@ private final MainActivityContext mainActivityContext;
 
     @Override
     public int getItemCount() {
-        return 10;
+        return 5;
     }
 
     protected static class RecentsViewHolder extends RecyclerView.ViewHolder{

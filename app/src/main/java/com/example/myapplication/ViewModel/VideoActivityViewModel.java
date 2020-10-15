@@ -14,6 +14,7 @@ import com.example.myapplication.API.DAO.ApiClient;
 import com.example.myapplication.API.DAO.VideosDao;
 import com.example.myapplication.Models.VideoResponseBody;
 import com.example.myapplication.ViewModel.BottomFragmentViewModel.HomeFragmentViewModel;
+import com.example.myapplication.util.AppHandlerThread;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -42,8 +43,8 @@ public class VideoActivityViewModel extends AndroidViewModel {
         videosDao = apiClient.getClient(VideosDao.class);
 
         if(handlerThread == null){
-            handlerThread = new HandlerThread("VIDEO_ACTIVITY_THREAD");
-            handlerThread.start();
+            AppHandlerThread appHandlerThread = AppHandlerThread.getInstance();
+            handlerThread = appHandlerThread.getHandlerThread();
         }
         customHandler = new VideoActivityThreadCustomHandler(handlerThread.getLooper(), videosDao, this);
     }

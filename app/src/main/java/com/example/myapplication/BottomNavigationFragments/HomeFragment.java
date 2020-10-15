@@ -77,8 +77,6 @@ public class HomeFragment extends RootBottomFragment implements SwipeRefreshLayo
                 Toast.makeText(getContext(), viewModel.getMessage(), Toast.LENGTH_SHORT).show();
                 viewModel.resetRequestStatus();
                 swipeRefreshLayout.setRefreshing(false);
-            }else{
-                loading_screen.setVisibility(View.GONE);
             }
         });
 

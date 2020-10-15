@@ -49,7 +49,7 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
         Picasso.get().load(Uri.parse(getItem(position).getUser().getProfile_url())).into(holder.author_image);
 
         holder.title.setText(getItem(position).getVideo().getTitle());
-        holder.author.setText(getItem(position).getUser().getUsername());
+        holder.author.setText(getItem(position).getUser().getUsername().concat(" ~ ").concat(String.valueOf(getItem(position).getViews()).concat(" views")));
 
         holder.linearLayout.setOnClickListener(v -> {
             mainActivityContext.navigateToVideos(getItem(position).getVideo().getId());
