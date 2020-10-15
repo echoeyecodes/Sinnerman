@@ -8,7 +8,7 @@ public class CommentResponseBody {
     @Embedded
     private UserModel user;
 
-    @Relation(parentColumn = "id", entityColumn = "user_id")
+    @Embedded
     private CommentModel comment;
 
     public UserModel getUser() {

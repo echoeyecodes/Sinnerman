@@ -126,12 +126,9 @@ public class CommentActivityViewModel extends AndroidViewModel {
             try {
                 Response<List<CommentResponseBody>> response = call.execute();
                 if(response.isSuccessful() && response.body() != null){
-                    Log.d("CARRR", ""+response.body());
-
                     for(CommentResponseBody commentResponseBody : response.body()){
                         persist_comment_dao.insertCommentAndUser(commentResponseBody);
                     }
-
                     commentActivityViewModel.getRequest_status().postValue(NetworkState.SUCCESS);
                 }else{
                     commentActivityViewModel.getRequest_status().postValue(NetworkState.ERROR);
@@ -153,11 +150,15 @@ public class CommentActivityViewModel extends AndroidViewModel {
                     break;
                 case 1:
                     AuthUser authUser = new AuthUser().getUser(commentActivityViewModel.getApplication());
+
                     UserModel userModel = new UserModel();
                     userModel.setUsername(authUser.getUsername());
                     userModel.setProfile_url(authUser.getProfile_url());
                     userModel.setFullname(authUser.getName());
                     userModel.setId(authUser.getId());
+
+                    CommentModel commentModel = (CommentModel) msg.obj;
+                    commentModel.setUser_id(authUser.getId());
 
                     CommentResponseBody commentResponseBody = new CommentResponseBody();
                     commentResponseBody.setComment((CommentModel) msg.obj);

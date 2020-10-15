@@ -1,14 +1,17 @@
 package com.example.myapplication.Models;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import org.jetbrains.annotations.NotNull;
 
 @Entity(tableName = "comments")
 public class CommentModel{
 
     @PrimaryKey
     @NonNull
+    @ColumnInfo(name = "comment_id")
     private String id;
     private String comment;
     private String createdAt;
@@ -16,12 +19,13 @@ public class CommentModel{
     private String user_id;
     private String video_id;
 
-    public CommentModel(String id, String comment, String createdAt) {
+    public CommentModel(@NotNull String id, String comment, String createdAt) {
         this.id = id;
         this.comment = comment;
         this.createdAt = createdAt;
     }
 
+    @NotNull
     public String getId() {
         return id;
     }

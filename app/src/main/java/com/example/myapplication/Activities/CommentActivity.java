@@ -22,9 +22,7 @@ import com.example.myapplication.ViewModel.NetworkState;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class CommentActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, CommentActivityListener {
 private RecyclerView recyclerView;

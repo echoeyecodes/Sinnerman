@@ -4,6 +4,7 @@ package com.example.myapplication.Models;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "comment_users")
@@ -11,8 +12,12 @@ public class UserModel {
 
     @PrimaryKey @NonNull
     private String id;
+
+    @Ignore
     private String email;
+    @Ignore
     private String password;
+
     private String username;
     private String fullname;
     private String profile_url;

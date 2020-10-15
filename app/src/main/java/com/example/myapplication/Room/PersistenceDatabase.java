@@ -9,7 +9,7 @@ import com.example.myapplication.Models.UserModel;
 import com.example.myapplication.Room.Dao.CommentDao;
 import com.example.myapplication.Room.Dao.UserDao;
 
-@Database(entities = {CommentModel.class, UserModel.class}, version = 1)
+@Database(entities = {CommentModel.class, UserModel.class}, version = 3)
 public abstract class PersistenceDatabase extends RoomDatabase {
     private static PersistenceDatabase database;
     public abstract CommentDao commentDao();

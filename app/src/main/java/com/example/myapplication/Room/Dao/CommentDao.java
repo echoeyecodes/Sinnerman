@@ -1,5 +1,6 @@
 package com.example.myapplication.Room.Dao;
 
+import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.room.*;
 import com.example.myapplication.Models.CommentModel;
@@ -14,13 +15,14 @@ public abstract class CommentDao {
     @Insert
     public abstract void insertComment(CommentModel comment);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract void insertUser(UserModel userModel);
 
     @Insert
     public abstract void insertComments(CommentModel... comment);
 
-    @Query("SELECT * FROM comments")
+
+    @Query("SELECT * FROM comments INNER JOIN comment_users ON comments.user_id = comment_users.id")
     public abstract LiveData<List<CommentResponseBody>> getComments();
 
     @Delete
