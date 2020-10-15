@@ -1,24 +1,38 @@
 package com.example.myapplication.Room.Dao;
 
 import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.Query;
-import com.example.myapplication.Room.Entities.Comment;
+import androidx.room.*;
+import com.example.myapplication.Models.CommentModel;
+import com.example.myapplication.Models.CommentResponseBody;
+import com.example.myapplication.Models.UserModel;
 
 import java.util.List;
 
 @Dao
-public interface CommentDao {
+public abstract class CommentDao {
 
     @Insert
-    void insertComment(Comment comment);
+    public abstract void insertComment(CommentModel comment);
+
+    @Insert
+    abstract void insertUser(UserModel userModel);
+
+    @Insert
+    public abstract void insertComments(CommentModel... comment);
 
     @Query("SELECT * FROM comments")
-    LiveData<List<Comment>> getComments();
+    public abstract LiveData<List<CommentResponseBody>> getComments();
 
     @Delete
-    void deleteComment(Comment comment);
+    abstract void deleteComment(CommentModel comment);
+
+    @Query("DELETE FROM comments")
+    public abstract void deleteAllComment();
+
+    @Transaction
+    public void insertCommentAndUser(CommentResponseBody commentResponseBody){
+        insertUser(commentResponseBody.getUser());
+        insertComment(commentResponseBody.getComment());
+    };
 
 }

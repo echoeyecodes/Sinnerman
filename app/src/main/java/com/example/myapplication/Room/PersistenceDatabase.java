@@ -3,13 +3,17 @@ package com.example.myapplication.Room;
 import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import com.example.myapplication.Models.CommentModel;
+import com.example.myapplication.Models.UserModel;
 import com.example.myapplication.Room.Dao.CommentDao;
-import com.example.myapplication.Room.Entities.Comment;
+import com.example.myapplication.Room.Dao.UserDao;
 
-@Database(entities = {Comment.class}, version = 1)
-public abstract class PersistenceDatabase {
+@Database(entities = {CommentModel.class, UserModel.class}, version = 1)
+public abstract class PersistenceDatabase extends RoomDatabase {
     private static PersistenceDatabase database;
     public abstract CommentDao commentDao();
+    public abstract UserDao userDao();
 
     public static synchronized PersistenceDatabase getInstance(Context context){
         if(database == null){

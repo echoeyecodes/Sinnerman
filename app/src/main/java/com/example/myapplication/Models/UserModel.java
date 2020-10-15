@@ -1,6 +1,16 @@
 package com.example.myapplication.Models;
 
+
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "comment_users")
 public class UserModel {
+
+    @PrimaryKey @NonNull
+    private String id;
     private String email;
     private String password;
     private String username;
@@ -15,6 +25,10 @@ public class UserModel {
         this.password = password;
     }
 
+    public UserModel(){
+
+    }
+
     public UserModel(String username, String password) {
         this.username = username;
         this.password = password;
@@ -25,6 +39,13 @@ public class UserModel {
         return fullname;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public void setUsername(String username) {
         this.username = username;

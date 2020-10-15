@@ -91,7 +91,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
             }
         });
 
-        comment_btn.setOnClickListener(v -> navigateToComments());
+        comment_btn.setOnClickListener(v -> navigateToComments(video_id));
         reload_btn.setOnClickListener(v -> {
             refresh();
         });
@@ -146,8 +146,9 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         params.setMargins(0,0,0, margin);
     }
 
-    public void navigateToComments() {
+    public void navigateToComments(String id) {
         Intent intent = new Intent(this, CommentActivity.class);
+        intent.putExtra("video_id", id);
         startActivity(intent);
     }
 

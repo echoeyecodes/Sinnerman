@@ -9,17 +9,33 @@
 
     <include android:id="@+id/comments_toolbar" layout="@layout/layout_sub_activity_action_bar" />
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:id="@+id/comments_refresh_layout"
+            android:layout_below="@+id/comments_toolbar"
+            android:layout_above="@+id/comments_divider"
+            android:layout_height="match_parent">
+
+
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/comments_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/comments_toolbar"
-                android:layout_above="@+id/comments_divider"
                 android:paddingBottom="@dimen/list_item_spacing_half"
                 android:paddingTop="@dimen/list_item_spacing_half"
                 tools:context="com.example.myapplication.Fragments.OtpDialogFragment"
         />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <include layout="@layout/layout_divider" />
         <include layout="@layout/layout_comment_area" />
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_below="@id/comments_toolbar"
+            android:layout_above="@+id/comments_divider"
+            android:layout_height="match_parent">
+
+        <include android:id="@+id/comments_loading_layout" layout="@layout/layout_loading" />
+    </RelativeLayout>
 </RelativeLayout>

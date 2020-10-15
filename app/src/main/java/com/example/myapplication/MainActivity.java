@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,6 +21,8 @@ import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 import com.example.myapplication.BottomNavigationFragments.NotificationFragment;
 import com.example.myapplication.Activities.VideoActivity;
 import com.example.myapplication.Interface.MainActivityContext;
+import com.example.myapplication.Models.UserModel;
+import com.example.myapplication.Utils.AuthUser;
 import com.example.myapplication.Utils.AuthenticationManager;
 import com.example.myapplication.ViewModel.MainActivityViewModel;
 import com.example.myapplication.util.BottomNavigationHandler;
@@ -35,20 +38,47 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     private TextView search_btn;
     private RootBottomFragment active_fragment;
     private ImageView user_profile;
+    private AuthUser authUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mainActivityViewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+
+
+        //You might wanna remove this observer after authentication
+        mainActivityViewModel.getIsLoaded().observe(this, (loaded) ->{
+            if(loaded){
+                boolean cacheExists = authUser.dataExists(this);
+                if(!cacheExists){
+                    createUserCache();
+                }else{
+                    beginActivity();
+                }
+            }
+        });
+
         AuthenticationManager authenticationManager = new AuthenticationManager();
+        authUser = new AuthUser();
+
         String token = authenticationManager.checkToken(this);
         if(token == null){
             authenticationManager.startAuthActivity(this);
         }else {
-            setContentView(R.layout.activity_main);
-            initViews();
+            mainActivityViewModel.updateCurrentUser();
         }
+    }
 
+    private void createUserCache(){
+        UserModel user = mainActivityViewModel.getUserModel();
+        AuthUser authUser = new AuthUser(user.getId(), user.getFullname(), user.getProfile_url(), user.getUsername());
+        authUser.saveUser(this, authUser);
+    }
+
+    public void beginActivity(){
+        setContentView(R.layout.activity_main);
+        initViews();
     }
 
     private void initViews(){
@@ -58,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
         bottomNavigationHandler = new ViewModelProvider(this).get(BottomNavigationHandler.class);
-        mainActivityViewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         search_btn = findViewById(R.id.search_input_button);
 
         search_btn.setOnClickListener(v -> {

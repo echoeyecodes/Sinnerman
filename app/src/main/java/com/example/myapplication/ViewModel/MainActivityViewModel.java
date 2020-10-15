@@ -2,22 +2,70 @@ package com.example.myapplication.ViewModel;
 
 import android.app.Application;
 
+import android.content.Context;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MutableLiveData;
+import com.example.myapplication.API.DAO.ApiClient;
+import com.example.myapplication.API.DAO.UserDao;
+import com.example.myapplication.API.DAO.VideosDao;
+import com.example.myapplication.Models.CommentModel;
+import com.example.myapplication.Models.UserModel;
 import com.example.myapplication.Models.VideoModel;
+import com.example.myapplication.Utils.AuthUser;
+import com.example.myapplication.util.AppHandlerThread;
+import retrofit2.Call;
+import retrofit2.Response;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 public class MainActivityViewModel extends AndroidViewModel {
 
+    private UserDao userDao;
+    private ApiClient apiClient;
+    private AppHandlerThread appHandlerThread;
+    private HandlerThread handlerThread;
+    private MainActivityCustomHandler customHandler;
+    private UserModel userModel;
+    private MutableLiveData<Boolean> isLoaded = new MutableLiveData<>();
+    private Context context;
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
+        this.context = application.getApplicationContext();
 
+        appHandlerThread = AppHandlerThread.getInstance();
+        apiClient = new ApiClient(application.getApplicationContext());
+        userDao = apiClient.getClient(UserDao.class);
+        handlerThread = appHandlerThread.getHandlerThread();
+        customHandler = new MainActivityCustomHandler(handlerThread.getLooper(), userDao, this);
     }
 
 
+    public void updateCurrentUser(){
+        Message message = Message.obtain(customHandler);
+        message.sendToTarget();
+    }
+
+    private void setCurrentUser(UserModel user){
+        this.userModel = user;
+        isLoaded.postValue(true);
+    }
+
+    public MutableLiveData<Boolean> getIsLoaded() {
+        return isLoaded;
+    }
+
+    public UserModel getUserModel() {
+        return userModel;
+    }
 
     public List<VideoModel> fetchExploreVideos(){
         VideoModel test = new VideoModel("12356165456", "The beginning", "https://res.cloudinary.com/echoeyecodes/video/upload/v1601629562/eypac8l0uvf5m9rtkqpf.jpg", "https://res.cloudinary.com/echoeyecodes/video/upload/v1601629562/eypac8l0uvf5m9rtkqpf.m3u8");
@@ -37,5 +85,32 @@ public class MainActivityViewModel extends AndroidViewModel {
         videoModel.setLike_count(1);
     }
 
+    private static class MainActivityCustomHandler extends Handler {
+
+        private UserDao userDao;
+        private MainActivityViewModel mainActivityViewModel;
+
+        public MainActivityCustomHandler(Looper looper, UserDao userDao, MainActivityViewModel mainActivityViewModel) {
+            super(looper);
+
+            this.userDao = userDao;
+            this.mainActivityViewModel = mainActivityViewModel;
+
+        }
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+
+            Call<UserModel> call = userDao.getCurrentUser();
+            try {
+                Response<UserModel> response = call.execute();
+                if(response.isSuccessful() && response.body() != null){
+                    mainActivityViewModel.setCurrentUser(response.body());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
