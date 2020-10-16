@@ -12,7 +12,7 @@ import java.util.List;
 @Dao
 public abstract class CommentDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertComment(CommentModel comment);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -25,10 +25,13 @@ public abstract class CommentDao {
     @Query("SELECT * FROM comments INNER JOIN comment_users ON comments.user_id = comment_users.id")
     public abstract LiveData<List<CommentResponseBody>> getComments();
 
+    @Query("SELECT * FROM comments WHERE status = 1")
+    public abstract List<CommentModel> getUnsentComments();
+
     @Delete
     abstract void deleteComment(CommentModel comment);
 
-    @Query("DELETE FROM comments")
+    @Query("DELETE FROM comments WHERE status = 0")
     public abstract void deleteAllComment();
 
     @Transaction

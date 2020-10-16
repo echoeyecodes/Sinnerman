@@ -5,12 +5,15 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.myapplication.API.DAO.ApiClient;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
+import com.example.myapplication.API.ApiUtils.ApiClient;
+import com.example.myapplication.JobDispatchers.CommentDispatch;
 import com.example.myapplication.Models.CommentModel;
 import com.example.myapplication.Models.CommentResponseBody;
 import com.example.myapplication.Models.UserModel;
@@ -88,6 +91,7 @@ public class CommentActivityViewModel extends AndroidViewModel {
     }
 
     public void persistComment(CommentModel commentModel){
+        commentModel.setVideo_id(video_id);
         Message message = Message.obtain(customHandler);
         message.what = 1;
         message.obj = commentModel;
@@ -108,10 +112,11 @@ public class CommentActivityViewModel extends AndroidViewModel {
 
     private static class CommentActivityThreadCustomHandler extends Handler {
 
-        private CommentActivityViewModel commentActivityViewModel;
-        private com.example.myapplication.API.DAO.CommentDao commentDao;
-        private CommentDao persist_comment_dao;
-        private UserDao persist_user_dao;
+        private final CommentActivityViewModel commentActivityViewModel;
+        private final com.example.myapplication.API.DAO.CommentDao commentDao;
+        private final CommentDao persist_comment_dao;
+        private final UserDao persist_user_dao;
+        private final UserModel currentUser;
 
         public CommentActivityThreadCustomHandler(Looper looper, com.example.myapplication.API.DAO.CommentDao commentDao,UserDao persist_user_dao, CommentActivityViewModel commentActivityViewModel, CommentDao persist_comment_dao) {
             super(looper);
@@ -119,6 +124,13 @@ public class CommentActivityViewModel extends AndroidViewModel {
             this.commentDao = commentDao;
             this.persist_user_dao = persist_user_dao;
             this.persist_comment_dao = persist_comment_dao;
+
+            AuthUser authUser = new AuthUser().getUser(commentActivityViewModel.getApplication());
+            currentUser = new UserModel();
+            currentUser.setUsername(authUser.getUsername());
+            currentUser.setProfile_url(authUser.getProfile_url());
+            currentUser.setFullname(authUser.getName());
+            currentUser.setId(authUser.getId());
         }
 
         public void fetchComments(String id){
@@ -130,9 +142,6 @@ public class CommentActivityViewModel extends AndroidViewModel {
                         persist_comment_dao.insertCommentAndUser(commentResponseBody);
                     }
                     commentActivityViewModel.getRequest_status().postValue(NetworkState.SUCCESS);
-                }else{
-                    commentActivityViewModel.getRequest_status().postValue(NetworkState.ERROR);
-                    commentActivityViewModel.setMessage("An error occurred while retrieving comments");
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -149,21 +158,17 @@ public class CommentActivityViewModel extends AndroidViewModel {
                     commentActivityViewModel.getIsRefreshing().postValue(false);
                     break;
                 case 1:
-                    AuthUser authUser = new AuthUser().getUser(commentActivityViewModel.getApplication());
-
-                    UserModel userModel = new UserModel();
-                    userModel.setUsername(authUser.getUsername());
-                    userModel.setProfile_url(authUser.getProfile_url());
-                    userModel.setFullname(authUser.getName());
-                    userModel.setId(authUser.getId());
-
                     CommentModel commentModel = (CommentModel) msg.obj;
-                    commentModel.setUser_id(authUser.getId());
+                    commentModel.setUser_id(currentUser.getId());
 
                     CommentResponseBody commentResponseBody = new CommentResponseBody();
                     commentResponseBody.setComment((CommentModel) msg.obj);
-                    commentResponseBody.setUser(userModel);
+                    commentResponseBody.setUser(currentUser);
                     persist_comment_dao.insertCommentAndUser(commentResponseBody);
+
+                    WorkRequest workRequest = new OneTimeWorkRequest.Builder(CommentDispatch.class).build();
+                    WorkManager workManager = WorkManager.getInstance(commentActivityViewModel.getApplication());
+                    workManager.enqueue(workRequest);
                     break;
                 case 2:
                     persist_comment_dao.deleteAllComment();
