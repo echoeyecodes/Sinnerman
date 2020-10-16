@@ -5,23 +5,18 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import com.example.myapplication.API.DAO.ApiClient;
+import com.example.myapplication.API.ApiUtils.ApiClient;
 import com.example.myapplication.API.DAO.VideosDao;
 import com.example.myapplication.Models.VideoResponseBody;
-import com.example.myapplication.ViewModel.BottomFragmentViewModel.HomeFragmentViewModel;
 import com.example.myapplication.util.AppHandlerThread;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class VideoActivityViewModel extends AndroidViewModel {
     private MutableLiveData<Boolean> isFullScreen = new MutableLiveData<>();

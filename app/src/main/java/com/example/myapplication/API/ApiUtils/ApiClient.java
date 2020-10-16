@@ -1,4 +1,4 @@
-package com.example.myapplication.API.DAO;
+package com.example.myapplication.API.ApiUtils;
 
 import android.content.Context;
 import android.util.Log;

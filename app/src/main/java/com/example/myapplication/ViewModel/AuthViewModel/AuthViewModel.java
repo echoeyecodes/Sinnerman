@@ -4,9 +4,9 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.example.myapplication.API.DAO.ApiClient;
+import com.example.myapplication.API.ApiUtils.ApiClient;
 import com.example.myapplication.API.DAO.AuthDao;
-import com.example.myapplication.API.DAO.RequestStatus;
+import com.example.myapplication.API.ApiUtils.RequestStatus;
 import com.example.myapplication.Utils.FieldErrorStatus;
 
 import java.util.HashMap;

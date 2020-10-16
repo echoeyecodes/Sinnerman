@@ -2,12 +2,11 @@ package com.example.myapplication.Activities.AuthActivities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.myapplication.API.DAO.RequestStatus;
+import com.example.myapplication.API.ApiUtils.RequestStatus;
 import com.example.myapplication.CustomView.FormEditText;
 import com.example.myapplication.CustomView.FormEditTextListener;
 import com.example.myapplication.R;

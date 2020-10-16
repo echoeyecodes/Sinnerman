@@ -1,20 +1,13 @@
 package com.example.myapplication.ViewModel.AuthViewModel;
 
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.util.Log;
-import com.example.myapplication.API.DAO.AuthDao;
-import com.example.myapplication.API.DAO.RequestStatus;
-import com.example.myapplication.Models.OtpModel;
+import com.example.myapplication.API.ApiUtils.RequestStatus;
 import com.example.myapplication.Models.UserModel;
-import com.example.myapplication.Utils.AuthenticationManager;
-import com.google.gson.Gson;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
-import java.util.Objects;
 
 public class LoginViewModel extends AuthViewModel {
 

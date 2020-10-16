@@ -1,4 +1,4 @@
-package com.example.myapplication.API.DAO;
+package com.example.myapplication.API.ApiUtils;
 
 public enum RequestStatus{
     EXISTS,
