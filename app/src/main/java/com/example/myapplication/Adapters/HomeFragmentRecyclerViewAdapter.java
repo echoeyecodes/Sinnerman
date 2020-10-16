@@ -12,6 +12,7 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.paging.PagedListAdapter;
 import androidx.recyclerview.widget.*;
 
 import androidx.recyclerview.widget.ListAdapter;
@@ -24,7 +25,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.io.Serializable;
 
-public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBody, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
+public class HomeFragmentRecyclerViewAdapter extends PagedListAdapter<VideoResponseBody, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
     private final Context context;
     private final MainActivityContext mainActivityContext;
     private HomeFragmentRecyclerViewItemViewHolder homeFragmentRecyclerViewItemViewHolder;

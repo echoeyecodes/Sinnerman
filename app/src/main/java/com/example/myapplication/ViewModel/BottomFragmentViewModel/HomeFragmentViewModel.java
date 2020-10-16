@@ -7,11 +7,16 @@ import android.os.Looper;
 import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import com.example.myapplication.API.DAO.ApiClient;
+import androidx.lifecycle.Transformations;
+import androidx.paging.LivePagedListBuilder;
+import androidx.paging.PagedList;
+import com.example.myapplication.API.ApiUtils.ApiClient;
 import com.example.myapplication.API.DAO.VideosDao;
 import com.example.myapplication.Models.VideoResponseBody;
+import com.example.myapplication.Paging.DataSource.VideoDataSource;
+import com.example.myapplication.Paging.DataSourceFactory.VideoDataSourceFactory;
 import com.example.myapplication.ViewModel.NetworkState;
 import com.example.myapplication.util.AppHandlerThread;
 import org.jetbrains.annotations.NotNull;
@@ -21,45 +26,40 @@ import retrofit2.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class HomeFragmentViewModel extends AndroidViewModel {
-    private MutableLiveData<NetworkState> request_status = new MutableLiveData<>(NetworkState.LOADING);
-    private MutableLiveData<List<VideoResponseBody>> videosObserver = new MutableLiveData<>();
+    private LiveData<NetworkState> request_status = new MutableLiveData<>(NetworkState.LOADING);
+    private LiveData videosObserver;
     private List<VideoResponseBody> videos = new ArrayList<>();
-    private HandlerThread handlerThread;
-    private AppHandlerThread appHandlerThread = AppHandlerThread.getInstance();
-    private HomeFragmentThreadCustomHandler customHandler;
-    private final VideosDao videosDao;
-    private ApiClient apiClient;
     private String message;
 
 
 
     public HomeFragmentViewModel(Application application){
         super(application);
-        request_status.setValue(NetworkState.LOADING);
-        apiClient = new ApiClient(application);
-        videosDao = apiClient.getClient(VideosDao.class);
 
-        if(handlerThread == null){
-            handlerThread = appHandlerThread.getHandlerThread();
-        }
-        customHandler = new HomeFragmentThreadCustomHandler(handlerThread.getLooper(), videosDao, this);
         fetchVideos();
     }
 
     public void fetchVideos(){
-        Message message = Message.obtain(customHandler);
-        message.what = 0;
-        message.sendToTarget();
+        VideoDataSourceFactory videoDataSourceFactory = new VideoDataSourceFactory(getApplication());
+        setRequest_status(Transformations.switchMap(videoDataSourceFactory.getVideoDataSourceMutableLiveData(), VideoDataSource::getRequest_status));
+
+        PagedList.Config.Builder pagedListBuilder = new PagedList.Config.Builder();
+        PagedList.Config config1 = pagedListBuilder.setEnablePlaceholders(false).setInitialLoadSizeHint(5).setPageSize(5).build();
+
+        videosObserver = new LivePagedListBuilder(videoDataSourceFactory, config1).build();
     }
 
     public void resetRequestStatus(){
-        request_status.postValue(NetworkState.IDLE);
+
     }
 
-    public MutableLiveData<List<VideoResponseBody>> getVideosObserver() {
+    public void setRequest_status(LiveData<NetworkState> request_status) {
+        this.request_status = request_status;
+    }
+
+    public LiveData<PagedList<VideoResponseBody>> getVideosObserver() {
         return videosObserver;
     }
 
@@ -72,16 +72,14 @@ public class HomeFragmentViewModel extends AndroidViewModel {
     }
 
     public void setVideos(List<VideoResponseBody> new_videos) {
-        request_status.postValue(NetworkState.SUCCESS);
         videos.addAll(new_videos);
-        videosObserver.postValue(videos);
     }
 
     public List<VideoResponseBody> getVideos() {
         return videos;
     }
 
-    public MutableLiveData<NetworkState> getRequest_status() {
+    public LiveData<NetworkState> getRequest_status() {
         return request_status;
     }
 
@@ -96,29 +94,13 @@ public class HomeFragmentViewModel extends AndroidViewModel {
             this.videosDao = videosDao;
         }
 
-        public void fetchVideoList(){
-            Call<List<VideoResponseBody>> call =  videosDao.fetchVideos("20", String.valueOf(homeFragmentViewModel.getVideos().size()));
-            try {
-                Response<List<VideoResponseBody>> response = call.execute();
-                if(response.isSuccessful() && response.body() != null){
-                    homeFragmentViewModel.setVideos(response.body());
-                }else{
-                    homeFragmentViewModel.getRequest_status().postValue(NetworkState.ERROR);
-                    homeFragmentViewModel.setMessage("An error occurred while retrieving videos");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                homeFragmentViewModel.getRequest_status().postValue(NetworkState.ERROR);
-                homeFragmentViewModel.setMessage("Couldn't connect to server. Please try again");
-            }
-        }
         @Override
         public void handleMessage(@NonNull @NotNull Message msg) {
             super.handleMessage(msg);
 
             switch (msg.what){
                 case 0:
-                    fetchVideoList();
+
                     break;
             }
         }
@@ -127,6 +109,6 @@ public class HomeFragmentViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
-        appHandlerThread.dispose();
+
     }
 }
