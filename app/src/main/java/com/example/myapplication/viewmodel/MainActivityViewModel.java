@@ -1,4 +1,4 @@
-package com.example.myapplication.ViewModel;
+package com.example.myapplication.viewmodel;
 
 import android.app.Application;
 
@@ -7,17 +7,13 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
-import com.example.myapplication.API.DAO.ApiClient;
+import com.example.myapplication.API.ApiUtils.ApiClient;
 import com.example.myapplication.API.DAO.UserDao;
-import com.example.myapplication.API.DAO.VideosDao;
-import com.example.myapplication.Models.CommentModel;
 import com.example.myapplication.Models.UserModel;
 import com.example.myapplication.Models.VideoModel;
-import com.example.myapplication.Utils.AuthUser;
 import com.example.myapplication.util.AppHandlerThread;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -28,23 +24,17 @@ import java.util.List;
 
 public class MainActivityViewModel extends AndroidViewModel {
 
-    private UserDao userDao;
-    private ApiClient apiClient;
-    private AppHandlerThread appHandlerThread;
-    private HandlerThread handlerThread;
-    private MainActivityCustomHandler customHandler;
+    private final MainActivityCustomHandler customHandler;
     private UserModel userModel;
-    private MutableLiveData<Boolean> isLoaded = new MutableLiveData<>();
-    private Context context;
+    private final MutableLiveData<Boolean> isLoaded = new MutableLiveData<>();
 
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
-        this.context = application.getApplicationContext();
 
-        appHandlerThread = AppHandlerThread.getInstance();
-        apiClient = new ApiClient(application.getApplicationContext());
-        userDao = apiClient.getClient(UserDao.class);
-        handlerThread = appHandlerThread.getHandlerThread();
+        AppHandlerThread appHandlerThread = AppHandlerThread.getInstance();
+        ApiClient apiClient = ApiClient.getInstance(application);
+        UserDao userDao = apiClient.getClient(UserDao.class);
+        HandlerThread handlerThread = appHandlerThread.getHandlerThread();
         customHandler = new MainActivityCustomHandler(handlerThread.getLooper(), userDao, this);
     }
 
@@ -80,15 +70,10 @@ public class MainActivityViewModel extends AndroidViewModel {
         return Arrays.asList(test, test1, test3, test4, test5, test6, test7,test8,test9);
     }
 
-
-    public void likeVideo(VideoModel videoModel){
-        videoModel.setLike_count(1);
-    }
-
     private static class MainActivityCustomHandler extends Handler {
 
-        private UserDao userDao;
-        private MainActivityViewModel mainActivityViewModel;
+        private final UserDao userDao;
+        private final MainActivityViewModel mainActivityViewModel;
 
         public MainActivityCustomHandler(Looper looper, UserDao userDao, MainActivityViewModel mainActivityViewModel) {
             super(looper);

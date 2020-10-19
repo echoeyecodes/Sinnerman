@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class SearchActivity extends AppCompatActivity {
 private TabLayout tabLayout;
 private ViewPager2 viewPager;
-private static String[] tabs={"Videos", "Comments", "Accounts"};
+private static final String[] tabs={"Videos", "Comments", "Accounts"};
 
     @Override
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {

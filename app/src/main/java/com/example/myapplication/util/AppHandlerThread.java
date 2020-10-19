@@ -4,7 +4,7 @@ import android.os.HandlerThread;
 
 public class AppHandlerThread {
     private static AppHandlerThread appHandlerThread;
-    private HandlerThread handlerThread;
+    private final HandlerThread handlerThread;
 
     private AppHandlerThread(){
         handlerThread = new HandlerThread("APP_HANDLER_THREAD");

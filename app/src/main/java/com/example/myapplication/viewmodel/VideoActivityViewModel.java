@@ -1,4 +1,4 @@
-package com.example.myapplication.ViewModel;
+package com.example.myapplication.viewmodel;
 
 import android.app.Application;
 import android.os.Handler;
@@ -19,14 +19,14 @@ import retrofit2.Response;
 import java.io.IOException;
 
 public class VideoActivityViewModel extends AndroidViewModel {
-    private MutableLiveData<Boolean> isFullScreen = new MutableLiveData<>();
-    private MutableLiveData<NetworkState> request_status = new MutableLiveData<>(NetworkState.LOADING);
-    private MutableLiveData<VideoResponseBody> videoObserver = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> isFullScreen = new MutableLiveData<>();
+    private final MutableLiveData<NetworkState> request_status = new MutableLiveData<>(NetworkState.LOADING);
+    private final MutableLiveData<VideoResponseBody> videoObserver = new MutableLiveData<>();
     private VideoResponseBody video = null;
     private HandlerThread handlerThread;
-    private VideoActivityThreadCustomHandler customHandler;
+    private final VideoActivityThreadCustomHandler customHandler;
     private final VideosDao videosDao;
-    private ApiClient apiClient;
+    private final ApiClient apiClient;
     private String video_id;
     private String message;
 
@@ -34,7 +34,7 @@ public class VideoActivityViewModel extends AndroidViewModel {
         super(application);
         isFullScreen.setValue(false);
 
-        apiClient = new ApiClient(application);
+        apiClient = ApiClient.getInstance(application);
         videosDao = apiClient.getClient(VideosDao.class);
 
         if(handlerThread == null){
@@ -96,8 +96,8 @@ public class VideoActivityViewModel extends AndroidViewModel {
 
     private static class VideoActivityThreadCustomHandler extends Handler {
 
-        private VideoActivityViewModel videoActivityViewModel;
-        private VideosDao videosDao;
+        private final VideoActivityViewModel videoActivityViewModel;
+        private final VideosDao videosDao;
 
         public VideoActivityThreadCustomHandler(Looper looper, VideosDao videosDao, VideoActivityViewModel videoActivityViewModel) {
             super(looper);

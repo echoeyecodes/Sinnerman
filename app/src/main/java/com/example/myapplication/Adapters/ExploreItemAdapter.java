@@ -64,9 +64,9 @@ public class ExploreItemAdapter extends ListAdapter<VideoResponseBody, ExploreIt
     }
 
     public static class ExploreItemViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
-        private CardView cardView;
-        private LinearLayout linearLayout;
+        private final ImageView imageView;
+        private final CardView cardView;
+        private final LinearLayout linearLayout;
 
         public ExploreItemViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -13,19 +13,34 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient{
     private Retrofit.Builder retrofitBuilder;
-    private static final String BASE_URL = "https://sinnerman-291514.uc.r.appspot.com/";
+    private static final String BASE_URL = "https://sinnerman-real.uc.r.appspot.com/";
     private Retrofit retrofit;
+    private static ApiClient apiClient;
     private Context context;
 
-    public ApiClient(){
+
+    private ApiClient(){
         init();
     }
 
-    public ApiClient(Context context){
-        this.context = context;
+    private ApiClient(Context context){
+        this.context = context.getApplicationContext();
         init();
     }
 
+    public static ApiClient getInstance(){
+        if(apiClient == null){
+          apiClient = new ApiClient();
+        }
+        return apiClient;
+    }
+
+    public static ApiClient getInstance(Context ctx){
+        if(apiClient == null){
+            apiClient = new ApiClient(ctx);
+        }
+        return apiClient;
+    }
 
     public void init(){
         Gson gson = new GsonBuilder().setLenient().create();

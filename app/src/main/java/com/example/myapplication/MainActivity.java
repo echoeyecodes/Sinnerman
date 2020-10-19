@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.content.Intent;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,7 +23,7 @@ import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.UserModel;
 import com.example.myapplication.Utils.AuthUser;
 import com.example.myapplication.Utils.AuthenticationManager;
-import com.example.myapplication.ViewModel.MainActivityViewModel;
+import com.example.myapplication.viewmodel.MainActivityViewModel;
 import com.example.myapplication.util.BottomNavigationHandler;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         authUser = new AuthUser();
 
         String token = authenticationManager.checkToken(this);
-        if(token == null){
+        if(token == null || token.equals("")){
             authenticationManager.startAuthActivity(this);
         }else {
             mainActivityViewModel.updateCurrentUser();
@@ -100,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
 
-        navigateToBottomFragment(HomeFragment.newInstance());
+        navigateToBottomFragment(HomeFragment.Companion.newInstance());
     }
 
 
@@ -164,15 +163,15 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         RootBottomFragment fragment;
         switch (item.getItemId()) {
             case R.id.action_home:
-                fragment = HomeFragment.newInstance();
+                fragment = HomeFragment.Companion.newInstance();
                 openFragment(fragment, fragment.getTAG());
                 return true;
             case R.id.action_notifications:
-                fragment = NotificationFragment.newInstance();
+                fragment = NotificationFragment.Companion.newInstance();
                 openFragment(fragment, fragment.getTAG());
                 return true;
             case R.id.action_explore:
-                fragment = ExploreFragment.newInstance();
+                fragment = ExploreFragment.Companion.newInstance();
                 openFragment(fragment, fragment.getTAG());
                 return true;
         }

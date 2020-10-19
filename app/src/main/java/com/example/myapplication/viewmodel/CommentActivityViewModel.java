@@ -1,4 +1,4 @@
-package com.example.myapplication.ViewModel;
+package com.example.myapplication.viewmodel;
 
 import android.app.Application;
 import android.os.Handler;
@@ -33,7 +33,7 @@ public class CommentActivityViewModel extends AndroidViewModel {
     private final CommentDao commentDao;
     private final UserDao persist_user_dao;
     private final com.example.myapplication.API.DAO.CommentDao network_comment_dao;
-    private ApiClient apiClient;
+    private final ApiClient apiClient;
     private AppHandlerThread appHandlerThread;
     private String video_id;
     private String message;
@@ -44,7 +44,7 @@ public class CommentActivityViewModel extends AndroidViewModel {
 
     public CommentActivityViewModel(@NonNull @NotNull Application application) {
         super(application);
-        apiClient = new ApiClient(application);
+        apiClient = ApiClient.getInstance(application);
         persistenceDatabase = PersistenceDatabase.getInstance(application);
         commentDao = persistenceDatabase.commentDao();
         persist_user_dao = persistenceDatabase.userDao();

@@ -6,10 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CustomItemDecoration extends RecyclerView.ItemDecoration {
-    private int top;
-    private int left;
-    private int bottom;
-    private int right;
+    private final int top;
+    private final int left;
+    private final int bottom;
+    private final int right;
 
 
 

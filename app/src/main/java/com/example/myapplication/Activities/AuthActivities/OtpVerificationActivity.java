@@ -10,7 +10,7 @@ import com.example.myapplication.CustomView.FormEditText;
 import com.example.myapplication.CustomView.FormEditTextListener;
 import com.example.myapplication.R;
 import com.example.myapplication.Utils.AuthenticationManager;
-import com.example.myapplication.ViewModel.AuthViewModel.OtpViewModel;
+import com.example.myapplication.viewmodel.authViewModel.OtpViewModel;
 import com.google.android.material.button.MaterialButton;
 
 public class OtpVerificationActivity extends AppCompatActivity implements FormEditTextListener {
@@ -34,6 +34,7 @@ public class OtpVerificationActivity extends AppCompatActivity implements FormEd
 
 
         String verification_response = getIntent().getStringExtra("verification_response");
+        assert verification_response != null;
         otpViewModel.setVerification_response(verification_response);
 
         Toast.makeText(this, verification_response, Toast.LENGTH_LONG).show();
@@ -58,7 +59,7 @@ public class OtpVerificationActivity extends AppCompatActivity implements FormEd
     @Override
     public void onTextInput(String type, String value) {
         if (otpViewModel != null) {
-            otpViewModel.setForm_field(type, value);
+            otpViewModel.getForm_fields().put(type, value);
             otpViewModel.validateSingleField(type);
         }
     }

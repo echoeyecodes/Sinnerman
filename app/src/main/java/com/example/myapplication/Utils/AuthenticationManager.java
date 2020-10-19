@@ -41,6 +41,6 @@ public class AuthenticationManager {
 
     public String checkToken(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key_file), Context.MODE_PRIVATE);
-        return sharedPreferences.getString("user_token", null);
+        return sharedPreferences.getString("user_token", "");
     }
 }
