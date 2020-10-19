@@ -62,10 +62,10 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private ProgressBar progressBar;
-        private TextView comment_author;
-        private TextView comment;
-        private CircleImageView comment_author_image;
+        private final ProgressBar progressBar;
+        private final TextView comment_author;
+        private final TextView comment;
+        private final CircleImageView comment_author_image;
 
         public ViewHolder(View itemView){
             super(itemView);

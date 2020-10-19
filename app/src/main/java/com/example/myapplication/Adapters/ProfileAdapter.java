@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context context;
+    private final Context context;
     private static final int PROFILE_LAYOUT = 0;
     private static final int USER_BIO_LAYOUT = 1;
 
@@ -70,7 +70,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     protected static class BioProfileViewHolder extends RecyclerView.ViewHolder {
-        private RecyclerView recyclerView;
+        private final RecyclerView recyclerView;
         public BioProfileViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
@@ -80,7 +80,7 @@ public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     protected static class ProfileHeaderViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imageView;
+        private final ImageView imageView;
         private TextView textView;
         public ProfileHeaderViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);

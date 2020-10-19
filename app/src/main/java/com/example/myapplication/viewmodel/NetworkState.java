@@ -1,4 +1,4 @@
-package com.example.myapplication.ViewModel;
+package com.example.myapplication.viewmodel;
 
 public enum NetworkState {
     LOADING,

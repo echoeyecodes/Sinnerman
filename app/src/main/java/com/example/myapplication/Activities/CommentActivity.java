@@ -17,8 +17,8 @@ import com.example.myapplication.Models.CommentModel;
 import com.example.myapplication.Models.CommentResponseBody;
 import com.example.myapplication.R;
 import com.example.myapplication.Utils.AuthUser;
-import com.example.myapplication.ViewModel.CommentActivityViewModel;
-import com.example.myapplication.ViewModel.NetworkState;
+import com.example.myapplication.viewmodel.CommentActivityViewModel;
+import com.example.myapplication.viewmodel.NetworkState;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.sql.Timestamp;

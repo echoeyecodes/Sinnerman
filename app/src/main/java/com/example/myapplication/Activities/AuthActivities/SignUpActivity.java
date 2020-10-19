@@ -10,7 +10,7 @@ import com.example.myapplication.API.ApiUtils.RequestStatus;
 import com.example.myapplication.CustomView.FormEditText;
 import com.example.myapplication.CustomView.FormEditTextListener;
 import com.example.myapplication.R;
-import com.example.myapplication.ViewModel.AuthViewModel.SignUpViewModel;
+import com.example.myapplication.viewmodel.authViewModel.SignUpViewModel;
 import com.google.android.material.button.MaterialButton;
 
 public class SignUpActivity extends AppCompatActivity implements FormEditTextListener {
@@ -76,7 +76,7 @@ public class SignUpActivity extends AppCompatActivity implements FormEditTextLis
     @Override
     public void onTextInput(String type, String value) {
         if (signUpViewModel != null) {
-            signUpViewModel.setForm_field(type, value);
+            signUpViewModel.getForm_fields().put(type, value);
             signUpViewModel.validateSingleField(type);
         }
     }

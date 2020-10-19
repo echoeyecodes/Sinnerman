@@ -45,7 +45,7 @@ private final MainActivityContext mainActivityContext;
     }
 
     protected static class RecentsViewHolder extends RecyclerView.ViewHolder{
-        private ImageView image_thumbnail;
+        private final ImageView image_thumbnail;
         public RecentsViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 

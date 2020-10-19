@@ -11,7 +11,7 @@ import com.example.myapplication.CustomView.FormEditText;
 import com.example.myapplication.CustomView.FormEditTextListener;
 import com.example.myapplication.R;
 import com.example.myapplication.Utils.AuthenticationManager;
-import com.example.myapplication.ViewModel.AuthViewModel.LoginViewModel;
+import com.example.myapplication.viewmodel.authViewModel.LoginViewModel;
 import com.google.android.material.button.MaterialButton;
 
 public class LoginActivity extends AppCompatActivity implements FormEditTextListener {
@@ -79,7 +79,7 @@ public class LoginActivity extends AppCompatActivity implements FormEditTextList
     @Override
     public void onTextInput(String type, String value) {
         if (loginViewModel != null) {
-            loginViewModel.setForm_field(type, value);
+            loginViewModel.getForm_fields().put(type, value);
             loginViewModel.validateSingleField(type);
         }
     }

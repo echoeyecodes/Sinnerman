@@ -38,6 +38,6 @@ public abstract class CommentDao {
     public void insertCommentAndUser(CommentResponseBody commentResponseBody){
         insertUser(commentResponseBody.getUser());
         insertComment(commentResponseBody.getComment());
-    };
+    }
 
 }

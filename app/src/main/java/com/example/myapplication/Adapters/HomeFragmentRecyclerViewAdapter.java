@@ -13,6 +13,7 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.paging.PagedListAdapter;
+import androidx.paging.PagingDataAdapter;
 import androidx.recyclerview.widget.*;
 
 import androidx.recyclerview.widget.ListAdapter;
@@ -25,7 +26,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.io.Serializable;
 
-public class HomeFragmentRecyclerViewAdapter extends PagedListAdapter<VideoResponseBody, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
+public class HomeFragmentRecyclerViewAdapter extends PagingDataAdapter<VideoResponseBody, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
     private final Context context;
     private final MainActivityContext mainActivityContext;
     private HomeFragmentRecyclerViewItemViewHolder homeFragmentRecyclerViewItemViewHolder;
@@ -46,15 +47,19 @@ public class HomeFragmentRecyclerViewAdapter extends PagedListAdapter<VideoRespo
 
     @Override
     public void onBindViewHolder(@NonNull HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder holder, int position) {
-        Picasso.get().load(Uri.parse(getItem(position).getVideo().getThumbnail())).into(holder.imageView);
-        Picasso.get().load(Uri.parse(getItem(position).getUser().getProfile_url())).into(holder.author_image);
+        VideoResponseBody videoResponseBody = getItem(position);
 
-        holder.title.setText(getItem(position).getVideo().getTitle());
-        holder.author.setText(getItem(position).getUser().getUsername().concat(" ~ ").concat(String.valueOf(getItem(position).getViews()).concat(" views")));
+                if(videoResponseBody != null){
+                    Picasso.get().load(Uri.parse(videoResponseBody.getVideo().getThumbnail())).into(holder.imageView);
+                    Picasso.get().load(Uri.parse(videoResponseBody.getUser().getProfile_url())).into(holder.author_image);
 
-        holder.linearLayout.setOnClickListener(v -> {
-            mainActivityContext.navigateToVideos(getItem(position).getVideo().getId());
-        });
+                    holder.title.setText(videoResponseBody.getVideo().getTitle());
+                    holder.author.setText(videoResponseBody.getUser().getUsername().concat(" ~ ").concat(String.valueOf(videoResponseBody.getViews()).concat(" views")));
+
+                    holder.linearLayout.setOnClickListener(v -> {
+                        mainActivityContext.navigateToVideos(videoResponseBody.getVideo().getId());
+                    });
+                }
     }
 
     public HomeFragmentRecyclerViewItemViewHolder getHomeAdapterViewHolder(){
@@ -63,12 +68,12 @@ public class HomeFragmentRecyclerViewAdapter extends PagedListAdapter<VideoRespo
 
 
     public static class HomeFragmentRecyclerViewItemViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
-        private CircleImageView author_image;
-        private TextView title;
-        private TextView author;
-        private CardView cardView;
-        private LinearLayout linearLayout;
+        private final ImageView imageView;
+        private final CircleImageView author_image;
+        private final TextView title;
+        private final TextView author;
+        private final CardView cardView;
+        private final LinearLayout linearLayout;
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
 
         public HomeFragmentRecyclerViewItemViewHolder(@NonNull View itemView) {

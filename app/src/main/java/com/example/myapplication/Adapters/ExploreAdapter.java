@@ -22,13 +22,13 @@ import java.util.*;
 
 public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreViewHolder> {
 
-    private Context context;
-    private Map<String, List<VideoModel>> data;
-    private List<String> keys;
-    private MainActivityContext mainActivityContext;
+    private final Context context;
+    private final Map<String, List<VideoModel>> data;
+    private final List<String> keys;
+    private final MainActivityContext mainActivityContext;
     private final VideosItemCallback videosItemCallback = VideosItemCallback.newInstance();
     private static Map<String, Parcelable> recycler_states = null;
-    private ExploreFragmentContext exploreFragmentContext;
+    private final ExploreFragmentContext exploreFragmentContext;
 
     public ExploreAdapter(Map<String, List<VideoModel>> data, Context context, MainActivityContext mainActivityContext, ExploreFragmentContext exploreFragmentContext) {
         if(recycler_states == null){
@@ -106,9 +106,9 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ExploreV
 
     public static class ExploreViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView recycler_header;
-        private RecyclerView recycler_view;
-        private ImageButton imageButton;
+        private final TextView recycler_header;
+        private final RecyclerView recycler_view;
+        private final ImageButton imageButton;
 
         public ExploreViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);

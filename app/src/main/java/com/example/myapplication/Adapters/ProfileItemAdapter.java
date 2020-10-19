@@ -15,8 +15,8 @@ import java.util.List;
 
 public class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.ProfileItemViewHolder> {
     private ProfileItemViewHolder profileItemViewHolder;
-    private String[] items;
-    private Context context;
+    private final String[] items;
+    private final Context context;
 
     public ProfileItemAdapter(Context context, String... items) {
         this.items = items;
@@ -56,10 +56,10 @@ public class ProfileItemAdapter extends RecyclerView.Adapter<ProfileItemAdapter.
 
     public static class ProfileItemViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView name;
-        private ImageView profile_icon;
-        private ImageButton profile_action;
-        private TextView profile_context;
+        private final TextView name;
+        private final ImageView profile_icon;
+        private final ImageButton profile_action;
+        private final TextView profile_context;
 
         public ProfileItemViewHolder(@NonNull View itemView) {
             super(itemView);
