@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.Activities.VideoListActivity
 import com.example.myapplication.Adapters.ExploreAdapter
 import com.example.myapplication.Interface.ExploreFragmentContext
+import com.example.myapplication.MainActivity
 import com.example.myapplication.Models.ExploreResponseBody
 import com.example.myapplication.R
 import com.example.myapplication.RootBottomFragment
@@ -42,6 +43,7 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val mainActivity: MainActivity = context as MainActivity
         recyclerView = view.findViewById(R.id.explore_recycler_view)
         exploreViewModel = ViewModelProvider(requireActivity()).get(ExploreViewModel::class.java)
 
@@ -49,7 +51,7 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext {
         linearLayoutManager = LinearLayoutManager(context)
 
         recyclerView!!.layoutManager = linearLayoutManager
-        exploreAdapter = ExploreAdapter(context!!, lifecycle, this::navigateToVideoListActivity, this::navigateToVideoListActivity, ExploreResponseItemCallback())
+        exploreAdapter = ExploreAdapter(context!!, this::navigateToVideoListActivity, mainActivity::navigateToVideos, ExploreResponseItemCallback())
         recyclerView!!.adapter = exploreAdapter
 
         exploreViewModel!!.videosObserver.observe(viewLifecycleOwner, Observer<PagingData<ExploreResponseBody>> { value ->

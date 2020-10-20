@@ -7,11 +7,12 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "comment_users")
+@Entity(tableName = "users")
 public class UserModel {
 
     @PrimaryKey @NonNull
-    private String id;
+    @ColumnInfo(name = "user_id")
+    public String id;
 
     @Ignore
     private String email;

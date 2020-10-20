@@ -1,28 +1,23 @@
-package com.example.myapplication.Paging
+package com.example.myapplication.Paging;
 
 import android.util.Log
 import androidx.paging.PagingSource
-import com.example.myapplication.API.DAO.VideosDao
+import com.example.myapplication.API.DAO.VideosDao;
+import com.example.myapplication.Models.ExploreResponseBody
 import com.example.myapplication.Models.VideoResponseBody
-import com.example.myapplication.Room.Dao.VideoDao
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 
-class VideoPagingSource(private val videoDao: VideoDao) : PagingSource<Int, VideoResponseBody>() {
+data class ExploreItemPagingSource (private val videoDao:VideosDao, private val key:String) : PagingSource<Int, VideoResponseBody>(){
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VideoResponseBody> {
         val position = params.key ?: 0
 
         return try {
 
-            var result: List<VideoResponseBody>
-
-            withContext(Dispatchers.IO) {
-                result = videoDao.getVideos(position, 5)
+            val result = videoDao.fetchExploreItem("5", position.toString(), key)
+            if(result.isNotEmpty()){
+                Log.d("CARRR", result.toString())
             }
 
             LoadResult.Page(
@@ -36,7 +31,5 @@ class VideoPagingSource(private val videoDao: VideoDao) : PagingSource<Int, Vide
         } catch (exception: HttpException) {
             return LoadResult.Error(exception)
         }
-
     }
-
 }

@@ -1,6 +1,7 @@
 package com.example.myapplication.BottomNavigationFragments
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.RelativeLayout
 import android.widget.Toast
 
@@ -50,7 +51,6 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -64,45 +64,27 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
 
         val videosItemCallback = VideosItemCallback.newInstance()
 
-        adapter = HomeFragmentRecyclerViewAdapter(videosItemCallback, context, mainActivityContext)
+        adapter = HomeFragmentRecyclerViewAdapter(videosItemCallback, mainActivityContext)
         val chipsAdapter = ChipsAdapter(items)
         linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         chipsLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         chipsRecyclerView?.layoutManager = chipsLayoutManager
         recyclerView?.layoutManager = linearLayoutManager
 
+        recyclerView?.addOnScrollListener(CustomScrollListener())
+
         chipsRecyclerView?.addItemDecoration(CustomItemDecoration(0, IntegerToDp.intToDp(5)))
         recyclerView?.addItemDecoration(CustomItemDecoration(IntegerToDp.intToDp(15), IntegerToDp.intToDp(15)))
         chipsRecyclerView?.adapter = chipsAdapter
+        recyclerView?.adapter = adapter
 
 
-        recyclerView?.adapter = adapter!!.withLoadStateFooter(footer = VideoLoadStateAdapter())
         chipsAdapter.notifyDataSetChanged()
 
-        viewModel!!.videosObserver?.observe(viewLifecycleOwner, Observer<PagingData<VideoResponseBody>> { videos ->
-            adapter!!.submitData(lifecycle, videos)
+        viewModel!!.videosObserver.observe(viewLifecycleOwner, Observer<List<VideoResponseBody>> { videos ->
+            adapter?.submitList(videos)
             swipeRefreshLayout!!.isRefreshing = false
         })
-
-        adapter!!.addLoadStateListener { state ->
-            when (state.append) {
-                is LoadState.Loading -> {
-                    loading_screen!!.visibility = View.VISIBLE
-                }
-                else -> {
-                    loading_screen!!.visibility = View.GONE
-                }
-            }
-
-            when (state.refresh) {
-                is LoadState.Loading -> {
-                    swipeRefreshLayout!!.isRefreshing = true
-                }
-                else -> {
-                    swipeRefreshLayout!!.isRefreshing = false
-                }
-            }
-        }
     }
 
     override fun onResume() {
@@ -111,7 +93,7 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
     }
 
     override fun onRefresh() {
-        adapter?.refresh()
+        viewModel?.refresh()
     }
 
     inner class ChipsAdapter(private val items: Array<String>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -132,6 +114,25 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
         inner class ChipsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val chip: Chip = itemView.findViewById(R.id.home_chips_item)
 
+        }
+    }
+
+    inner class CustomScrollListener : RecyclerView.OnScrollListener(){
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+
+//            if(newState == RecyclerView.SCROLL_STATE_IDLE){
+//                val linearLayoutManager = (recyclerView.layoutManager) as LinearLayoutManager
+//                val totalItemCount =  linearLayoutManager.itemCount
+//                val childCount = linearLayoutManager.childCount
+//                val firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
+//
+//                if((firstVisibleItemPosition + childCount) >= totalItemCount && firstVisibleItemPosition > 0){
+//
+//                    viewModel?.fetchVideosFromDB()
+//                }
+//            }
         }
     }
 }

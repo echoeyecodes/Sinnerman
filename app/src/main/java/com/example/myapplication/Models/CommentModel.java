@@ -16,6 +16,8 @@ public class CommentModel{
     private String comment;
     private String createdAt;
     private int status=0;
+
+    @ColumnInfo(name = "comment_user_id")
     private String user_id;
     private String video_id;
 

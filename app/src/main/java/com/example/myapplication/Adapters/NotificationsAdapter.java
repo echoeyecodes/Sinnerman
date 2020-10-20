@@ -1,20 +1,16 @@
 package com.example.myapplication.Adapters;
 
-import android.content.res.Resources;
 import android.net.Uri;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.NotificationModel;
-import com.example.myapplication.Models.VideoModel;
 import com.example.myapplication.R;
 import com.squareup.picasso.Picasso;
 import org.jetbrains.annotations.NotNull;

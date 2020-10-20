@@ -14,7 +14,7 @@ public abstract class UserDao {
     @Insert
     public abstract void insertUsers(UserModel... userModels);
 
-    @Query("DELETE FROM comment_users")
+    @Query("DELETE FROM users")
     public abstract void deleteAllUsers();
 
 }

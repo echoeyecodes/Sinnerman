@@ -10,13 +10,15 @@ import android.widget.*;
 import androidx.cardview.widget.CardView;
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.*;
+import androidx.recyclerview.widget.ListAdapter
 import com.example.myapplication.Models.VideoResponseBody;
 import com.example.myapplication.R;
 import com.squareup.picasso.Picasso;
+import de.hdodenhof.circleimageview.CircleImageView
 
 import java.io.Serializable;
 
- class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>, private val navigate: (String) -> Unit) : PagingDataAdapter<VideoResponseBody, ExploreItemAdapter.ExploreItemViewHolder>(itemCallback), Serializable {
+ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>, private val navigate: (String) -> Unit) : ListAdapter<VideoResponseBody, ExploreItemAdapter.ExploreItemViewHolder>(itemCallback), Serializable {
 
 
     override fun onCreateViewHolder( parent : ViewGroup, viewType : Int): ExploreItemViewHolder {
@@ -40,9 +42,10 @@ import java.io.Serializable;
 
         if(videoResponseBody != null) {
             Picasso.get().load(Uri.parse(videoResponseBody.video.thumbnail)).into(holder.imageView);
-
+            Picasso.get().load(Uri.parse(videoResponseBody.user.profile_url)).into(holder.author_image);
+            holder.title.text = videoResponseBody.video.title
+            holder.author.text = videoResponseBody.user.fullname
             holder.linearLayout.setOnClickListener{ navigate(videoResponseBody.video.id) }
-
         }
     }
 
@@ -50,6 +53,9 @@ import java.io.Serializable;
         val imageView : ImageView = itemView.findViewById(R.id.video_thumbnail);
         val cardView : CardView = itemView.findViewById(R.id.video_card_frame);
         val linearLayout : LinearLayout = itemView.findViewById(R.id.video_item);
+        val author_image:CircleImageView = itemView.findViewById(R.id.author_image)
+        val title : TextView = itemView.findViewById(R.id.video_title);
+        val author : TextView = itemView.findViewById(R.id.video_author);
 
 
     }

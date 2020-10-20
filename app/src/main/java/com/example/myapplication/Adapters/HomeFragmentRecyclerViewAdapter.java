@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +11,11 @@ import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.paging.PagedListAdapter;
 import androidx.paging.PagingDataAdapter;
 import androidx.recyclerview.widget.*;
 
 import androidx.recyclerview.widget.ListAdapter;
 import com.example.myapplication.Interface.MainActivityContext;
-import com.example.myapplication.Models.VideoModel;
 import com.example.myapplication.Models.VideoResponseBody;
 import com.example.myapplication.R;
 import com.squareup.picasso.Picasso;
@@ -26,14 +23,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.io.Serializable;
 
-public class HomeFragmentRecyclerViewAdapter extends PagingDataAdapter<VideoResponseBody, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
-    private final Context context;
+public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBody, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
     private final MainActivityContext mainActivityContext;
     private HomeFragmentRecyclerViewItemViewHolder homeFragmentRecyclerViewItemViewHolder;
 
-    public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<VideoResponseBody> itemCallback, Context context, MainActivityContext mainActivityContext) {
+    public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<VideoResponseBody> itemCallback, MainActivityContext mainActivityContext) {
         super(itemCallback);
-        this.context = context;
         this.mainActivityContext = mainActivityContext;
     }
 
@@ -54,16 +49,12 @@ public class HomeFragmentRecyclerViewAdapter extends PagingDataAdapter<VideoResp
                     Picasso.get().load(Uri.parse(videoResponseBody.getUser().getProfile_url())).into(holder.author_image);
 
                     holder.title.setText(videoResponseBody.getVideo().getTitle());
-                    holder.author.setText(videoResponseBody.getUser().getUsername().concat(" ~ ").concat(String.valueOf(videoResponseBody.getViews()).concat(" views")));
+                    holder.author.setText(videoResponseBody.getUser().getUsername().concat(" ~ ").concat(String.valueOf(videoResponseBody.getVideo().getViews()).concat(" views")));
 
                     holder.linearLayout.setOnClickListener(v -> {
                         mainActivityContext.navigateToVideos(videoResponseBody.getVideo().getId());
                     });
                 }
-    }
-
-    public HomeFragmentRecyclerViewItemViewHolder getHomeAdapterViewHolder(){
-        return homeFragmentRecyclerViewItemViewHolder;
     }
 
 

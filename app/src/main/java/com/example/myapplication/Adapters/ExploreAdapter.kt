@@ -9,15 +9,21 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.paging.PagingData
 import androidx.paging.PagingDataAdapter;
 import androidx.recyclerview.widget.*
 import com.example.myapplication.Models.ExploreResponseBody
+import com.example.myapplication.Models.VideoResponseBody
 import com.example.myapplication.R;
 import com.example.myapplication.Utils.HorizontalItemDecoration;
 import com.example.myapplication.Utils.VideosItemCallback
+import com.example.myapplication.viewmodel.ExploreViewModel
 import kotlin.collections.HashMap
 
-class ExploreAdapter(private val context: Context, private val lifecycle: Lifecycle, private val navigateToMore: (String) ->Unit, private val navigateToVideo: ((String) -> Unit), itemCallback: DiffUtil.ItemCallback<ExploreResponseBody> ) : PagingDataAdapter<ExploreResponseBody, ExploreAdapter.ExploreViewHolder>(itemCallback) {
+typealias navigateToDestination = (String) -> Unit
+class ExploreAdapter(private val context: Context, private val navigateToMore: navigateToDestination, private val navigateToVideo: navigateToDestination, itemCallback: DiffUtil.ItemCallback<ExploreResponseBody>) : PagingDataAdapter<ExploreResponseBody, ExploreAdapter.ExploreViewHolder>(itemCallback) {
 
     private val videosItemCallback = VideosItemCallback.newInstance()
     private var recycler_states : HashMap<String, Parcelable>? = null
@@ -60,15 +66,12 @@ class ExploreAdapter(private val context: Context, private val lifecycle: Lifecy
         if(exploreResponseBody != null){
             holder.recycler_header.text = exploreResponseBody.name
 
-//            holder.bindClickListener(exploreResponseBody.id)
             val adapter = ExploreItemAdapter(videosItemCallback, navigateToVideo);
             holder.recycler_view.adapter = adapter
-//            adapter.submitData(lifecycle, exploreResponseBody.videos!!)
+            adapter.submitList(exploreResponseBody.videos)
+
+            holder.bindClickListener(exploreResponseBody.id)
         }
-
-
-
-//        adapter.submitList(data.get(keys.get(position)));
     }
 
     inner class ExploreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

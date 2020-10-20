@@ -20,4 +20,7 @@ interface VideosDao {
     @GET("api/v1/video/explore/tags")
     suspend fun fetchExplore(@Query("limit") limit : String, @Query("offset") offset : String) : List<ExploreResponseBody>
 
+    @GET("api/v1/video/explore/tags/{id}")
+    suspend fun fetchExploreItem(@Query("limit") limit : String, @Query("offset") offset : String, @Path("id") id:String) : List<VideoResponseBody>
+
 }

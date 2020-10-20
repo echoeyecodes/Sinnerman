@@ -22,7 +22,7 @@ public abstract class CommentDao {
     public abstract void insertComments(CommentModel... comment);
 
 
-    @Query("SELECT * FROM comments INNER JOIN comment_users ON comments.user_id = comment_users.id")
+    @Query("SELECT * FROM comments INNER JOIN users ON comments.comment_user_id = users.user_id")
     public abstract LiveData<List<CommentResponseBody>> getComments();
 
     @Query("SELECT * FROM comments WHERE status = 1")
