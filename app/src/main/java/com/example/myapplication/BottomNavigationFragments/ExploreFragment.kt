@@ -5,20 +5,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.PagingData
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.Activities.VideoListActivity
 import com.example.myapplication.Adapters.ExploreAdapter
 import com.example.myapplication.Interface.ExploreFragmentContext
-import com.example.myapplication.Models.VideoModel
+import com.example.myapplication.Models.ExploreResponseBody
 import com.example.myapplication.R
 import com.example.myapplication.RootBottomFragment
 import com.example.myapplication.viewmodel.ExploreViewModel
-import com.example.myapplication.viewmodel.MainActivityViewModel
-
-import java.util.HashMap
-import java.util.Map
 
 
 class ExploreFragment : RootBottomFragment(), ExploreFragmentContext {
@@ -47,15 +46,30 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext {
         exploreViewModel = ViewModelProvider(requireActivity()).get(ExploreViewModel::class.java)
 
 
-        val mock_data = HashMap<String, List<VideoModel>>()
-
-        linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        linearLayoutManager = LinearLayoutManager(context)
 
         recyclerView!!.layoutManager = linearLayoutManager
-        exploreAdapter = ExploreAdapter(mock_data, context, mainActivityContext!!, this)
+        exploreAdapter = ExploreAdapter(context!!, lifecycle, this::navigateToVideoListActivity, this::navigateToVideoListActivity, ExploreResponseItemCallback())
         recyclerView!!.adapter = exploreAdapter
 
+        exploreViewModel!!.videosObserver.observe(viewLifecycleOwner, Observer<PagingData<ExploreResponseBody>> { value ->
+            exploreAdapter!!.submitData(lifecycle, value)
+        })
+
     }
+
+    inner class ExploreResponseItemCallback : DiffUtil.ItemCallback<ExploreResponseBody>() {
+
+        override fun areItemsTheSame(oldItem: ExploreResponseBody, newItem: ExploreResponseBody): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: ExploreResponseBody, newItem: ExploreResponseBody): Boolean {
+            return oldItem.name == newItem.name
+        }
+
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -77,4 +91,5 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext {
         intent.putExtra("title", title)
         startActivity(intent)
     }
+
 }

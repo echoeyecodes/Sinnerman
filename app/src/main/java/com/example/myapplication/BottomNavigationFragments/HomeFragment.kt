@@ -74,10 +74,12 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
         chipsRecyclerView?.addItemDecoration(CustomItemDecoration(0, IntegerToDp.intToDp(5)))
         recyclerView?.addItemDecoration(CustomItemDecoration(IntegerToDp.intToDp(15), IntegerToDp.intToDp(15)))
         chipsRecyclerView?.adapter = chipsAdapter
+
+
         recyclerView?.adapter = adapter!!.withLoadStateFooter(footer = VideoLoadStateAdapter())
         chipsAdapter.notifyDataSetChanged()
 
-        viewModel!!.videosObserver.observe(viewLifecycleOwner, Observer<PagingData<VideoResponseBody>> { videos ->
+        viewModel!!.videosObserver?.observe(viewLifecycleOwner, Observer<PagingData<VideoResponseBody>> { videos ->
             adapter!!.submitData(lifecycle, videos)
             swipeRefreshLayout!!.isRefreshing = false
         })

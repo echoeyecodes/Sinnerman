@@ -6,7 +6,7 @@ import androidx.paging.*
 import com.example.myapplication.API.ApiUtils.ApiClient
 import com.example.myapplication.API.DAO.VideosDao
 import com.example.myapplication.Models.ExploreResponseBody
-import com.example.myapplication.Paging.ExploreDataSource
+import com.example.myapplication.Paging.ExplorePagingSource
 
 class ExploreViewModel(application: Application) : AndroidViewModel(application){
 
@@ -24,6 +24,6 @@ class ExploreViewModel(application: Application) : AndroidViewModel(application)
                     maxSize = 100,
                     enablePlaceholders = false
             ),
-            pagingSourceFactory = { ExploreDataSource(videoDao = videoDao) }
+            pagingSourceFactory = { ExplorePagingSource(videoDao = videoDao) }
     ).liveData.cachedIn(viewModelScope)
 }

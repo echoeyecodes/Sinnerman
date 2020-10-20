@@ -1,16 +1,15 @@
 package com.example.myapplication.Paging
 
-import android.util.Log
 import androidx.paging.PagingSource
 import com.example.myapplication.API.DAO.VideosDao
 import com.example.myapplication.Models.VideoResponseBody
 import retrofit2.HttpException
 import java.io.IOException
 
-class VideoPagingSource(private val videoDao: VideosDao) : PagingSource<Int, VideoResponseBody>() {
+class VideoPagingSource(private val videoDao: VideosDao, private val initialLoadSize: Int) : PagingSource<Int, VideoResponseBody>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, VideoResponseBody> {
-        val position = params.key ?: 0
+        val position = params.key ?: initialLoadSize
 
         return try {
 
