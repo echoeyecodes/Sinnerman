@@ -26,6 +26,6 @@ public final class VideosItemCallback extends DiffUtil.ItemCallback<VideoRespons
 
     @Override
     public boolean areContentsTheSame(@NonNull @NotNull VideoResponseBody oldItem, @NonNull @NotNull VideoResponseBody newItem) {
-        return oldItem.getVideo().getThumbnail().equals(newItem.getVideo().getVideo_url());
+        return oldItem.getVideo().getThumbnail().equals(newItem.getVideo().getVideo_url()) && oldItem.getVideo().getViews() == newItem.getVideo().getViews();
     }
 }

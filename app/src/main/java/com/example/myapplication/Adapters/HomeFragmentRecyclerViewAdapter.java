@@ -15,6 +15,8 @@ import androidx.paging.PagingDataAdapter;
 import androidx.recyclerview.widget.*;
 
 import androidx.recyclerview.widget.ListAdapter;
+import com.bumptech.glide.Glide;
+import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 import com.example.myapplication.Interface.MainActivityContext;
 import com.example.myapplication.Models.VideoResponseBody;
 import com.example.myapplication.R;
@@ -23,13 +25,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.io.Serializable;
 
-public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBody, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
+public class HomeFragmentRecyclerViewAdapter extends PagingDataAdapter<VideoResponseBody, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
     private final MainActivityContext mainActivityContext;
+    private final Context context;
     private HomeFragmentRecyclerViewItemViewHolder homeFragmentRecyclerViewItemViewHolder;
+    private HomeFragment homeFragment;
 
-    public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<VideoResponseBody> itemCallback, MainActivityContext mainActivityContext) {
+    public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<VideoResponseBody> itemCallback,Context context, HomeFragment fragment) {
         super(itemCallback);
-        this.mainActivityContext = mainActivityContext;
+        this.mainActivityContext = (MainActivityContext) context;
+        this.homeFragment = fragment;
+        this.context = context.getApplicationContext();
     }
 
     @NonNull
@@ -45,14 +51,15 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
         VideoResponseBody videoResponseBody = getItem(position);
 
                 if(videoResponseBody != null){
-                    Picasso.get().load(Uri.parse(videoResponseBody.getVideo().getThumbnail())).into(holder.imageView);
-                    Picasso.get().load(Uri.parse(videoResponseBody.getUser().getProfile_url())).into(holder.author_image);
+                    Glide.with(context).load(Uri.parse(videoResponseBody.getVideo().getThumbnail())).into(holder.imageView);
+                    Glide.with(context).load(Uri.parse(videoResponseBody.getUser().getProfile_url())).into(holder.author_image);
 
                     holder.title.setText(videoResponseBody.getVideo().getTitle());
                     holder.author.setText(videoResponseBody.getUser().getUsername().concat(" ~ ").concat(String.valueOf(videoResponseBody.getVideo().getViews()).concat(" views")));
 
                     holder.linearLayout.setOnClickListener(v -> {
-                        mainActivityContext.navigateToVideos(videoResponseBody.getVideo().getId());
+//                        mainActivityContext.navigateToVideos(videoResponseBody.getVideo().getId());
+                        homeFragment.doSomething(videoResponseBody);
                     });
                 }
     }

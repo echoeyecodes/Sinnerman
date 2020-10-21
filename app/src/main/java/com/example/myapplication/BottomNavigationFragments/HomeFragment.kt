@@ -64,14 +64,13 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
 
         val videosItemCallback = VideosItemCallback.newInstance()
 
-        adapter = HomeFragmentRecyclerViewAdapter(videosItemCallback, mainActivityContext)
+        adapter = HomeFragmentRecyclerViewAdapter(videosItemCallback, context, this)
         val chipsAdapter = ChipsAdapter(items)
         linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         chipsLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView?.setHasFixedSize(true)
         chipsRecyclerView?.layoutManager = chipsLayoutManager
         recyclerView?.layoutManager = linearLayoutManager
-
-        recyclerView?.addOnScrollListener(CustomScrollListener())
 
         chipsRecyclerView?.addItemDecoration(CustomItemDecoration(0, IntegerToDp.intToDp(5)))
         recyclerView?.addItemDecoration(CustomItemDecoration(IntegerToDp.intToDp(15), IntegerToDp.intToDp(15)))
@@ -81,10 +80,15 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
 
         chipsAdapter.notifyDataSetChanged()
 
-        viewModel!!.videosObserver.observe(viewLifecycleOwner, Observer<List<VideoResponseBody>> { videos ->
-            adapter?.submitList(videos)
+        viewModel!!.videos.observe(viewLifecycleOwner, Observer<PagingData<VideoResponseBody>> { videos ->
+            adapter?.submitData(lifecycle, videos)
             swipeRefreshLayout!!.isRefreshing = false
         })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        adapter = null
     }
 
     override fun onResume() {
@@ -92,8 +96,13 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
         mainActivityContext.setActiveBottomViewFragment(0)
     }
 
+    fun doSomething(item: VideoResponseBody){
+        item.video.views = item.video.views+1
+        viewModel?.insertUpdateToVideoList(item)
+    }
+
     override fun onRefresh() {
-        viewModel?.refresh()
+        adapter?.refresh()
     }
 
     inner class ChipsAdapter(private val items: Array<String>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -117,22 +126,4 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
         }
     }
 
-    inner class CustomScrollListener : RecyclerView.OnScrollListener(){
-
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
-
-//            if(newState == RecyclerView.SCROLL_STATE_IDLE){
-//                val linearLayoutManager = (recyclerView.layoutManager) as LinearLayoutManager
-//                val totalItemCount =  linearLayoutManager.itemCount
-//                val childCount = linearLayoutManager.childCount
-//                val firstVisibleItemPosition = linearLayoutManager.findFirstVisibleItemPosition()
-//
-//                if((firstVisibleItemPosition + childCount) >= totalItemCount && firstVisibleItemPosition > 0){
-//
-//                    viewModel?.fetchVideosFromDB()
-//                }
-//            }
-        }
-    }
 }

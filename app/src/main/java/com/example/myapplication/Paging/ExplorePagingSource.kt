@@ -1,6 +1,5 @@
 package com.example.myapplication.Paging;
 
-import android.util.Log
 import androidx.paging.PagingSource
 import com.example.myapplication.API.DAO.VideosDao;
 import com.example.myapplication.Models.ExploreResponseBody
@@ -15,9 +14,6 @@ data class ExplorePagingSource (private val videoDao:VideosDao) : PagingSource<I
         return try {
 
             val result = videoDao.fetchExplore("5", position.toString())
-            if(result.isNotEmpty()){
-                Log.d("CARRR", result.toString())
-            }
 
             LoadResult.Page(
                     data = result,

@@ -15,11 +15,12 @@ import java.io.IOException
 import kotlin.coroutines.coroutineContext
 
 @OptIn(ExperimentalPagingApi::class)
-class VideoPagingMediator(private val videoDao: VideosDao, private val context: Context, private val initialLoadSize: Int) : RemoteMediator<Int, VideoResponseBody>() {
+class VideoPagingMediator(private val videoDao: VideosDao, private val context: Context, private val initialPosition: Int) : RemoteMediator<Int, VideoResponseBody>() {
 
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, VideoResponseBody>): MediatorResult {
-        val position = state.anchorPosition ?: initialLoadSize
+        val position = state.anchorPosition ?: initialPosition
+
         return try {
 
             val roomDao = PersistenceDatabase.getInstance(context).videoDao()
@@ -31,11 +32,11 @@ class VideoPagingMediator(private val videoDao: VideosDao, private val context: 
                 result.forEach {
                     roomDao.insertVideoAndUsers(it)
                 }
-            }
 
-            MediatorResult.Success(
-                    endOfPaginationReached = endOfPaginationReached
-            )
+                MediatorResult.Success(
+                        endOfPaginationReached = endOfPaginationReached
+                )
+            }
 
         } catch (exception: IOException) {
             return MediatorResult.Error(exception)

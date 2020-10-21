@@ -51,7 +51,13 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext {
         linearLayoutManager = LinearLayoutManager(context)
 
         recyclerView!!.layoutManager = linearLayoutManager
-        exploreAdapter = ExploreAdapter(context!!, this::navigateToVideoListActivity, mainActivity::navigateToVideos, ExploreResponseItemCallback())
+        exploreAdapter = ExploreAdapter(
+                context = context!!,
+                lifecycleOwner = viewLifecycleOwner,
+                navigateToMore =  this::navigateToVideoListActivity,
+                navigateToVideo = mainActivity::navigateToVideos,
+                itemCallback = ExploreResponseItemCallback())
+
         recyclerView!!.adapter = exploreAdapter
 
         exploreViewModel!!.videosObserver.observe(viewLifecycleOwner, Observer<PagingData<ExploreResponseBody>> { value ->
