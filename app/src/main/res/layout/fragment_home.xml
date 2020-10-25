@@ -18,6 +18,4 @@
                     android:layout_height="match_parent"/>
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-        <include android:id="@+id/home_fragment_loading_layout" layout="@layout/layout_loading"/>
 </FrameLayout>

@@ -1,6 +1,7 @@
 package com.example.myapplication.BottomNavigationFragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,13 +10,10 @@ import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.Adapters.HomeFragmentRecyclerViewAdapter
-import com.example.myapplication.Adapters.VideoLoadStateAdapter
 import com.example.myapplication.Models.VideoResponseBody
 import com.example.myapplication.R
 import com.example.myapplication.RootBottomFragment
@@ -23,17 +21,10 @@ import com.example.myapplication.Utils.*
 import com.example.myapplication.viewmodel.BottomFragmentViewModel.HomeFragmentViewModel
 import com.example.myapplication.viewmodel.NetworkState
 import com.google.android.material.chip.Chip
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener {
     private lateinit var recyclerView: RecyclerView
-    private lateinit var loading_error_container: LinearLayout
-    private lateinit var loading_screen: RelativeLayout
-    private lateinit var progress_bar: ProgressBar
     private var adapter: HomeFragmentRecyclerViewAdapter? = null
     private lateinit var viewModel: HomeFragmentViewModel
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -57,9 +48,7 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
 
         viewModel = ViewModelProvider(requireActivity()).get(HomeFragmentViewModel::class.java)
         swipeRefreshLayout = view.findViewById(R.id.home_swipe_refresh)
-        loading_screen = view.findViewById(R.id.home_fragment_loading_layout)
-        loading_error_container = view.findViewById(R.id.loading_error_container)
-        progress_bar = view.findViewById(R.id.loading_progress_bar);
+
         recyclerView = view.findViewById(R.id.fragment_home_recycler_view)
 
         swipeRefreshLayout.setOnRefreshListener(this)
@@ -76,38 +65,25 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
         recyclerView.adapter = adapter
 
 
-        viewModel.networkStatus.observe(viewLifecycleOwner, Observer<NetworkState> {state ->
-                when(state){
-                    NetworkState.REFRESHING -> swipeRefreshLayout.isRefreshing = true
-                    NetworkState.LOADING -> {
-                        loading_screen.visibility = View.VISIBLE
-                        progress_bar.visibility = View.VISIBLE
-                    }
-                    NetworkState.ERROR -> {
-                        progress_bar.visibility = View.GONE
-                        loading_screen.visibility = View.VISIBLE
-                        loading_error_container.visibility = View.VISIBLE
-                    }
-                    else -> {
-                        loading_screen.visibility = View.GONE
-                        swipeRefreshLayout.isRefreshing = false
-                    }
-                }
-        })
-
-
         viewModel.roomDao.getVideos().observe(viewLifecycleOwner, Observer<List<VideoResponseBody>> { videos ->
             adapter?.submitList(videos)
         })
 
+        viewModel.networkStatus.observe(viewLifecycleOwner, Observer<NetworkState> { state ->
+            if(state == NetworkState.LOADING || state == NetworkState.ERROR){
+                val originalList = ArrayList<VideoResponseBody?>(viewModel.state)
+                originalList.add(null)
+                adapter?.submitList(originalList)
+                adapter?.onNetworkStateChanged(state)
+            }
+            swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
+        })
 
-
-        recyclerView.addOnScrollListener(CustomScrollListener(fetchMore = viewModel::fetchMore))
+        recyclerView.addOnScrollListener(CustomScrollListener(fetchMore = this::fetchMore))
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        adapter = null
+    fun fetchMore(){
+        viewModel.fetchMore(NetworkState.LOADING);
     }
 
     override fun onResume() {
@@ -119,27 +95,11 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
         viewModel.insertUpdateToVideoList(item)
     }
 
-    override fun onRefresh() {
-        viewModel.refresh()
+    fun retry(){
+        viewModel.retry()
     }
 
-    inner class ChipsAdapter(private val items: Array<String>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_home_chips_item, parent, false)
-            return ChipsViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            (holder as ChipsViewHolder).chip.text = items[position]
-        }
-
-        override fun getItemCount(): Int {
-            return items.size
-        }
-
-        inner class ChipsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val chip: Chip = itemView.findViewById(R.id.home_chips_item)
-        }
+    override fun onRefresh() {
+        viewModel.refresh()
     }
 }
