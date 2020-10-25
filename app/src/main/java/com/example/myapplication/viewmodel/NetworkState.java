@@ -5,4 +5,5 @@ public enum NetworkState {
     SUCCESS,
     ERROR,
     IDLE,
+    REFRESHING,
 }

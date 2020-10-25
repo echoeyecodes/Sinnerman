@@ -6,18 +6,9 @@
         android:layout_height="match_parent"
         tools:context=".BottomNavigationFragments.HomeFragment"
         >
-
-    <RelativeLayout
-            android:id="@+id/home_fragment_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <include android:id="@+id/video_filters" layout="@layout/layout_home_chips"/>
-
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/home_swipe_refresh"
                 android:layout_width="match_parent"
-                android:layout_below="@+id/video_filters"
                 android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -28,9 +19,5 @@
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    </RelativeLayout>
-
-    <include android:id="@+id/home_fragment_loading_layout" layout="@layout/layout_loading"/>
-
-
+        <include android:id="@+id/home_fragment_loading_layout" layout="@layout/layout_loading"/>
 </FrameLayout>

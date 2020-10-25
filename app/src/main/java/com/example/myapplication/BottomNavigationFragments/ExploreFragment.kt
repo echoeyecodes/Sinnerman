@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.Activities.VideoListActivity
 import com.example.myapplication.Adapters.ExploreAdapter
 import com.example.myapplication.Interface.ExploreFragmentContext
@@ -18,14 +18,16 @@ import com.example.myapplication.MainActivity
 import com.example.myapplication.Models.ExploreResponseBody
 import com.example.myapplication.R
 import com.example.myapplication.RootBottomFragment
+import com.example.myapplication.Utils.CustomScrollListener
 import com.example.myapplication.viewmodel.ExploreViewModel
 
 
-class ExploreFragment : RootBottomFragment(), ExploreFragmentContext {
-    private var recyclerView : RecyclerView? = null
-    private var linearLayoutManager : LinearLayoutManager? = null
-    private var exploreViewModel: ExploreViewModel? = null;
+class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefreshLayout.OnRefreshListener{
+    private lateinit var recyclerView : RecyclerView
+    private lateinit var linearLayoutManager : LinearLayoutManager
+    private lateinit var exploreViewModel: ExploreViewModel
     private var exploreAdapter : ExploreAdapter? = null
+    private lateinit var swipeRefreshLayout : SwipeRefreshLayout
 
     init{
         TAG ="EXPLORE_FRAGMENT"
@@ -45,25 +47,32 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext {
 
         val mainActivity: MainActivity = context as MainActivity
         recyclerView = view.findViewById(R.id.explore_recycler_view)
+        swipeRefreshLayout = view.findViewById(R.id.explore_swipe_refresh)
+
+        swipeRefreshLayout.setOnRefreshListener(this)
         exploreViewModel = ViewModelProvider(requireActivity()).get(ExploreViewModel::class.java)
 
 
         linearLayoutManager = LinearLayoutManager(context)
 
-        recyclerView!!.layoutManager = linearLayoutManager
+        recyclerView.layoutManager = linearLayoutManager
         exploreAdapter = ExploreAdapter(
                 context = context!!,
-                lifecycleOwner = viewLifecycleOwner,
                 navigateToMore =  this::navigateToVideoListActivity,
                 navigateToVideo = mainActivity::navigateToVideos,
                 itemCallback = ExploreResponseItemCallback())
 
-        recyclerView!!.adapter = exploreAdapter
+        recyclerView.adapter = exploreAdapter
 
-        exploreViewModel!!.videosObserver.observe(viewLifecycleOwner, Observer<PagingData<ExploreResponseBody>> { value ->
-            exploreAdapter!!.submitData(lifecycle, value)
+        exploreViewModel.categories.observe(viewLifecycleOwner, Observer<List<ExploreResponseBody>> { value ->
+            exploreAdapter?.submitList(value)
         })
 
+        exploreViewModel.isRefreshing.observe(viewLifecycleOwner, Observer<Boolean> {value ->
+            swipeRefreshLayout.isRefreshing = value
+        })
+
+        recyclerView.addOnScrollListener(CustomScrollListener(fetchMore = exploreViewModel::fetchMore))
     }
 
     inner class ExploreResponseItemCallback : DiffUtil.ItemCallback<ExploreResponseBody>() {
@@ -73,15 +82,14 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext {
         }
 
         override fun areContentsTheSame(oldItem: ExploreResponseBody, newItem: ExploreResponseBody): Boolean {
-            return oldItem.name == newItem.name
+            return oldItem == newItem
         }
 
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
-        recyclerView?.adapter = null
+        recyclerView.adapter = null
     }
 
     override fun onResume() {
@@ -98,6 +106,10 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext {
         val intent =Intent(context, VideoListActivity::class.java)
         intent.putExtra("title", title)
         startActivity(intent)
+    }
+
+    override fun onRefresh() {
+        exploreViewModel.refresh()
     }
 
 }

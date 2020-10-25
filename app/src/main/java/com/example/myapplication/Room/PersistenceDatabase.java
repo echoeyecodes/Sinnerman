@@ -4,14 +4,12 @@ import android.content.Context;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-import com.example.myapplication.Models.CommentModel;
-import com.example.myapplication.Models.UserModel;
-import com.example.myapplication.Models.VideoModel;
+import com.example.myapplication.Models.*;
 import com.example.myapplication.Room.Dao.CommentDao;
 import com.example.myapplication.Room.Dao.UserDao;
 import com.example.myapplication.Room.Dao.VideoDao;
 
-@Database(entities = {CommentModel.class, UserModel.class, VideoModel.class}, version = 3)
+@Database(entities = {UserModel.class, CommentModel.class, VideoModel.class}, version = 1)
 public abstract class PersistenceDatabase extends RoomDatabase {
     private static PersistenceDatabase database;
     public abstract CommentDao commentDao();

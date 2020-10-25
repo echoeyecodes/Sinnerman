@@ -16,7 +16,7 @@ class LoginViewModel : AuthViewModel() {
     }
 
     private suspend fun login() : Unit = withContext(IO){
-        val userModel = UserModel(form_fields["username"], form_fields["password"])
+        val userModel = UserModel(form_fields["username"]!!, form_fields["password"]!!)
         val call = authDao.login(userModel)
 
         try {

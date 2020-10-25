@@ -1,20 +1,22 @@
 package com.example.myapplication.Utils
 
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class CustomScrollListener : RecyclerView.OnScrollListener() {
+class CustomScrollListener(private val fetchMore: () -> Unit) : RecyclerView.OnScrollListener(){
 
-    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-        super.onScrolled(recyclerView, dx, dy)
+    override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+        if(newState == RecyclerView.SCROLL_STATE_IDLE){
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
 
-        val layoutManager = (recyclerView.layoutManager) as LinearLayoutManager
+            val totalItems = layoutManager.itemCount
+            val visibleItems = layoutManager.childCount
+            val firstItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-        val totalItemCount = layoutManager.itemCount
-        val visibleCount = layoutManager.childCount
-        val firstItemPosition = layoutManager.findFirstVisibleItemPosition()
-
-//        if(firstItemPosition > 0 && totalItemCount)
-
+            if((firstItemPosition + visibleItems) >= totalItems && firstItemPosition > 0){
+                fetchMore.invoke()
+            }
+        }
     }
 }

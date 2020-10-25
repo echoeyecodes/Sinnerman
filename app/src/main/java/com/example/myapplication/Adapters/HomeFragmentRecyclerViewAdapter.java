@@ -25,7 +25,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.io.Serializable;
 
-public class HomeFragmentRecyclerViewAdapter extends PagingDataAdapter<VideoResponseBody, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
+public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBody, HomeFragmentRecyclerViewAdapter.HomeFragmentRecyclerViewItemViewHolder> implements Serializable {
     private final MainActivityContext mainActivityContext;
     private final Context context;
     private HomeFragmentRecyclerViewItemViewHolder homeFragmentRecyclerViewItemViewHolder;

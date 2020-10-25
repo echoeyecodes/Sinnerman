@@ -13,7 +13,7 @@ class SignUpViewModel : AuthViewModel() {
     }
 
     private suspend fun createAccount() : Unit = withContext(Dispatchers.IO){
-        val userModel = UserModel(form_fields["firstname"].plus(" ").plus(form_fields["lastname"]), form_fields["username"], form_fields["email"], form_fields["password"], "")
+        val userModel = UserModel(form_fields["firstname"].plus(" ").plus(form_fields["lastname"]), form_fields["username"]!!, form_fields["email"]!!, form_fields["password"]!!)
         val call = authDao.createUser(userModel)
 
         try {
