@@ -85,7 +85,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
                 adjustPlayerViewMargins(0);
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             } else {
-                adjustPlayerViewMargins(getNavigationBarHeight());
+                adjustPlayerViewMargins(0);
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
         });

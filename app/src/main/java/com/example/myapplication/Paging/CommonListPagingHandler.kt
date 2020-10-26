@@ -3,6 +3,7 @@ package com.example.myapplication.Paging
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.viewmodel.NetworkState
 import kotlinx.coroutines.*
 import java.io.IOException
@@ -16,9 +17,11 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
 
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            networkStatus.postValue(NetworkState.LOADING)
-            load()
+        viewModelScope.launch {
+            CoroutineScope(Dispatchers.IO).launch {
+                networkStatus.postValue(NetworkState.LOADING)
+                load()
+            }
         }
     }
 
@@ -47,6 +50,7 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
 
     private fun resetState() {
         networkStatus.postValue(NetworkState.IDLE)
+        isRunning = false
     }
 
     abstract suspend fun fetchList(): List<T>

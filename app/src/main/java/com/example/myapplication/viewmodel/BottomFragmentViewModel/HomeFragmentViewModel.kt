@@ -31,8 +31,10 @@ class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<
     }
 
     override suspend fun initialize() {
-        roomDao.deleteVideoAndUsers()
-        super.initialize()
+        viewModelScope.launch(coroutineContext) {
+            roomDao.deleteVideoAndUsers()
+            super.initialize()
+        }
     }
 
 

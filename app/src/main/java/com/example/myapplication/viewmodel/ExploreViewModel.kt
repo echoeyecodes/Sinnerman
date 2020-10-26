@@ -19,12 +19,16 @@ class ExploreViewModel(application: Application) : CommonListPagingHandler<Explo
 
 
     override suspend fun initialize() {
-        categories.postValue(null)
-        super.initialize()
+        viewModelScope.launch(coroutineContext) {
+            categories.postValue(null)
+            super.initialize()
+        }
     }
 
     override suspend fun fetchList(): List<ExploreResponseBody> {
-        return videoDao.fetchExplore("5", state.size.toString())
+        return withContext(coroutineContext){
+            videoDao.fetchExplore("5", state.size.toString())
+        }
     }
 
     override suspend fun onDataReceived(result: List<ExploreResponseBody>) {

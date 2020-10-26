@@ -1,6 +1,7 @@
 package com.example.myapplication.viewmodel.authViewModel
 
 import android.app.Application
+import android.util.Log
 import com.example.myapplication.API.ApiUtils.RequestStatus
 import com.example.myapplication.Models.UserModel
 import kotlinx.coroutines.*
@@ -14,7 +15,11 @@ class SignUpViewModel(application: Application) : AuthViewModel(application) {
     }
 
     private suspend fun createAccount() : Unit = withContext(Dispatchers.IO){
-        val userModel = UserModel(form_fields["firstname"].plus(" ").plus(form_fields["lastname"]), form_fields["username"]!!, form_fields["email"]!!, form_fields["password"]!!)
+        val userModel = UserModel()
+        userModel.email =form_fields["email"]!!
+        userModel.password= form_fields["password"]!!
+        userModel.username= form_fields["username"]!!
+        userModel.fullname= form_fields["firstname"].plus(" ").plus(form_fields["lastname"])
         val call = authDao.createUser(userModel)
 
         try {
@@ -32,6 +37,7 @@ class SignUpViewModel(application: Application) : AuthViewModel(application) {
 
             }else{
                 if(response.errorBody() != null){
+                    Log.d("CARRR", response.errorBody()!!.string())
                     message = response.errorBody()!!.string()
                 }
                 requestStatusObserver.postValue(RequestStatus.ERROR)

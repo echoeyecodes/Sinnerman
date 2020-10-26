@@ -12,7 +12,7 @@ data class UserModel(@PrimaryKey
                     @NonNull
                      @ColumnInfo(name = "user_id")
                      var id: String,
-                     val email: String,
+                     var email: String,
                      var password: String,
                      var username: String,
                      var fullname: String,
