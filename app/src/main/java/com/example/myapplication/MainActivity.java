@@ -20,8 +20,7 @@ import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 import com.example.myapplication.BottomNavigationFragments.NotificationFragment;
 import com.example.myapplication.Activities.VideoActivity;
 import com.example.myapplication.Interface.MainActivityContext;
-import com.example.myapplication.Models.UserModel;
-import com.example.myapplication.Utils.AuthUser;
+import com.example.myapplication.Utils.AuthUserManager;
 import com.example.myapplication.Utils.AuthenticationManager;
 import com.example.myapplication.viewmodel.MainActivityViewModel;
 import com.example.myapplication.util.BottomNavigationHandler;
@@ -31,13 +30,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MainActivityContext, BottomNavigationView.OnNavigationItemSelectedListener, FragmentManager.OnBackStackChangedListener {
-    private BottomNavigationHandler bottomNavigationHandler;
     private MainActivityViewModel mainActivityViewModel;
     private BottomNavigationView bottomNavigationView;
     private TextView search_btn;
     private RootBottomFragment active_fragment;
     private ImageView user_profile;
-    private AuthUser authUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,55 +42,57 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
 
         mainActivityViewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
 
-
-        //You might wanna remove this observer after authentication
-        mainActivityViewModel.getIsLoaded().observe(this, (loaded) ->{
-            if(loaded){
-                boolean cacheExists = authUser.dataExists(this);
-                if(!cacheExists){
-                    createUserCache();
-                }else{
-                    beginActivity();
-                }
-            }
-        });
-
         AuthenticationManager authenticationManager = new AuthenticationManager();
-        authUser = new AuthUser();
 
         String token = authenticationManager.checkToken(this);
-        if(token == null || token.equals("")){
+        if (token == null || token.equals("")) {
             authenticationManager.startAuthActivity(this);
-        }else {
-            mainActivityViewModel.updateCurrentUser();
+        } else {
+            beginActivity();
         }
+
+
+        mainActivityViewModel.getIsLoaded().observe(this, (value) ->{
+            if(value){
+                initUserData();
+            }
+        });
     }
 
-    private void createUserCache(){
-        UserModel user = mainActivityViewModel.getUserModel();
-        AuthUser authUser = new AuthUser(user.getId(), user.getFullname(), user.getProfile_url(), user.getUsername());
-        authUser.saveUser(this, authUser);
+
+    public void initUserData() {
+        if(!userExists()){
+            mainActivityViewModel.updateCurrentUser();
+            return;
+        }
+        //load user data into toolbar here
     }
 
-    public void beginActivity(){
+    public Boolean userExists(){
+        AuthUserManager authUserManager = AuthUserManager.getInstance();
+        return authUserManager.dataExists(this);
+    }
+
+    public void beginActivity() {
         setContentView(R.layout.activity_main);
+
+        initUserData();
         initViews();
     }
 
-    private void initViews(){
+    private void initViews() {
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         user_profile = findViewById(R.id.user_profile_btn);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
-        bottomNavigationHandler = new ViewModelProvider(this).get(BottomNavigationHandler.class);
         search_btn = findViewById(R.id.search_input_button);
 
         search_btn.setOnClickListener(v -> {
             startActivity(new Intent(this, SearchActivity.class));
         });
 
-        user_profile.setOnClickListener(v ->{
+        user_profile.setOnClickListener(v -> {
             startActivity(new Intent(this, ProfileActivity.class));
         });
 
@@ -112,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
             fragmentTransaction.replace(R.id.bottom_navigation_fragment_container, fragment, fragment.getTAG());
         }
 
-        if(active_fragment == null || !fragment.getTAG().equals(active_fragment.getTAG())){
+        if (active_fragment == null || !fragment.getTAG().equals(active_fragment.getTAG())) {
             fragmentTransaction.addToBackStack(null);
         }
         active_fragment = fragment;
@@ -182,9 +181,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     @Override
     public void onBackStackChanged() {
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
-        Fragment fragment = fragments.get(fragments.size() -1);
-        if(fragment instanceof RootBottomFragment){
-            active_fragment  = (RootBottomFragment) fragment;
+        Fragment fragment = fragments.get(fragments.size() - 1);
+        if (fragment instanceof RootBottomFragment) {
+            active_fragment = (RootBottomFragment) fragment;
         }
     }
 }

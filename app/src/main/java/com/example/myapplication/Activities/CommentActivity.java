@@ -1,7 +1,6 @@
 package com.example.myapplication.Activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.annotation.NonNull;
@@ -16,7 +15,6 @@ import com.example.myapplication.Interface.CommentActivityListener;
 import com.example.myapplication.Models.CommentModel;
 import com.example.myapplication.Models.CommentResponseBody;
 import com.example.myapplication.R;
-import com.example.myapplication.Utils.AuthUser;
 import com.example.myapplication.viewmodel.CommentActivityViewModel;
 import com.example.myapplication.viewmodel.NetworkState;
 import com.google.android.material.textfield.TextInputEditText;
@@ -52,10 +50,6 @@ private TextInputEditText comment_field;
         back_button = toolbar.findViewById(R.id.sub_activity_back_btn);
         toolbar_title.setText("Comments");
 
-        AuthUser authUser = new AuthUser().getUser(this);
-        if(authUser != null){
-            Log.d("CARRR", authUser.getProfile_url());
-        }
 
         back_button.setOnClickListener(v -> super.onBackPressed());
 

@@ -28,13 +28,6 @@ public class ApiClient{
         init();
     }
 
-    public static ApiClient getInstance(){
-        if(apiClient == null){
-          apiClient = new ApiClient();
-        }
-        return apiClient;
-    }
-
     public static ApiClient getInstance(Context ctx){
         if(apiClient == null){
             apiClient = new ApiClient(ctx);
@@ -50,10 +43,8 @@ public class ApiClient{
             Request originalRequest = chain.request();
             Request.Builder builder = originalRequest.newBuilder().header("x-api-key", "123456789").header("Content-Type", "application/json");
 
-            if(context != null){
-                String token = new AuthenticationManager().checkToken(context);
-                builder.header("token", token);
-            }
+            String token = new AuthenticationManager().checkToken(context);
+            builder.header("token", token);
 
             return chain.proceed(builder.build());
         });

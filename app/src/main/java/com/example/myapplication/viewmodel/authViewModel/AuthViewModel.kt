@@ -1,5 +1,7 @@
 package com.example.myapplication.viewmodel.authViewModel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.API.ApiUtils.ApiClient
@@ -9,9 +11,9 @@ import com.example.myapplication.Utils.FieldErrorStatus
 
 import java.util.HashMap
 
-open class AuthViewModel : ViewModel() {
+open class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val requestStatusObserver = MutableLiveData<RequestStatus>()
-    val apiClient = ApiClient.getInstance()
+    val apiClient = ApiClient.getInstance(application.applicationContext)
     val authDao: AuthDao = apiClient.getClient(AuthDao::class.java)
 
     var isValid = true

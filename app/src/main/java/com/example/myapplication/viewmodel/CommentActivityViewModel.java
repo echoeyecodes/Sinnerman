@@ -20,7 +20,7 @@ import com.example.myapplication.Models.UserModel;
 import com.example.myapplication.Room.Dao.CommentDao;
 import com.example.myapplication.Room.Dao.UserDao;
 import com.example.myapplication.Room.PersistenceDatabase;
-import com.example.myapplication.Utils.AuthUser;
+import com.example.myapplication.Utils.AuthUserManager;
 import com.example.myapplication.util.AppHandlerThread;
 import org.jetbrains.annotations.NotNull;
 import retrofit2.Call;
@@ -125,12 +125,7 @@ public class CommentActivityViewModel extends AndroidViewModel {
             this.persist_user_dao = persist_user_dao;
             this.persist_comment_dao = persist_comment_dao;
 
-            AuthUser authUser = new AuthUser().getUser(commentActivityViewModel.getApplication());
-            currentUser = new UserModel();
-            currentUser.setUsername(authUser.getUsername());
-            currentUser.setProfile_url(authUser.getProfile_url());
-            currentUser.setFullname(authUser.getName());
-            currentUser.setId(authUser.getId());
+            this.currentUser = AuthUserManager.getInstance().getUser(commentActivityViewModel.getApplication());
         }
 
         public void fetchComments(String id){

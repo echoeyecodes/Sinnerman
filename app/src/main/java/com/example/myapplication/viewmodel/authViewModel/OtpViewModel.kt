@@ -1,5 +1,6 @@
 package com.example.myapplication.viewmodel.authViewModel
 
+import android.app.Application
 import android.util.Log
 import com.example.myapplication.API.ApiUtils.RequestStatus
 import com.example.myapplication.Models.OtpModel
@@ -14,7 +15,7 @@ import retrofit2.Response
 
 import java.io.IOException
 
-class OtpViewModel : AuthViewModel() {
+class OtpViewModel(application: Application) : AuthViewModel(application) {
 
     init {
         initRequiredFields("otp")

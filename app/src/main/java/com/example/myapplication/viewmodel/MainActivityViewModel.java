@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.myapplication.API.ApiUtils.ApiClient;
 import com.example.myapplication.API.DAO.UserDao;
 import com.example.myapplication.Models.UserModel;
+import com.example.myapplication.Utils.AuthUserManager;
 import com.example.myapplication.util.AppHandlerThread;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -42,7 +43,8 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     private void setCurrentUser(UserModel user){
         this.userModel = user;
-        isLoaded.postValue(true);
+        AuthUserManager authUserManager = AuthUserManager.getInstance();
+        authUserManager.saveUser(this, this.userModel);
     }
 
     public MutableLiveData<Boolean> getIsLoaded() {

@@ -1,12 +1,13 @@
 package com.example.myapplication.viewmodel.authViewModel
 
+import android.app.Application
 import com.example.myapplication.API.ApiUtils.RequestStatus
 import com.example.myapplication.Models.UserModel
 import kotlinx.coroutines.*
 
 import java.io.IOException
 
-class SignUpViewModel : AuthViewModel() {
+class SignUpViewModel(application: Application) : AuthViewModel(application) {
 
     init{
         initRequiredFields("username", "password", "firstname", "lastname", "email")
