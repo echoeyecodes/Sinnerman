@@ -10,7 +10,8 @@ import java.io.IOException
 abstract class CommonListPagingHandler<T>(application: Application) : AndroidViewModel(application){
 
     var hasMore = true
-    val networkStatus = MutableLiveData<NetworkState>()
+    var isRunning= false
+    val networkStatus = MutableLiveData<NetworkState>(NetworkState.IDLE)
     var state = ArrayList<T>()
 
 
@@ -21,7 +22,10 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
         }
     }
 
-    abstract suspend fun initialize()
+    open suspend fun initialize(){
+        state.clear()
+        state = java.util.ArrayList();
+    }
 
     private suspend fun load(){
         withContext(Dispatchers.IO){
@@ -32,7 +36,7 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
 
     fun fetchMore(state: NetworkState){
         networkStatus.postValue(state)
-        if(hasMore){
+        if(hasMore && !isRunning){
             CoroutineScope(Dispatchers.IO).launch{
                 async { fetchData() }.await()
             }
@@ -48,6 +52,7 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
     abstract suspend fun fetchList(): List<T>
 
     suspend fun fetchData(){
+        isRunning = true
         try{
             val result = fetchList()
             state.addAll(result)
@@ -55,13 +60,15 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
             if(result.isEmpty() || result.size < 5){
                 hasMore = false
             }
-            networkStatus.postValue(NetworkState.SUCCESS)
         }catch (error: IOException){
             networkStatus.postValue(NetworkState.ERROR)
         }
+        isRunning = false
     }
 
-    abstract suspend fun onDataReceived(result: List<T>)
+    open suspend fun onDataReceived(result: List<T>){
+        networkStatus.postValue(NetworkState.SUCCESS)
+    }
 
     fun refresh(){
         CoroutineScope(Dispatchers.IO).launch {

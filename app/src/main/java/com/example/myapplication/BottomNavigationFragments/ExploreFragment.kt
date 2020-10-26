@@ -2,6 +2,7 @@ package com.example.myapplication.BottomNavigationFragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,17 +17,19 @@ import com.example.myapplication.Adapters.ExploreAdapter
 import com.example.myapplication.Interface.ExploreFragmentContext
 import com.example.myapplication.MainActivity
 import com.example.myapplication.Models.ExploreResponseBody
+import com.example.myapplication.Models.VideoResponseBody
 import com.example.myapplication.R
 import com.example.myapplication.RootBottomFragment
 import com.example.myapplication.Utils.CustomScrollListener
 import com.example.myapplication.viewmodel.ExploreViewModel
+import com.example.myapplication.viewmodel.NetworkState
 
 
 class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefreshLayout.OnRefreshListener{
     private lateinit var recyclerView : RecyclerView
     private lateinit var linearLayoutManager : LinearLayoutManager
     private lateinit var exploreViewModel: ExploreViewModel
-    private var exploreAdapter : ExploreAdapter? = null
+    private lateinit var exploreAdapter : ExploreAdapter
     private lateinit var swipeRefreshLayout : SwipeRefreshLayout
 
     init{
@@ -57,7 +60,7 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
 
         recyclerView.layoutManager = linearLayoutManager
         exploreAdapter = ExploreAdapter(
-                context = context!!,
+                exploreFragment = this,
                 navigateToMore =  this::navigateToVideoListActivity,
                 navigateToVideo = mainActivity::navigateToVideos,
                 itemCallback = ExploreResponseItemCallback())
@@ -65,14 +68,20 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
         recyclerView.adapter = exploreAdapter
 
         exploreViewModel.categories.observe(viewLifecycleOwner, Observer<List<ExploreResponseBody>> { value ->
-            exploreAdapter?.submitList(value)
+            exploreAdapter.submitList(value)
         })
 
-        exploreViewModel.isRefreshing.observe(viewLifecycleOwner, Observer<Boolean> {value ->
-            swipeRefreshLayout.isRefreshing = value
+        exploreViewModel.networkStatus.observe(viewLifecycleOwner, Observer<NetworkState> { state ->
+            if(state == NetworkState.LOADING || state == NetworkState.ERROR){
+                val originalList = ArrayList<ExploreResponseBody?>(exploreViewModel.state)
+                originalList.add(null)
+                exploreAdapter.submitList(originalList)
+                exploreAdapter.onNetworkStateChanged(state)
+            }
+            swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
         })
 
-        recyclerView.addOnScrollListener(CustomScrollListener(fetchMore = exploreViewModel::fetchMore))
+        recyclerView.addOnScrollListener(CustomScrollListener(fetchMore = this::fetchMore))
     }
 
     inner class ExploreResponseItemCallback : DiffUtil.ItemCallback<ExploreResponseBody>() {
@@ -87,9 +96,8 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
 
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        recyclerView.adapter = null
+    fun fetchMore(){
+        exploreViewModel.fetchMore(NetworkState.LOADING);
     }
 
     override fun onResume() {
@@ -97,9 +105,8 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
         mainActivityContext.setActiveBottomViewFragment(1)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        exploreAdapter?.resetRecyclerStates()
+    fun retry(){
+        exploreViewModel.retry()
     }
 
     override fun navigateToVideoListActivity(title: String?) {

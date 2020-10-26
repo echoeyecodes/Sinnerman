@@ -1,5 +1,6 @@
 package com.example.myapplication.viewmodel.authViewModel
 
+import android.app.Application
 import android.util.Log
 import com.example.myapplication.API.ApiUtils.RequestStatus
 import com.example.myapplication.Models.UserModel
@@ -9,7 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
-class LoginViewModel : AuthViewModel() {
+class LoginViewModel(application: Application) : AuthViewModel(application) {
 
     init{
        initRequiredFields("username", "password")

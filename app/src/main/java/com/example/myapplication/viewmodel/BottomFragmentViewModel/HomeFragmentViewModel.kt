@@ -1,6 +1,7 @@
 package com.example.myapplication.viewmodel.BottomFragmentViewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.*
 import com.example.myapplication.API.ApiUtils.ApiClient
@@ -13,10 +14,11 @@ import com.example.myapplication.viewmodel.NetworkState
 import kotlinx.coroutines.*
 import java.io.IOException
 import java.util.ArrayList
+import kotlin.coroutines.coroutineContext
 
 class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<VideoResponseBody>(application) {
-    private val videoDao: VideosDao = ApiClient.getInstance(application).getClient(VideosDao::class.java)
-    val roomDao: VideoDao = PersistenceDatabase.getInstance(application).videoDao()
+    private val videoDao: VideosDao = ApiClient.getInstance(application.applicationContext).getClient(VideosDao::class.java)
+    val roomDao: VideoDao = PersistenceDatabase.getInstance(application.applicationContext).videoDao()
 
 
     fun insertUpdateToVideoList(item: VideoResponseBody) {
@@ -30,8 +32,7 @@ class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<
 
     override suspend fun initialize() {
         roomDao.deleteVideoAndUsers()
-        state.clear()
-        state = ArrayList();
+        super.initialize()
     }
 
 
@@ -40,6 +41,10 @@ class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<
     }
 
     override suspend fun onDataReceived(result: List<VideoResponseBody>) {
-        roomDao.insertVideoAndUsers(result)
+        withContext(coroutineContext){
+            async { roomDao.insertVideoAndUsers(result) }.await()
+            super.onDataReceived(result)
+        }
     }
+
 }

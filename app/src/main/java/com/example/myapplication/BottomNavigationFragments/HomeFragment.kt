@@ -64,7 +64,6 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
 
         recyclerView.adapter = adapter
 
-
         viewModel.roomDao.getVideos().observe(viewLifecycleOwner, Observer<List<VideoResponseBody>> { videos ->
             adapter?.submitList(videos)
         })

@@ -7,62 +7,31 @@ import com.example.myapplication.API.ApiUtils.ApiClient
 import com.example.myapplication.API.DAO.VideosDao
 import com.example.myapplication.Models.ExploreResponseBody
 import com.example.myapplication.Models.VideoResponseBody
+import com.example.myapplication.Paging.CommonListPagingHandler
 import kotlinx.coroutines.*
 import java.io.IOException
 import kotlin.coroutines.coroutineContext
 
-class ExploreViewModel(application: Application) : AndroidViewModel(application) {
+class ExploreViewModel(application: Application) : CommonListPagingHandler<ExploreResponseBody>(application) {
 
-    private val videoDao: VideosDao = ApiClient.getInstance(application).getClient(VideosDao::class.java)
-    var hasMore = true
-    var isRefreshing = MutableLiveData<Boolean>(false)
-    var data = ArrayList<ExploreResponseBody>()
+    private val videoDao: VideosDao = ApiClient.getInstance(application.applicationContext).getClient(VideosDao::class.java)
     var categories: MutableLiveData<List<ExploreResponseBody>> = MutableLiveData()
 
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-            load()
+
+    override suspend fun initialize() {
+        categories.postValue(null)
+        super.initialize()
+    }
+
+    override suspend fun fetchList(): List<ExploreResponseBody> {
+        return videoDao.fetchExplore("5", state.size.toString())
+    }
+
+    override suspend fun onDataReceived(result: List<ExploreResponseBody>) {
+        withContext(coroutineContext){
+         async { categories.postValue(ArrayList(result)) }.await()
+            super.onDataReceived(result)
         }
     }
 
-    private suspend fun load() {
-        withContext(Dispatchers.IO) {
-            async { data.clear() }.await()
-            async { fetchMore() }.await()
-        }
-    }
-
-    fun fetchMore() {
-        if (hasMore) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val offset = data.size.toString()
-                async { fetchData(offset) }.await()
-            }
-        }
-    }
-
-    suspend fun fetchData(offset: String) {
-        try {
-            val result = videoDao.fetchExplore("5", offset)
-            data.addAll(result)
-            val newData = ArrayList(data)
-            if (result.isEmpty()) {
-                hasMore = false
-            }
-            categories.postValue(newData)
-        } catch (exception: IOException) {
-            exception.printStackTrace()
-        } finally {
-            isRefreshing.postValue(false)
-        }
-    }
-
-
-    fun refresh() {
-        CoroutineScope(Dispatchers.IO).launch {
-            isRefreshing.postValue(true)
-            hasMore = true
-            load()
-        }
-    }
 }
