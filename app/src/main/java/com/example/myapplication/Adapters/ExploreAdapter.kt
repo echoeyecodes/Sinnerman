@@ -31,8 +31,8 @@ class ExploreAdapter(private val exploreFragment: ExploreFragment, private val n
         return ExploreViewHolder(view, this)
     }
 
-    fun onNetworkStateChanged(netState: NetworkState) {
-        this.networkState = netState
+    override fun onNetworkStateChanged(networkState: NetworkState) {
+        this.networkState = networkState
     }
 
     override fun onBindViewHolder(holder: ExploreViewHolder, position: Int) {

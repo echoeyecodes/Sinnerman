@@ -52,7 +52,8 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
         return new HomeFragmentRecyclerViewItemViewHolder(view, this);
     }
 
-    public void onNetworkStateChanged(NetworkState netState) {
+    @Override
+    public void onNetworkStateChanged(@NonNull NetworkState netState) {
         this.networkState = netState;
     }
 
