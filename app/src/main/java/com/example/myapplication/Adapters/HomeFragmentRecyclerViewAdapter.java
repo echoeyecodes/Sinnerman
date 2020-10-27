@@ -81,8 +81,7 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
             viewHolder.author.setText(videoResponseBody.getUser().getUsername().concat(" \u2022 ").concat(String.valueOf(videoResponseBody.getVideo().getViews()).concat(" views")).concat(" \u2022 ").concat(timestamp));
 
             viewHolder.linearLayout.setOnClickListener(v -> {
-//                        mainActivityContext.navigateToVideos(videoResponseBody.getVideo().getId());
-                homeFragment.doSomething(videoResponseBody);
+                mainActivityContext.navigateToVideos(videoResponseBody.getVideo().getId());
             });
     }
 
