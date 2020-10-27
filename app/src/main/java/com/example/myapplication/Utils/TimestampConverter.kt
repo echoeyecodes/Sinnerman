@@ -1,6 +1,7 @@
 package com.example.myapplication.Utils
 
 import android.annotation.SuppressLint
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.time.Duration
 import java.time.Instant
@@ -32,13 +33,13 @@ class TimestampConverter {
             days >= 1 -> {
                 "$days days ago"
             }
-            hours >= 1 -> {
+            hours in 1..24 -> {
                 "$hours hours ago"
             }
-            minutes >= 1 -> {
+            minutes in 1..60 -> {
                 "$minutes minutes ago"
             }
-            seconds > 0 -> {
+            seconds in 0..60 -> {
                 "a few seconds ago"
             }
             else -> {
