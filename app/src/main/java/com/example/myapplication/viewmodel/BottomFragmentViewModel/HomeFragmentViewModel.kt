@@ -1,6 +1,9 @@
 package com.example.myapplication.viewmodel.BottomFragmentViewModel
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.media.MediaMetadataRetriever
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.*
@@ -10,10 +13,16 @@ import com.example.myapplication.Models.VideoResponseBody
 import com.example.myapplication.Paging.CommonListPagingHandler
 import com.example.myapplication.Room.Dao.VideoDao
 import com.example.myapplication.Room.PersistenceDatabase
+import com.example.myapplication.Utils.TimestampConverter
 import com.example.myapplication.viewmodel.NetworkState
 import kotlinx.coroutines.*
 import java.io.IOException
-import java.util.ArrayList
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.Instant
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.coroutines.coroutineContext
 
 class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<VideoResponseBody>(application) {
@@ -43,10 +52,9 @@ class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<
     }
 
     override suspend fun onDataReceived(result: List<VideoResponseBody>) {
-        withContext(coroutineContext){
-            async { roomDao.insertVideoAndUsers(result) }.await()
+        withContext(coroutineContext) {
+            async { roomDao.insertVideoAndUsers(ArrayList(result)) }.await()
             super.onDataReceived(result)
         }
     }
-
 }

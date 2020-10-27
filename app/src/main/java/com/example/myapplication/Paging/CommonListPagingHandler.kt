@@ -18,7 +18,7 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
 
     init {
         viewModelScope.launch {
-            CoroutineScope(Dispatchers.IO).launch {
+            withContext(Dispatchers.IO) {
                 networkStatus.postValue(NetworkState.LOADING)
                 load()
             }
@@ -75,7 +75,7 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
     }
 
     fun refresh(){
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch {
             networkStatus.postValue(NetworkState.REFRESHING)
             hasMore = true
             load()
