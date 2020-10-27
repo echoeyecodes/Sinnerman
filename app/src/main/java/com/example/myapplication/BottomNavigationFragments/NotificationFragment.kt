@@ -5,21 +5,29 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.myapplication.Adapters.NotificationsAdapter
+import com.example.myapplication.Interface.NotificationFragmentListener
 import com.example.myapplication.MainActivity
-import com.example.myapplication.Models.NotificationModel
+import com.example.myapplication.Models.UploadNotificationModel
 import com.example.myapplication.R
 import com.example.myapplication.RootBottomFragment
 import com.example.myapplication.Utils.CustomItemDecoration
 import com.example.myapplication.Utils.IntegerToDp
+import com.example.myapplication.viewmodel.BottomFragmentViewModel.NotificationViewModel
+import com.example.myapplication.viewmodel.NetworkState
 
 
-class NotificationFragment : RootBottomFragment() {
+class NotificationFragment : RootBottomFragment(), NotificationFragmentListener, SwipeRefreshLayout.OnRefreshListener {
     private var recyclerView: RecyclerView? = null
-
+    private lateinit var swipeRefreshLayout:SwipeRefreshLayout
+    private lateinit var notificationViewModel: NotificationViewModel
+    private lateinit var adapter: NotificationsAdapter
      init{
          TAG ="NOTIFICATION_FRAGMENT"
      }
@@ -31,7 +39,7 @@ class NotificationFragment : RootBottomFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_library, container, false)
+        return inflater.inflate(R.layout.fragment_notification, container, false)
     }
 
     override fun onAttach(context : Context) {
@@ -49,28 +57,55 @@ class NotificationFragment : RootBottomFragment() {
     override fun onViewCreated( view : View, savedInstanceState : Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        notificationViewModel = ViewModelProvider(requireActivity()).get(NotificationViewModel::class.java)
+
         recyclerView = view.findViewById(R.id.fragment_notifications_recycler_view)
+        swipeRefreshLayout = view.findViewById(R.id.swipe_refresh)
         val notificationItemCallback = NotificationItemCallback()
 
         recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        val adapter = NotificationsAdapter(notificationItemCallback, mainActivityContext)
+        adapter = NotificationsAdapter(context, notificationItemCallback, mainActivityContext, this)
         recyclerView?.addItemDecoration( CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)))
         recyclerView?.adapter = adapter
+
+        swipeRefreshLayout.setOnRefreshListener(this)
+
+        notificationViewModel.networkStatus.observe(viewLifecycleOwner, Observer<NetworkState> { state ->
+            if(state == NetworkState.LOADING || state == NetworkState.ERROR){
+                val originalList = ArrayList<UploadNotificationModel?>(notificationViewModel.state)
+                originalList.add(null)
+                adapter.submitList(originalList)
+                adapter.onNetworkStateChanged(state)
+            }
+            swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
+        })
+
+        notificationViewModel.roomDao.getUploadNotifications().observe(viewLifecycleOwner, Observer<List<UploadNotificationModel>> { notification ->
+            adapter.submitList(notification)
+        })
     }
 
-    inner class NotificationItemCallback : DiffUtil.ItemCallback<NotificationModel>(){
+    inner class NotificationItemCallback : DiffUtil.ItemCallback<UploadNotificationModel>(){
 
-        override fun areItemsTheSame( oldItem : NotificationModel, newItem : NotificationModel) : Boolean {
-            return oldItem.id.equals(newItem.id)
+        override fun areItemsTheSame( oldItem : UploadNotificationModel, newItem : UploadNotificationModel) : Boolean {
+            return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem : NotificationModel, newItem : NotificationModel) : Boolean{
-            return oldItem.title == newItem.title
+        override fun areContentsTheSame(oldItem : UploadNotificationModel, newItem : UploadNotificationModel) : Boolean{
+            return oldItem.message == newItem.message
         }
     }
 
     override fun onResume() {
         super.onResume()
         mainActivityContext.setActiveBottomViewFragment(2)
+    }
+
+    override fun retry() {
+        notificationViewModel.retry()
+    }
+
+    override fun onRefresh() {
+        notificationViewModel.refresh()
     }
 }

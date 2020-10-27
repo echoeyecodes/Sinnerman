@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
               android:gravity="center_vertical"
               android:layout_height="wrap_content">
 
+    <LinearLayout
+            android:id="@+id/notification_item"
+                  android:orientation="horizontal"
+                  android:layout_width="match_parent"
+                  android:gravity="center_vertical"
+                  android:layout_height="wrap_content">
+
     <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/notification_author"
             android:layout_width="30dp"
             android:layout_height="30dp"
     />
@@ -18,6 +26,7 @@
             android:layout_marginHorizontal="10dp"
     >
         <TextView
+                android:id="@+id/notification_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="A mod uploaded: Here's my new favorite scene from the movie - Apple"
@@ -27,6 +36,7 @@
         />
 
         <TextView
+                android:id="@+id/notification_timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="11 hours ago"
@@ -38,8 +48,12 @@
     </LinearLayout>
 
     <ImageView
-            android:id="@+id/notifications_thumbnail"
+            android:id="@+id/notification_thumbnail"
             android:layout_width="80dp"
             android:layout_height="50dp"
+            android:scaleType="centerCrop"
     />
+
+    <include android:id="@+id/loading_layout" layout="@layout/layout_loading" />
 </LinearLayout>
+</FrameLayout>
