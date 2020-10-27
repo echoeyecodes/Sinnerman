@@ -14,7 +14,7 @@ class DurationConverter {
             val formatted_seconds = "0".plus((new_duration%60).toInt())
 
             val minutes = formatted_minutes.substring(formatted_minutes.length - 2)
-            val seconds = formatted_minutes.substring(formatted_seconds.length - 2)
+            val seconds = formatted_seconds.substring(formatted_seconds.length - 2)
 
             "$minutes:$seconds"
         }else{
