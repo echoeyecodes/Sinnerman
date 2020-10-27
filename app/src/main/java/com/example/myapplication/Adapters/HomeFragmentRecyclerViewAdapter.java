@@ -23,6 +23,7 @@ import com.example.myapplication.Models.VideoResponseBody;
 import com.example.myapplication.Paging.CommonListPagingListeners;
 import com.example.myapplication.Paging.CommonListPagingViewHolder;
 import com.example.myapplication.R;
+import com.example.myapplication.Utils.TimestampConverter;
 import com.example.myapplication.viewmodel.NetworkState;
 import com.google.android.material.button.MaterialButton;
 import com.squareup.picasso.Picasso;
@@ -73,7 +74,8 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
             Glide.with(context).load(Uri.parse(videoResponseBody.getUser().getProfile_url())).into(viewHolder.author_image);
 
             viewHolder.title.setText(videoResponseBody.getVideo().getTitle());
-            viewHolder.author.setText(videoResponseBody.getUser().getUsername().concat(" ~ ").concat(String.valueOf(videoResponseBody.getVideo().getViews()).concat(" views")));
+            String timestamp = TimestampConverter.Companion.getInstance().convertToTimeDifference(videoResponseBody.getVideo().getCreatedAt());
+            viewHolder.author.setText(videoResponseBody.getUser().getUsername().concat(" \u2022 ").concat(String.valueOf(videoResponseBody.getVideo().getViews()).concat(" views")).concat(" \u2022 ").concat(timestamp));
 
             viewHolder.linearLayout.setOnClickListener(v -> {
 //                        mainActivityContext.navigateToVideos(videoResponseBody.getVideo().getId());
