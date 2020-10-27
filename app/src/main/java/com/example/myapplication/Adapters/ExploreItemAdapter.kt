@@ -1,26 +1,27 @@
 package com.example.myapplication.Adapters;
 
 import android.content.Context
-import android.content.res.Resources;
-import android.net.Uri;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.*;
-
-import androidx.cardview.widget.CardView;
-import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.*;
+import android.content.res.Resources
+import android.net.Uri
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.myapplication.Models.VideoResponseBody;
-import com.example.myapplication.R;
-import com.squareup.picasso.Picasso;
+import com.example.myapplication.Models.VideoResponseBody
+import com.example.myapplication.R
+import com.example.myapplication.Utils.DurationConverter
+import com.example.myapplication.Utils.TimestampConverter
 import de.hdodenhof.circleimageview.CircleImageView
+import java.io.Serializable
 
-import java.io.Serializable;
-
- class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>, private val context: Context, private val navigate: (String) -> Unit) : ListAdapter<VideoResponseBody, ExploreItemAdapter.CustomViewHolder>(itemCallback), Serializable {
+class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>, private val context: Context, private val navigate: (String) -> Unit) : ListAdapter<VideoResponseBody, ExploreItemAdapter.CustomViewHolder>(itemCallback), Serializable {
 
      companion object{
          const val PRIMARY = 0
@@ -45,6 +46,10 @@ import java.io.Serializable;
             Glide.with(context).load(Uri.parse(videoResponseBody.user.profile_url)).into(holder.author_image);
             holder.title.text = videoResponseBody.video.title
             holder.author.text = videoResponseBody.user.fullname
+
+            holder.duration.text = DurationConverter.getInstance().convertToDuration(videoResponseBody.video.duration)
+            val timestamp = TimestampConverter.getInstance().convertToTimeDifference(videoResponseBody.video.createdAt)
+            holder.author.text = videoResponseBody.user.username + " \u2022 " + videoResponseBody.video.views.toString() + " views" + " \u2022 " + timestamp
             holder.linearLayout.setOnClickListener{ navigate(videoResponseBody.video.id) }
         }
     }
@@ -62,6 +67,7 @@ import java.io.Serializable;
          val author_image:CircleImageView = itemView.findViewById(R.id.author_image)
          val title : TextView = itemView.findViewById(R.id.video_title)
          val author : TextView = itemView.findViewById(R.id.video_author)
+         val duration : TextView = itemView.findViewById(R.id.video_duration)
      }
 
     inner class ExplorePrimaryItemViewHolder(itemView: View) : CustomViewHolder(itemView) {

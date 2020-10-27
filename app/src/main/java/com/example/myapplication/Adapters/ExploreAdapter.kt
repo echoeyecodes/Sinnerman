@@ -69,7 +69,7 @@ class ExploreAdapter(private val exploreFragment: ExploreFragment, private val n
 
             val linearLayoutManager = LinearLayoutManager(exploreFragment.requireContext(), LinearLayoutManager.VERTICAL, false)
             recycler_view.layoutManager = linearLayoutManager
-            recycler_view.addItemDecoration(CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15), IntegerToDp.intToDp(5), IntegerToDp.intToDp(15)))
+            recycler_view.addItemDecoration(CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15), IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)))
         }
 
         fun bindClickListener(key: String) {
