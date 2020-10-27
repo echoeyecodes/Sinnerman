@@ -80,7 +80,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
 
         valueAnimator.addUpdateListener(this);
 
-        videoActivityViewModel.getIsFullScreen().observe(this, (isFullScreen) -> {
+        videoActivityViewModel.isFullScreen().observe(this, (isFullScreen) -> {
             if (isFullScreen) {
                 adjustPlayerViewMargins(0);
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -96,7 +96,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         });
 
         fullscreen_btn.setOnClickListener(v -> {
-            toggleFullScreen(!videoActivityViewModel.getIsFullScreenValue());
+            toggleFullScreen(!videoActivityViewModel.getFullScreenValue());
         });
 
         like_btn.setOnClickListener(v -> animateLikeButton());
@@ -124,7 +124,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
             }
         });
 
-        videoActivityViewModel.setVideo_id(video_id);
+        videoActivityViewModel.fetchVideo(video_id);
     }
 
     private int getNavigationBarHeight(){
@@ -204,7 +204,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
 
     @Override
     public void onBackPressed() {
-        if (videoActivityViewModel.getIsFullScreenValue()) {
+        if (videoActivityViewModel.getFullScreenValue()) {
             toggleFullScreen(false);
             return;
         }
