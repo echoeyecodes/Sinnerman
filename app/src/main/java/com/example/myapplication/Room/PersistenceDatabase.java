@@ -10,7 +10,7 @@ import com.example.myapplication.Room.Dao.CommentDao;
 import com.example.myapplication.Room.Dao.UserDao;
 import com.example.myapplication.Room.Dao.VideoDao;
 
-@Database(entities = {UserModel.class, CommentModel.class, VideoModel.class}, version = 1)
+@Database(entities = {UserModel.class, CommentModel.class, VideoModel.class}, version = 2)
 public abstract class PersistenceDatabase extends RoomDatabase {
     private static PersistenceDatabase database;
     public abstract CommentDao commentDao();

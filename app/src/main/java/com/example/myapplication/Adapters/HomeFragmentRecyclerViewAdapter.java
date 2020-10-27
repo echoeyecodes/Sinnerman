@@ -23,6 +23,7 @@ import com.example.myapplication.Models.VideoResponseBody;
 import com.example.myapplication.Paging.CommonListPagingListeners;
 import com.example.myapplication.Paging.CommonListPagingViewHolder;
 import com.example.myapplication.R;
+import com.example.myapplication.Utils.DurationConverter;
 import com.example.myapplication.Utils.TimestampConverter;
 import com.example.myapplication.viewmodel.NetworkState;
 import com.google.android.material.button.MaterialButton;
@@ -74,6 +75,7 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
             Glide.with(context).load(Uri.parse(videoResponseBody.getUser().getProfile_url())).into(viewHolder.author_image);
 
             viewHolder.title.setText(videoResponseBody.getVideo().getTitle());
+            viewHolder.duration.setText(DurationConverter.Companion.getInstance().convertToDuration(videoResponseBody.getVideo().getDuration()));
             String timestamp = TimestampConverter.Companion.getInstance().convertToTimeDifference(videoResponseBody.getVideo().getCreatedAt());
             viewHolder.author.setText(videoResponseBody.getUser().getUsername().concat(" \u2022 ").concat(String.valueOf(videoResponseBody.getVideo().getViews()).concat(" views")).concat(" \u2022 ").concat(timestamp));
 
@@ -95,6 +97,7 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
         private final TextView author;
         private final CardView cardView;
         private final LinearLayout linearLayout;
+        private final TextView duration;
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
 
         public HomeFragmentRecyclerViewItemViewHolder(@NonNull View itemView, HomeFragmentRecyclerViewAdapter adapter) {
@@ -106,6 +109,7 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
             title = itemView.findViewById(R.id.video_title);
             author_image = itemView.findViewById(R.id.author_image);
             author = itemView.findViewById(R.id.video_author);
+            duration = itemView.findViewById(R.id.video_duration);
 
             LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) cardView.getLayoutParams();
             layoutParams.height = (int) (displayMetrics.heightPixels / 3.5);
