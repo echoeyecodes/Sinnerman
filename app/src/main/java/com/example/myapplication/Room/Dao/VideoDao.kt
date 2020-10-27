@@ -39,7 +39,9 @@ abstract class VideoDao {
 
     @Transaction
     open suspend fun insertVideoAndUsers(videoResponseBody : List<VideoResponseBody>){
-        for(response in videoResponseBody){
+        val iterator = videoResponseBody.iterator()
+        while (iterator.hasNext()){
+            val response = iterator.next()
             insertVideos(response.video)
             insertUser(response.user)
         }
