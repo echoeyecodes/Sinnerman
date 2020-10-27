@@ -17,6 +17,7 @@ import com.example.myapplication.JobDispatchers.CommentDispatch;
 import com.example.myapplication.Models.CommentModel;
 import com.example.myapplication.Models.CommentResponseBody;
 import com.example.myapplication.Models.UserModel;
+import com.example.myapplication.Room.CommentDatabase;
 import com.example.myapplication.Room.Dao.CommentDao;
 import com.example.myapplication.Room.Dao.UserDao;
 import com.example.myapplication.Room.PersistenceDatabase;
@@ -29,7 +30,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class CommentActivityViewModel extends AndroidViewModel {
-    private final PersistenceDatabase persistenceDatabase;
+    private final CommentDatabase commentDatabase;
     private final CommentDao commentDao;
     private final UserDao persist_user_dao;
     private final com.example.myapplication.API.DAO.CommentDao network_comment_dao;
@@ -45,9 +46,9 @@ public class CommentActivityViewModel extends AndroidViewModel {
     public CommentActivityViewModel(@NonNull @NotNull Application application) {
         super(application);
         apiClient = ApiClient.getInstance(application);
-        persistenceDatabase = PersistenceDatabase.getInstance(application);
-        commentDao = persistenceDatabase.commentDao();
-        persist_user_dao = persistenceDatabase.userDao();
+        commentDatabase = CommentDatabase.Companion.getInstance(application);
+        commentDao = commentDatabase.commentDao();
+        persist_user_dao = commentDatabase.userDao();
 
         if(appHandlerThread == null){
             appHandlerThread = AppHandlerThread.getInstance();

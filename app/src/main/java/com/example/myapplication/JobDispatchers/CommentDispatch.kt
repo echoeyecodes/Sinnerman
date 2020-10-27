@@ -5,6 +5,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.myapplication.API.ApiUtils.ApiClient
 import com.example.myapplication.API.DAO.CommentDao
+import com.example.myapplication.Room.CommentDatabase
 import com.example.myapplication.Room.PersistenceDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,11 +18,11 @@ class CommentDispatch(context: Context, workerParameters: WorkerParameters) : Wo
     private val commentDao : CommentDao
     private val persist_comment_dao : com.example.myapplication.Room.Dao.CommentDao
     private val apiClient : ApiClient
-    private val persistenceDatabase : PersistenceDatabase
+    private val commentDatabase : CommentDatabase
 
     init {
-        persistenceDatabase = PersistenceDatabase.getInstance(context)
-        persist_comment_dao = persistenceDatabase.commentDao()
+        commentDatabase = CommentDatabase.getInstance(context)!!
+        persist_comment_dao = commentDatabase.commentDao()!!
         apiClient =  ApiClient.getInstance(context)
         commentDao = apiClient.getClient(CommentDao::class.java)
     }
