@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        android:id="@+id/comment_item_container"
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
-        android:fadingEdge="none"
         android:layout_width="match_parent"
-        android:padding="10dp"
         android:layout_height="wrap_content">
+
+    <LinearLayout
+            android:id="@+id/comment_item_container"
+            android:orientation="horizontal"
+            android:fadingEdge="none"
+            android:layout_width="match_parent"
+            android:padding="10dp"
+            android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="35dp"
@@ -63,6 +67,7 @@
             />
 
             <TextView
+                    android:id="@+id/comment_timestamp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/RegularText"
@@ -74,4 +79,6 @@
 
     </LinearLayout>
 
+    <include android:id="@+id/loading_layout" layout="@layout/layout_loading" />
 </LinearLayout>
+</FrameLayout>

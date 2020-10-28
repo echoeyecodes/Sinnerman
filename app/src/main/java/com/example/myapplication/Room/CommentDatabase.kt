@@ -13,18 +13,11 @@ import com.example.myapplication.Room.Dao.UserDao
 
 @Database(entities = [UserModel::class, CommentModel::class, VideoModel::class, UploadNotificationModel::class], version = 1)
 abstract class CommentDatabase : RoomDatabase() {
-    abstract fun commentDao(): CommentDao?
-    abstract fun userDao(): UserDao?
+    abstract fun commentDao(): CommentDao
+    abstract fun userDao(): UserDao
 
     companion object {
-        private var database: CommentDatabase? = null
-        @Synchronized
-        fun getInstance(context: Context): CommentDatabase? {
-            if (database == null) {
-                database = Room.databaseBuilder(context.applicationContext, CommentDatabase::class.java, "comment_database")
-                        .fallbackToDestructiveMigration().build()
-            }
-            return database
-        }
+        fun getInstance(context: Context) = Room.databaseBuilder(context.applicationContext, CommentDatabase::class.java, "comment_database")
+        .fallbackToDestructiveMigration().build()
     }
 }
