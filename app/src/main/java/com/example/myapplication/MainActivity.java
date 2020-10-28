@@ -1,6 +1,8 @@
 package com.example.myapplication;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
+import com.bumptech.glide.Glide;
 import com.example.myapplication.Activities.ProfileActivity;
 import com.example.myapplication.Activities.SearchActivity;
 import com.example.myapplication.BottomNavigationFragments.ExploreFragment;
@@ -20,11 +23,13 @@ import com.example.myapplication.BottomNavigationFragments.HomeFragment;
 import com.example.myapplication.BottomNavigationFragments.NotificationFragment;
 import com.example.myapplication.Activities.VideoActivity;
 import com.example.myapplication.Interface.MainActivityContext;
+import com.example.myapplication.Models.UserModel;
 import com.example.myapplication.Utils.AuthUserManager;
 import com.example.myapplication.Utils.AuthenticationManager;
 import com.example.myapplication.viewmodel.MainActivityViewModel;
 import com.example.myapplication.util.BottomNavigationHandler;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import de.hdodenhof.circleimageview.CircleImageView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -33,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     private MainActivityViewModel mainActivityViewModel;
     private BottomNavigationView bottomNavigationView;
     private TextView search_btn;
+    private CircleImageView circleImageView;
     private RootBottomFragment active_fragment;
     private ImageView user_profile;
 
@@ -65,7 +71,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
             mainActivityViewModel.updateCurrentUser();
             return;
         }
-        //load user data into toolbar here
+        UserModel userModel = AuthUserManager.getInstance().getUser(this);
+        circleImageView = findViewById(R.id.user_profile_btn);
+
+
+        if(userModel != null){
+            Glide.with(this).load(Uri.parse(userModel.getProfile_url())).into(circleImageView);
+        }
     }
 
     public Boolean userExists(){

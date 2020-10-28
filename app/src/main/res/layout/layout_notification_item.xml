@@ -54,6 +54,7 @@
             android:scaleType="centerCrop"
     />
 
-    <include android:id="@+id/loading_layout" layout="@layout/layout_loading" />
 </LinearLayout>
+
+    <include android:id="@+id/loading_layout" layout="@layout/layout_loading" />
 </FrameLayout>

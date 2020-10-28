@@ -68,7 +68,7 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
 
         recyclerView.adapter = adapter
 
-        viewModel.roomDao.getVideos().observe(viewLifecycleOwner, Observer<List<VideoResponseBody>> { videos ->
+        viewModel.getVideos().observe(viewLifecycleOwner, Observer<List<VideoResponseBody>> { videos ->
             adapter?.submitList(videos)
         })
 
@@ -93,11 +93,6 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
         super.onResume()
         mainActivityContext.setActiveBottomViewFragment(0)
     }
-
-    fun doSomething(item: VideoResponseBody){
-        viewModel.insertUpdateToVideoList(item)
-    }
-
     fun retry(){
         viewModel.retry()
     }

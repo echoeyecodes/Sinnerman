@@ -1,39 +1,39 @@
 package com.example.myapplication.viewmodel.BottomFragmentViewModel
 
 import android.app.Application
-import android.util.Log
-import androidx.lifecycle.*
-import com.example.myapplication.API.ApiUtils.ApiClient
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.Models.UploadNotificationModel
 import com.example.myapplication.Paging.CommonListPagingHandler
-import com.example.myapplication.Room.Dao.UploadNotificationDao
-import com.example.myapplication.Room.PersistenceDatabase
-import kotlinx.coroutines.*
-import kotlin.collections.ArrayList
+import com.example.myapplication.repository.NotificationRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.coroutineContext
 
 class NotificationViewModel(application: Application) : CommonListPagingHandler<UploadNotificationModel>(application) {
-    private val uploadNotificationDao: com.example.myapplication.API.DAO.UploadNotificationDao = ApiClient.getInstance(application.applicationContext).getClient(com.example.myapplication.API.DAO.UploadNotificationDao::class.java)
-    val roomDao: UploadNotificationDao = PersistenceDatabase.getInstance(application.applicationContext).uploadNotificationDao()
+    val notificationRepository = NotificationRepository(getApplication())
 
+    init {
+        load()
+    }
 
-
-    override suspend fun initialize() {
-        viewModelScope.launch(coroutineContext) {
-            roomDao.deleteUploadNotifications()
+    override fun initialize() {
+            notificationRepository.deleteNotifications()
             super.initialize()
-        }
+    }
+
+    fun getNotifications():LiveData<List<UploadNotificationModel>>{
+        return notificationRepository.getNotificationsFromDB()
     }
 
 
     override suspend fun fetchList(): List<UploadNotificationModel> {
-        return uploadNotificationDao.fetchUploadNotifications("5", state.size.toString())
+        return notificationRepository.getNotifications(state.size.toString())
     }
 
     override suspend fun onDataReceived(result: List<UploadNotificationModel>) {
-        withContext(coroutineContext) {
-            async { roomDao.insertNotification(ArrayList(result)) }.await()
+            notificationRepository.addNotificationToDB(ArrayList(result))
             super.onDataReceived(result)
-        }
     }
 }

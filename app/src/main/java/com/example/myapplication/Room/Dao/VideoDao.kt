@@ -60,8 +60,7 @@ abstract class VideoDao {
     }
 
     @Transaction
-    open suspend fun deleteVideoAndUsers(){
-        Log.d("CARRR", "Deleting data")
+    open fun deleteVideoAndUsers(){
         deleteVideos()
         deleteUsers()
     }

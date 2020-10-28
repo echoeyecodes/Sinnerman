@@ -16,25 +16,15 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
     var state = ArrayList<T>()
 
 
-    init {
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                networkStatus.postValue(NetworkState.LOADING)
-                load()
-            }
-        }
-    }
-
-    open suspend fun initialize(){
+    open fun initialize(){
         state.clear()
         state = java.util.ArrayList();
+        networkStatus.postValue(NetworkState.LOADING)
     }
 
-    private suspend fun load(){
-        withContext(Dispatchers.IO){
-            async { initialize() }.await()
-            async { fetchMore(NetworkState.LOADING) }.await()
-        }
+    fun load(){
+        initialize()
+        fetchMore(NetworkState.LOADING)
     }
 
     fun fetchMore(state: NetworkState){

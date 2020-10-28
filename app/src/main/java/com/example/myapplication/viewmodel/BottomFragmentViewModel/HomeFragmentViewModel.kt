@@ -1,60 +1,43 @@
 package com.example.myapplication.viewmodel.BottomFragmentViewModel
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.media.MediaMetadataRetriever
-import android.net.Uri
-import android.util.Log
-import androidx.lifecycle.*
-import androidx.paging.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.API.ApiUtils.ApiClient
 import com.example.myapplication.API.DAO.VideosDao
 import com.example.myapplication.Models.VideoResponseBody
 import com.example.myapplication.Paging.CommonListPagingHandler
 import com.example.myapplication.Room.Dao.VideoDao
 import com.example.myapplication.Room.PersistenceDatabase
-import com.example.myapplication.Utils.TimestampConverter
-import com.example.myapplication.viewmodel.NetworkState
-import kotlinx.coroutines.*
-import java.io.IOException
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
-import java.time.Duration
-import java.time.Instant
-import java.util.*
-import kotlin.collections.ArrayList
+import com.example.myapplication.repository.VideoRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.coroutineContext
 
 class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<VideoResponseBody>(application) {
-    private val videoDao: VideosDao = ApiClient.getInstance(application.applicationContext).getClient(VideosDao::class.java)
-    val roomDao: VideoDao = PersistenceDatabase.getInstance(application.applicationContext).videoDao()
+    val videoRepository = VideoRepository(getApplication())
 
-
-    fun insertUpdateToVideoList(item: VideoResponseBody) {
-        // Testing views update on video watch
-        val (video, user) = item
-        val views = video.views + 1
-        val updatedVideo = video.copy(views = views)
-        val updatedData = VideoResponseBody(updatedVideo, user)
-        CoroutineScope(Dispatchers.IO).launch { roomDao.updateVideoAndUser(updatedData) }
+    init {
+        load()
     }
 
-    override suspend fun initialize() {
-        viewModelScope.launch(coroutineContext) {
-            roomDao.deleteVideoAndUsers()
+    override fun initialize() {
+            videoRepository.deleteVideosFromDB()
             super.initialize()
-        }
     }
 
+    fun getVideos():LiveData<List<VideoResponseBody>>{
+        return videoRepository.getVideosFromDB()
+    }
 
     override suspend fun fetchList(): List<VideoResponseBody> {
-        return videoDao.fetchVideos("5", state.size.toString())
+        return videoRepository.getVideos(state.size.toString())
     }
 
     override suspend fun onDataReceived(result: List<VideoResponseBody>) {
-        withContext(coroutineContext) {
-            async { roomDao.insertVideoAndUsers(ArrayList(result)) }.await()
+       videoRepository.addVideosToDB(ArrayList(result))
             super.onDataReceived(result)
-        }
     }
 }

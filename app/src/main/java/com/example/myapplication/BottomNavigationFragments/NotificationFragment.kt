@@ -80,7 +80,7 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
         })
 
-        notificationViewModel.roomDao.getUploadNotifications().observe(viewLifecycleOwner, Observer<List<UploadNotificationModel>> { notification ->
+        notificationViewModel.getNotifications().observe(viewLifecycleOwner, Observer<List<UploadNotificationModel>> { notification ->
             adapter.submitList(notification)
         })
     }

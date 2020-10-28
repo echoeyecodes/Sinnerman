@@ -1,15 +1,15 @@
 package com.example.myapplication.viewmodel
 
 import android.app.Application
-import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.API.ApiUtils.ApiClient
 import com.example.myapplication.API.DAO.VideosDao
 import com.example.myapplication.Models.ExploreResponseBody
-import com.example.myapplication.Models.VideoResponseBody
 import com.example.myapplication.Paging.CommonListPagingHandler
-import kotlinx.coroutines.*
-import java.io.IOException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.coroutines.coroutineContext
 
 class ExploreViewModel(application: Application) : CommonListPagingHandler<ExploreResponseBody>(application) {
@@ -17,12 +17,13 @@ class ExploreViewModel(application: Application) : CommonListPagingHandler<Explo
     private val videoDao: VideosDao = ApiClient.getInstance(application.applicationContext).getClient(VideosDao::class.java)
     var categories: MutableLiveData<List<ExploreResponseBody>> = MutableLiveData()
 
+    init {
+        load()
+    }
 
-    override suspend fun initialize() {
-        viewModelScope.launch(coroutineContext) {
+    override fun initialize() {
             categories.postValue(null)
             super.initialize()
-        }
     }
 
     override suspend fun fetchList(): List<ExploreResponseBody> {
@@ -32,10 +33,7 @@ class ExploreViewModel(application: Application) : CommonListPagingHandler<Explo
     }
 
     override suspend fun onDataReceived(result: List<ExploreResponseBody>) {
-        withContext(coroutineContext){
-         async { categories.postValue(ArrayList(result)) }.await()
+            categories.postValue(ArrayList(result))
             super.onDataReceived(result)
         }
     }
-
-}

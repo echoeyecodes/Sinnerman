@@ -57,8 +57,6 @@ public class AuthUserManager {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        }else{
-            Log.d("CARRR", "not exist");
         }
         return userModel;
     }

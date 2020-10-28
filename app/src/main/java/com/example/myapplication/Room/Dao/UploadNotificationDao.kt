@@ -13,7 +13,7 @@ import com.example.myapplication.Models.VideoResponseBody
 abstract class UploadNotificationDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertNotification(notification: List<UploadNotificationModel>)
+    abstract fun insertNotification(notification: List<UploadNotificationModel>)
 
     @Query("SELECT * FROM upload_notifications")
     abstract fun getUploadNotifications(): LiveData<List<UploadNotificationModel>>
