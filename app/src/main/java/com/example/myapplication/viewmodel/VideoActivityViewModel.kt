@@ -6,11 +6,13 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.solver.widgets.ResolutionDimension
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.API.ApiUtils.ApiClient;
 import com.example.myapplication.API.DAO.VideosDao;
+import com.example.myapplication.Models.ResolutionDimensions
 import com.example.myapplication.Models.VideoResponseBody;
 import com.example.myapplication.Room.Dao.VideoDao;
 import com.example.myapplication.Room.PersistenceDatabase;
@@ -24,15 +26,16 @@ import retrofit2.Response;
 
 import java.io.IOException;
 
+
 class VideoActivityViewModel(application: Application) : AndroidViewModel(application) {
     private var fullscreen = false
     val isFullScreen = MutableLiveData<Boolean>(fullscreen)
-    val request_status = MutableLiveData<NetworkState>(NetworkState.LOADING);
+    val request_status = MutableLiveData<NetworkState>(NetworkState.LOADING)
     val videoObserver = MutableLiveData<VideoResponseBody>()
-    private val video: VideoResponseBody? = null
+    var resolutions = ArrayList<ResolutionDimensions>()
+    var selectedItemPosition = 0;
     private val videosDao: VideosDao
     private val persistDao : VideoDao
-    private var message:String = ""
 
     init {
         videosDao = ApiClient.getInstance(application.applicationContext).getClient(VideosDao::class.java)

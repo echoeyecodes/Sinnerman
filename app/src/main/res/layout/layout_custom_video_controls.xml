@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-        >
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+>
 
     <RelativeLayout
             android:layout_width="match_parent"
@@ -12,10 +13,10 @@
     >
     </RelativeLayout>
 
-    <include layout="@layout/layout_video_profile_header" />
+    <include layout="@layout/layout_video_profile_header"/>
 
-    <include layout="@layout/layout_video_retry" />
-    <include layout="@layout/layout_video_details" />
+    <include layout="@layout/layout_video_retry"/>
+    <include layout="@layout/layout_video_details"/>
 
     <LinearLayout
             android:layout_width="match_parent"
@@ -23,13 +24,13 @@
             android:orientation="horizontal"
             android:layout_gravity="center"
             android:gravity="center"
-            >
+    >
 
         <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                >
+        >
 
             <ProgressBar
                     android:id="@+id/exo_buffering"
@@ -39,11 +40,12 @@
                     android:visibility="gone"
                     android:indeterminateBehavior="repeat"
                     android:progressTint="@color/colorPrimary"
-                    />
+            />
         </FrameLayout>
     </LinearLayout>
 
     <LinearLayout
+            android:id="@+id/video_controls"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -51,7 +53,7 @@
             android:gravity="center_vertical"
             android:layout_marginHorizontal="10dp"
             android:layout_marginBottom="10dp"
-            >
+    >
         <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -80,7 +82,7 @@
                 app:played_color="@color/white"
                 app:buffered_color="@color/light_grey"
                 android:id="@+id/exo_progress_placeholder"
- />
+        />
 
         <TextView
                 android:layout_width="wrap_content"
@@ -100,6 +102,17 @@
                 android:src="@drawable/exo_icon_fullscreen_enter"
                 android:background="?attr/selectableItemBackground"
                 android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+        />
+
+        <ImageButton
+                android:id="@+id/show_resolutions_btn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_baseline_settings_24"
+                android:background="?attr/selectableItemBackground"
+                android:layout_marginStart="5dp"
+                android:tint="@color/white"
                 android:layout_marginLeft="5dp"
         />
     </LinearLayout>

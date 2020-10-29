@@ -11,7 +11,11 @@ import android.view.View;
 import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.solver.widgets.ResolutionDimension;
 import androidx.lifecycle.ViewModelProvider;
+import com.example.myapplication.Fragments.ResolutionListFragment;
+import com.example.myapplication.Interface.VideoActivityListener;
+import com.example.myapplication.Models.ResolutionDimensions;
 import com.example.myapplication.Models.UserModel;
 import com.example.myapplication.Models.VideoModel;
 import com.example.myapplication.R;
@@ -19,29 +23,41 @@ import com.example.myapplication.Singleton.VideoCacheSingleton;
 import com.example.myapplication.Utils.CustomExoPlayerDataSourceFactory;
 import com.example.myapplication.viewmodel.NetworkState;
 import com.example.myapplication.viewmodel.VideoActivityViewModel;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.*;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroup;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.source.hls.HlsManifest;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
+import com.google.android.exoplayer2.source.hls.playlist.HlsMediaPlaylist;
+import com.google.android.exoplayer2.trackselection.*;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 import org.jetbrains.annotations.NotNull;
 
-public class VideoActivity extends AppCompatActivity implements Player.EventListener, ValueAnimator.AnimatorUpdateListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class VideoActivity extends AppCompatActivity implements VideoActivityListener, Player.EventListener, ValueAnimator.AnimatorUpdateListener {
     private PlayerView playerView;
     private ImageButton fullscreen_btn;
+    private ImageButton resolution_btn;
     private CircleImageView video_author_image;
     private TextView video_author_username;
     private TextView video_title;
     private TextView video_description;
     private ImageButton comment_btn;
+    private DefaultTrackSelector defaultTrackSelector;
     private ImageButton like_btn;
     private LinearLayout reload_btn;
     private SimpleExoPlayer player;
+    private static final String RESOLUTION_FRAGMENT_TAG = "RESOLUTION_FRAGMENT_TAG";
     private RelativeLayout loading_layout;
     private VideoActivityViewModel videoActivityViewModel;
     private ProgressBar progressBar;
@@ -62,6 +78,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         loading_layout = findViewById(R.id.video_activity_loading_layout);
         loading_layout.setBackgroundColor(R.color.black);
 
+        defaultTrackSelector = new DefaultTrackSelector(this);
         video_author_image = findViewById(R.id.video_author_image);
         video_author_username = findViewById(R.id.video_author_username);
         video_title = findViewById(R.id.video_title);
@@ -69,6 +86,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
 
         progressBar = findViewById(R.id.exo_buffering);
         fullscreen_btn = findViewById(R.id.full_screen_btn);
+        resolution_btn = findViewById(R.id.show_resolutions_btn);
         comment_btn = findViewById(R.id.comment_btn);
         like_btn = findViewById(R.id.like_btn);
         reload_btn = findViewById(R.id.retry_btn);
@@ -85,7 +103,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
                 adjustPlayerViewMargins(0);
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             } else {
-                adjustPlayerViewMargins(0);
+                adjustPlayerViewMargins(getNavigationBarHeight());
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
         });
@@ -110,7 +128,7 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
                 video_author_username.setText("@".concat(userModel.getUsername()));
                 video_title.setText(videoModel.getTitle());
                 video_description.setText(videoModel.getDescription());
-
+                videoActivityViewModel.setSelectedItemPosition(0);
                 mediaSource = buildMediaSource(Uri.parse(video.getVideo().getVideo_url()));
                 initializePlayer();
             }
@@ -125,6 +143,11 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         });
 
         videoActivityViewModel.fetchVideo(video_id);
+
+        resolution_btn.setOnClickListener(v -> {
+            Log.d("CARRR", "HEYEYE");
+            ResolutionListFragment.Companion.getInstance(videoActivityViewModel.getResolutions()).show(getSupportFragmentManager(), RESOLUTION_FRAGMENT_TAG);
+        });
     }
 
     private int getNavigationBarHeight(){
@@ -141,8 +164,10 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         like_btn.setColorFilter(R.color.colorPrimary);
     }
     private void adjustPlayerViewMargins(int margin){
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) playerView.getLayoutParams();
+        View controlView = findViewById(R.id.video_controls);
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) controlView.getLayoutParams();
         params.setMargins(0,0,0, margin);
+        controlView.setLayoutParams(params);
     }
 
     public void navigateToComments(String id) {
@@ -166,12 +191,26 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
     }
 
     public void initializePlayer() {
-        player = new SimpleExoPlayer.Builder(this).build();
+        player = new SimpleExoPlayer.Builder(this).setTrackSelector(defaultTrackSelector).build();
         playerView.setPlayer(player);
         player.setPlayWhenReady(true);
         player.seekTo(currentWindow, playBackPosition);
         player.addListener(this);
         player.prepare(mediaSource, false, false);
+    }
+
+    private void changeResolution(int position, ResolutionDimensions dimensions){
+        if(position == 0){
+            defaultTrackSelector.setParameters(defaultTrackSelector.buildUponParameters().setMaxVideoSizeSd());
+        }else{
+            defaultTrackSelector.setParameters(defaultTrackSelector.buildUponParameters().setMaxVideoSize(dimensions.getWidth(), dimensions.getHeight()));
+        }
+
+        videoActivityViewModel.setSelectedItemPosition(position);
+        ResolutionListFragment resolutionListFragment = (ResolutionListFragment) getSupportFragmentManager().findFragmentByTag(RESOLUTION_FRAGMENT_TAG);
+        if(resolutionListFragment != null && resolutionListFragment.isVisible()){
+            resolutionListFragment.dismiss();
+        }
     }
 
     private void refresh() {
@@ -260,6 +299,27 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
         }
     }
 
+
+    @Override
+    public void onTimelineChanged(@NotNull Timeline timeline, int reason) {
+        Object manifest = player.getCurrentManifest();
+        ArrayList<ResolutionDimensions> resolutions = new ArrayList<>();
+        resolutions.add(new ResolutionDimensions(0, 0));
+
+        if(manifest!= null){
+            HlsManifest hlsManifest = (HlsManifest) manifest;
+            List<HlsMasterPlaylist.Variant> variableDefinitions = hlsManifest.masterPlaylist.variants;
+
+            for (HlsMasterPlaylist.Variant trackSelection : variableDefinitions) {
+                if (trackSelection != null) {
+                    ResolutionDimensions dimensions = new ResolutionDimensions(trackSelection.format.width, trackSelection.format.height);
+                    resolutions.add(dimensions);
+                }
+            }
+            videoActivityViewModel.setResolutions(resolutions);
+        }
+    }
+
     @Override
     public void onPlayerError(@NotNull ExoPlaybackException error) {
         reload_btn.setVisibility(View.VISIBLE);
@@ -270,5 +330,10 @@ public class VideoActivity extends AppCompatActivity implements Player.EventList
             float value = (float) animation.getAnimatedValue();
             like_btn.setScaleX(value);
             like_btn.setScaleY(value);
+    }
+
+    @Override
+    public void onResolutionSelected(int position, ResolutionDimensions resolutionDimensions) {
+            changeResolution(position, resolutionDimensions);
     }
 }

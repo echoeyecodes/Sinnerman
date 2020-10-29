@@ -83,6 +83,7 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
     public static class ViewHolder extends CommonListPagingViewHolder {
 
         private final ProgressBar progressBar;
+
         private final TextView comment_author;
         private final TextView comment;
         private LinearLayout linearLayout;

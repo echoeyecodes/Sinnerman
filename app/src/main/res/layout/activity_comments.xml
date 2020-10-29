@@ -23,7 +23,6 @@
                 android:layout_height="match_parent"
                 android:paddingBottom="@dimen/list_item_spacing_half"
                 android:paddingTop="@dimen/list_item_spacing_half"
-                tools:context="com.example.myapplication.Fragments.OtpDialogFragment"
         />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
