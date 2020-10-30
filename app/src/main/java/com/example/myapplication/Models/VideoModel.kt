@@ -15,6 +15,7 @@ import androidx.room.PrimaryKey;
                         val thumbnail: String, var views: Int = 0,
                         val video_url: String,
                         val duration: String,
+                        val has_liked: Boolean = false,
                         @ColumnInfo(name = "video_user_id")
 val user_id : String)
 

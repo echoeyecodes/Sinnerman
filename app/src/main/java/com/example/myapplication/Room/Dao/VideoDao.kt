@@ -25,8 +25,17 @@ abstract class VideoDao {
     abstract fun getVideos(): LiveData<List<VideoResponseBody>>
 
     @Transaction
+    @Query("SELECT * FROM videos INNER JOIN users ON user_id=videos.video_user_id WHERE id = :id")
+    abstract fun getVideoLiveData(id:String): LiveData<VideoResponseBody>
+
+    @Transaction
+    @Query("SELECT * FROM videos INNER JOIN users ON user_id=videos.video_user_id WHERE id = :id")
+    abstract fun getVideo(id:String): VideoResponseBody
+
+    @Transaction
     @Query("SELECT * FROM videos INNER JOIN users ON user_id=videos.video_user_id")
     abstract fun getVideosList(): List<VideoResponseBody>
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertUser(userModel : UserModel)
