@@ -6,7 +6,7 @@
         android:padding="10dp"
         android:layout_height="wrap_content">
 
-    <com.example.myapplication.CustomView.FormEditText
+    <com.echoeyecodes.sinnerman.CustomView.FormEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:hint="Enter OTP"

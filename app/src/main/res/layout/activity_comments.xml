@@ -5,7 +5,7 @@
         android:layout_width="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
         android:background="@color/white"
         android:layout_height="match_parent"
-        tools:context="com.example.myapplication.Activities.CommentActivity">
+        tools:context="com.echoeyecodes.sinnerman.Activities.CommentActivity">
 
     <include android:id="@+id/comments_toolbar" layout="@layout/layout_sub_activity_action_bar" />
 

@@ -29,7 +29,7 @@
                     android:orientation="vertical"
             >
 
-                <com.example.myapplication.CustomView.FormEditText
+                <com.echoeyecodes.sinnerman.CustomView.FormEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:isSecure="false"
@@ -39,7 +39,7 @@
                         app:inputType="0"
                 />
 
-                <com.example.myapplication.CustomView.FormEditText
+                <com.echoeyecodes.sinnerman.CustomView.FormEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:hint="Password"

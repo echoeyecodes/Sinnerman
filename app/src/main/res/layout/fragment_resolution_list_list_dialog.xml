@@ -8,5 +8,5 @@
         android:clipToPadding="false"
         android:paddingBottom="@dimen/list_item_spacing_half"
         android:paddingTop="@dimen/list_item_spacing_half"
-        tools:context="com.example.myapplication.Fragments.ResolutionListFragment"
+        tools:context="com.echoeyecodes.sinnerman.Fragments.ResolutionListFragment"
 />

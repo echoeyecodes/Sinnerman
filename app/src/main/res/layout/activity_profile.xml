@@ -26,7 +26,7 @@
             >
 
 
-                <com.example.myapplication.CustomView.ProfileItem
+                <com.echoeyecodes.sinnerman.CustomView.ProfileItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:profile_context="Full Name"
@@ -34,7 +34,7 @@
                         app:profile_icon="0"
                 />
 
-                <com.example.myapplication.CustomView.ProfileItem
+                <com.echoeyecodes.sinnerman.CustomView.ProfileItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:profile_context="Username"
@@ -42,7 +42,7 @@
                         app:profile_icon="1"
                 />
 
-                <com.example.myapplication.CustomView.ProfileItem
+                <com.echoeyecodes.sinnerman.CustomView.ProfileItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:profile_context="Email"
