@@ -9,9 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.solver.widgets.ResolutionDimension;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.myapplication.Fragments.ResolutionListFragment;
 import com.example.myapplication.Interface.VideoActivityListener;
@@ -93,8 +95,8 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
 
         video_id = getIntent().getStringExtra("video_id");
 
-        valueAnimator = ValueAnimator.ofFloat(1,1.5f,1);
-        valueAnimator.setDuration(500);
+        valueAnimator = ValueAnimator.ofFloat(1,1.3f,1);
+        valueAnimator.setDuration(100);
 
         valueAnimator.addUpdateListener(this);
 
@@ -142,6 +144,14 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
             }
         });
 
+        videoActivityViewModel.getDidLike().observe(this, (like) ->{
+            if(like){
+                like_btn.setBackgroundResource(R.drawable.like_icon);
+            }else{
+                like_btn.setBackgroundResource(R.drawable.unlike_icon);
+            }
+        });
+
         videoActivityViewModel.fetchVideo(video_id);
 
         resolution_btn.setOnClickListener(v -> {
@@ -161,7 +171,7 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
 
     private void animateLikeButton(){
         valueAnimator.start();
-        like_btn.setColorFilter(R.color.colorPrimary);
+        videoActivityViewModel.likeVideo();
     }
     private void adjustPlayerViewMargins(int margin){
         View controlView = findViewById(R.id.video_controls);

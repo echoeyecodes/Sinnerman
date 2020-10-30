@@ -1,6 +1,7 @@
 package com.example.myapplication.repository
 
 import android.content.Context
+import android.content.LocusId
 import androidx.lifecycle.LiveData
 import com.example.myapplication.API.ApiUtils.ApiClient
 import com.example.myapplication.API.DAO.VideosDao
@@ -30,6 +31,12 @@ class VideoRepository(context: Context) {
         videoDao.updateVideoAndUser(videoResponseBody)
     }
 
+    suspend fun fetchVideo(id:String) : VideoResponseBody{
+        return withContext(Dispatchers.IO){
+            apiClient.fetchVideo(id)
+        }
+    }
+
     fun addVideosToDB(data:List<VideoResponseBody>){
         CoroutineScope(Dispatchers.IO).launch{
             videoDao.insertVideoAndUsers(data)
@@ -38,6 +45,10 @@ class VideoRepository(context: Context) {
 
     fun getVideosFromDB() : LiveData<List<VideoResponseBody>>{
         return videoDao.getVideos()
+    }
+
+    fun getVideoFromDB(id: String) : VideoResponseBody{
+        return videoDao.getVideo(id)
     }
 
 }
