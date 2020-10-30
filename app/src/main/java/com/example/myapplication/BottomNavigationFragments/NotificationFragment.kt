@@ -75,6 +75,11 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
                 val originalList = ArrayList<UploadNotificationModel?>(notificationViewModel.state)
                 originalList.add(null)
                 adapter.submitList(originalList)
+
+                //necessary call to force notification update
+                // due to the diffutil.callback comparison when
+                //the state changes from loading to error or vice-versa
+                adapter.notifyItemChanged(adapter.itemCount - 1)
                 adapter.onNetworkStateChanged(state)
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING

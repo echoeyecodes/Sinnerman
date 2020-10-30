@@ -76,6 +76,11 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
                 val originalList = ArrayList<ExploreResponseBody?>(exploreViewModel.state)
                 originalList.add(null)
                 exploreAdapter.submitList(originalList)
+
+                //necessary call to force notification update
+                // due to the diffutil.callback comparison when
+                //the state changes from loading to error or vice-versa
+                exploreAdapter.notifyItemChanged(exploreAdapter.itemCount - 1)
                 exploreAdapter.onNetworkStateChanged(state)
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING

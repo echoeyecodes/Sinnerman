@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.Models.UploadNotificationModel
 import com.example.myapplication.Paging.CommonListPagingHandler
 import com.example.myapplication.repository.NotificationRepository
+import com.example.myapplication.viewmodel.NetworkState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -15,7 +16,7 @@ class NotificationViewModel(application: Application) : CommonListPagingHandler<
     val notificationRepository = NotificationRepository(getApplication())
 
     init {
-        load()
+        load(NetworkState.LOADING)
     }
 
     override fun initialize() {

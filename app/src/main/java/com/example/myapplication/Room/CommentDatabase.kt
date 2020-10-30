@@ -11,7 +11,7 @@ import com.example.myapplication.Models.VideoModel
 import com.example.myapplication.Room.Dao.CommentDao
 import com.example.myapplication.Room.Dao.UserDao
 
-@Database(entities = [UserModel::class, CommentModel::class, VideoModel::class, UploadNotificationModel::class], version = 1)
+@Database(entities = [UserModel::class, CommentModel::class], version = 2)
 abstract class CommentDatabase : RoomDatabase() {
     abstract fun commentDao(): CommentDao
     abstract fun userDao(): UserDao
@@ -20,4 +20,5 @@ abstract class CommentDatabase : RoomDatabase() {
         fun getInstance(context: Context) = Room.databaseBuilder(context.applicationContext, CommentDatabase::class.java, "comment_database")
         .fallbackToDestructiveMigration().build()
     }
+
 }

@@ -18,13 +18,12 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
 
     open fun initialize(){
         state.clear()
-        state = java.util.ArrayList();
-        networkStatus.postValue(NetworkState.LOADING)
+        state = ArrayList();
     }
 
-    fun load(){
+    fun load(state: NetworkState){
         initialize()
-        fetchMore(NetworkState.LOADING)
+        fetchMore(state)
     }
 
     fun fetchMore(state: NetworkState){
@@ -66,9 +65,8 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
 
     fun refresh(){
         viewModelScope.launch {
-            networkStatus.postValue(NetworkState.REFRESHING)
             hasMore = true
-            load()
+            load(NetworkState.REFRESHING)
         }
     }
 

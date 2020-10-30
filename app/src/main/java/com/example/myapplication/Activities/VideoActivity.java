@@ -89,7 +89,7 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
         resolution_btn = findViewById(R.id.show_resolutions_btn);
         comment_btn = findViewById(R.id.comment_btn);
         like_btn = findViewById(R.id.like_btn);
-        reload_btn = findViewById(R.id.retry_btn);
+        reload_btn = findViewById(R.id.video_retry_btn);
 
         video_id = getIntent().getStringExtra("video_id");
 

@@ -39,10 +39,6 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
         fun newInstance(): HomeFragment = HomeFragment()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -76,8 +72,15 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
             if(state == NetworkState.LOADING || state == NetworkState.ERROR){
                 val originalList = ArrayList<VideoResponseBody?>(viewModel.state)
                 originalList.add(null)
-                adapter?.submitList(originalList)
-                adapter?.onNetworkStateChanged(state)
+                adapter?.let{
+                    it.submitList(originalList)
+
+                    //necessary call to force notification update
+                    // due to the diffutil.callback comparison when
+                    //the state changes from loading to error or vice-versa
+                    it.notifyItemChanged(it.itemCount - 1)
+                    it.onNetworkStateChanged(state)
+                }
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
         })

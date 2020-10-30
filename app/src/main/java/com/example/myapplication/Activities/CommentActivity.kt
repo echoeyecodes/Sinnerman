@@ -33,47 +33,47 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class CommentActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, CommentActivityListener {
-private lateinit var recyclerView :RecyclerView;
-private lateinit var toolbar : LinearLayout;
-private lateinit var send_btn : ImageButton;
-private  lateinit var toolbar_title : TextView;
-private lateinit var commentActivityViewModel : CommentActivityViewModel;
-private lateinit var swipeRefreshLayout : SwipeRefreshLayout;
-private lateinit var profile_image : CircleImageView;
-private lateinit var back_button : ImageButton;
-private lateinit var adapter : CommentsAdapter;
-private lateinit var comment_field : TextInputEditText;
+private lateinit var recyclerView :RecyclerView
+private lateinit var toolbar : LinearLayout
+private lateinit var send_btn : ImageButton
+private lateinit var toolbar_title : TextView
+private lateinit var commentActivityViewModel : CommentActivityViewModel
+private lateinit var swipeRefreshLayout : SwipeRefreshLayout
+private lateinit var profile_image : CircleImageView
+private lateinit var back_button : ImageButton
+private lateinit var adapter : CommentsAdapter
+private lateinit var comment_field : TextInputEditText
 
     override fun onCreate(savedInstanceState : Bundle?) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comments);
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_comments)
 
         val key = intent.getStringExtra("video_id") ?: ""
 
         commentActivityViewModel = ViewModelProvider(this).get(CommentActivityViewModel::class.java)
         commentActivityViewModel.video_id = key
-        val authUserManager = AuthUserManager.getInstance();
-        val userModel = authUserManager.getUser(this);
-        recyclerView = findViewById(R.id.comments_recycler_view);
-        toolbar = findViewById(R.id.comments_toolbar);
-        swipeRefreshLayout = findViewById(R.id.comments_refresh_layout);
-        profile_image = findViewById(R.id.comment_creator_image);
-        comment_field = findViewById(R.id.comment_text_input_field);
-        send_btn = findViewById(R.id.comment_send_btn);
-        toolbar_title = toolbar.findViewById(R.id.sub_activity_title);
-        back_button = toolbar.findViewById(R.id.sub_activity_back_btn);
-        toolbar_title.text = "Comments";
+        val authUserManager = AuthUserManager.getInstance()
+        val userModel = authUserManager.getUser(this)
+        recyclerView = findViewById(R.id.comments_recycler_view)
+        toolbar = findViewById(R.id.comments_toolbar)
+        swipeRefreshLayout = findViewById(R.id.comments_refresh_layout)
+        profile_image = findViewById(R.id.comment_creator_image)
+        comment_field = findViewById(R.id.comment_text_input_field)
+        send_btn = findViewById(R.id.comment_send_btn)
+        toolbar_title = toolbar.findViewById(R.id.sub_activity_title)
+        back_button = toolbar.findViewById(R.id.sub_activity_back_btn)
+        toolbar_title.text = "Comments"
 
 
         if (userModel != null) {
-            Glide.with(this).load(Uri.parse(userModel.profile_url)).into(profile_image);
+            Glide.with(this).load(Uri.parse(userModel.profile_url)).into(profile_image)
         }
 
         back_button.setOnClickListener { super.onBackPressed() }
 
         val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
-        recyclerView.layoutManager = linearLayoutManager;
-        swipeRefreshLayout.setOnRefreshListener(this);
+        recyclerView.layoutManager = linearLayoutManager
+        swipeRefreshLayout.setOnRefreshListener(this)
         val commentModelItemCallback: DiffUtil.ItemCallback<CommentResponseBody> = CommentItemCallback();
         adapter = CommentsAdapter(commentModelItemCallback, this);
         recyclerView.adapter = adapter;
@@ -83,8 +83,7 @@ private lateinit var comment_field : TextInputEditText;
             sendComment();
         };
 
-
-        commentActivityViewModel.getComments().observe(this, Observer<List<CommentResponseBody>> { value ->
+        commentActivityViewModel.commentDao.getComments(key).observe(this, Observer<List<CommentResponseBody>> { value ->
             adapter.submitList(value)
         })
 
@@ -94,6 +93,11 @@ private lateinit var comment_field : TextInputEditText;
                 val originalList = ArrayList<CommentResponseBody?>(commentActivityViewModel.state)
                 originalList.add(null)
                 adapter.submitList(originalList)
+
+                //necessary call to force notification update
+                // due to the diffutil.callback comparison when
+                //the state changes from loading to error or vice-versa
+                adapter.notifyItemChanged(adapter.itemCount - 1)
                 adapter.onNetworkStateChanged(state)
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
@@ -107,14 +111,13 @@ private lateinit var comment_field : TextInputEditText;
     }
 
         private fun sendComment() {
-            val message = Objects.requireNonNull(comment_field.text).toString();
+            val message = Objects.requireNonNull(comment_field.text).toString()
             if (message.trim().isNotEmpty()) {
-                val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                val time = dateTimeFormatter.format(LocalDateTime.now());
-                val commentModel = CommentModel(UUID.randomUUID().toString(), Objects.requireNonNull(comment_field.text).toString(), time);
-                commentModel.status = 1;
-                commentActivityViewModel.sendComment(commentModel);
-                comment_field.setText("");
+                val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                val time = dateTimeFormatter.format(LocalDateTime.now())
+                val commentModel = CommentModel(UUID.randomUUID().toString(), Objects.requireNonNull(comment_field.text).toString(), time, 1)
+                commentActivityViewModel.sendComment(commentModel)
+                comment_field.setText("")
                 onCommentInserted()
             }
         }
@@ -130,9 +133,9 @@ private lateinit var comment_field : TextInputEditText;
 
         override fun onCommentInserted() {
             GlobalScope.launch {
-                delay(50)
+                delay(100)
                 runOnUiThread{
-                    recyclerView.scrollToPosition(0)
+                    recyclerView.smoothScrollToPosition(0)
                 }
             }
         }
@@ -140,11 +143,11 @@ private lateinit var comment_field : TextInputEditText;
     inner class CommentItemCallback : DiffUtil.ItemCallback<CommentResponseBody>(){
 
         override fun areItemsTheSame( oldItem : CommentResponseBody, newItem : CommentResponseBody) :Boolean {
-            return oldItem.comment.id == newItem.comment.id;
+            return oldItem.comment.id == newItem.comment.id
         }
 
         override fun areContentsTheSame(oldItem : CommentResponseBody, newItem : CommentResponseBody) : Boolean{
-            return oldItem.comment.createdAt == newItem.comment.createdAt;
+            return oldItem.comment == newItem.comment
         }
     }
 

@@ -78,7 +78,7 @@
         </RelativeLayout>
 
     </LinearLayout>
+</LinearLayout>
 
     <include android:id="@+id/loading_layout" layout="@layout/layout_loading" />
-</LinearLayout>
 </FrameLayout>

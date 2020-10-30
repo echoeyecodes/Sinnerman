@@ -10,6 +10,7 @@ import com.example.myapplication.Paging.CommonListPagingHandler
 import com.example.myapplication.Room.Dao.VideoDao
 import com.example.myapplication.Room.PersistenceDatabase
 import com.example.myapplication.repository.VideoRepository
+import com.example.myapplication.viewmodel.NetworkState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +21,7 @@ class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<
     val videoRepository = VideoRepository(getApplication())
 
     init {
-        load()
+        load(NetworkState.LOADING)
     }
 
     override fun initialize() {

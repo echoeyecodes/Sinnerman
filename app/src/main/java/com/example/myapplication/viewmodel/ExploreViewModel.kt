@@ -18,7 +18,7 @@ class ExploreViewModel(application: Application) : CommonListPagingHandler<Explo
     var categories: MutableLiveData<List<ExploreResponseBody>> = MutableLiveData()
 
     init {
-        load()
+        load(NetworkState.LOADING)
     }
 
     override fun initialize() {

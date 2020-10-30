@@ -8,33 +8,31 @@ import com.example.myapplication.API.ApiUtils.ApiClient
 import com.example.myapplication.API.DAO.CommentDao
 import com.example.myapplication.Room.CommentDatabase
 import com.example.myapplication.Room.PersistenceDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.myapplication.repository.CommentRepository
+import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.io.IOException
 
 class CommentDispatch(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
 
-    private val commentDao : CommentDao
-    private val persist_comment_dao : com.example.myapplication.Room.Dao.CommentDao
-    private val apiClient : ApiClient
-    private val commentDatabase : CommentDatabase
-
-    init {
-        commentDatabase = CommentDatabase.getInstance(context)!!
-        persist_comment_dao = commentDatabase.commentDao()!!
-        apiClient =  ApiClient.getInstance(context)
-        commentDao = apiClient.getClient(CommentDao::class.java)
-    }
+    private val apiClient = ApiClient.getInstance(context).getClient(CommentDao::class.java)
+    private val commentRepository: CommentRepository = CommentRepository(context)
 
     override fun doWork() : Result {
         var status = false
 
-        CoroutineScope(Dispatchers.IO).launch {
-            status = withContext(Dispatchers.Default) { sendComments() }
+            val job = CoroutineScope(Dispatchers.IO).launch{
+                status = withContext(Dispatchers.IO) { sendComments() }
+            }
+
+        while(!job.isCompleted){
+            try{
+                Thread.sleep(1500)
+            }catch (exception: InterruptedException){
+                exception.printStackTrace()
+            }
         }
+
 
         if(!status){
             return Result.retry()
@@ -44,17 +42,20 @@ class CommentDispatch(context: Context, workerParameters: WorkerParameters) : Wo
 
     private suspend fun sendComments(): Boolean = withContext(Dispatchers.IO) {
         var status = false
-        val comments = persist_comment_dao.getUnsentComments()
-        for ( commentModel in comments) {
-            status = try {
-                val response = commentDao.sendComment(commentModel)
-                persist_comment_dao.insertCommentAndUser(response)
-                true
-            } catch (e : HttpException) {
-                false
+        val comments = commentRepository.getUnsentComments()
+        if(comments.isNotEmpty()){
+            for ( commentModel in comments) {
+                status = try {
+                    val response = apiClient.sendComment(commentModel)
+                    commentRepository.updateCommentInDB(response)
+                    true
+                } catch (e : HttpException) {
+                    false
+                }
             }
+            status
+        }else{
+            true
+        }
     }
-        return@withContext  status
-    }
-
 }
