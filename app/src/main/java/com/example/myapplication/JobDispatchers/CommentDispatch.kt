@@ -27,7 +27,9 @@ class CommentDispatch(context: Context, workerParameters: WorkerParameters) : Wo
 
         while(!job.isCompleted){
             try{
-                Thread.sleep(1500)
+                CoroutineScope(Dispatchers.IO).launch {
+                    delay(1500)
+                }
             }catch (exception: InterruptedException){
                 exception.printStackTrace()
             }

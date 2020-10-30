@@ -83,7 +83,7 @@ private lateinit var comment_field : TextInputEditText
             sendComment();
         };
 
-        commentActivityViewModel.commentDao.getComments(key).observe(this, Observer<List<CommentResponseBody>> { value ->
+        commentActivityViewModel.getComments().observe(this, Observer<List<CommentResponseBody>> { value ->
             adapter.submitList(value)
         })
 
