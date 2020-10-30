@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import com.bumptech.glide.Glide;
 import com.echoeyecodes.sinnerman.BottomNavigationFragments.HomeFragment;
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext;
+import com.echoeyecodes.sinnerman.Interface.PagingListener;
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody;
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingListeners;
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingViewHolder;
@@ -29,13 +30,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBody, RecyclerView.ViewHolder> implements CommonListPagingListeners {
     private final MainActivityContext mainActivityContext;
     private final Context context;
-    private HomeFragment homeFragment;
+    private PagingListener pagingListener;
     private NetworkState networkState;
 
-    public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<VideoResponseBody> itemCallback, Context context, HomeFragment fragment) {
+    public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<VideoResponseBody> itemCallback, Context context, PagingListener pagingListener) {
         super(itemCallback);
         this.mainActivityContext = (MainActivityContext) context;
-        this.homeFragment = fragment;
+        this.pagingListener = pagingListener;
         this.context = context.getApplicationContext();
     }
 
@@ -81,7 +82,7 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
 
     @Override
     public void retry() {
-        homeFragment.retry();
+        pagingListener.retry();
     }
 
     public static class HomeFragmentRecyclerViewItemViewHolder extends CommonListPagingViewHolder {

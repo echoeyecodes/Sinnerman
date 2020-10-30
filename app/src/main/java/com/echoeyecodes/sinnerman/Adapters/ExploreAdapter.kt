@@ -51,11 +51,11 @@ class ExploreAdapter(private val exploreFragment: ExploreFragment, private val n
         adapter.submitList(exploreResponseBody.videos)
         holder.bindClickListener(exploreResponseBody.id)
 
-        if (exploreResponseBody.videos.size > 3) {
-            holder.more_btn.visibility = View.VISIBLE
-        } else {
-            holder.more_btn.visibility = View.GONE
-        }
+//        if (exploreResponseBody.videos.size > 3) {
+//            holder.more_btn.visibility = View.VISIBLE
+//        } else {
+//            holder.more_btn.visibility = View.GONE
+//        }
     }
 
     inner class ExploreViewHolder(itemView: View, adapter: ExploreAdapter) : CommonListPagingViewHolder(itemView, adapter) {

@@ -1,11 +1,13 @@
 package com.echoeyecodes.sinnerman.Paging
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import kotlinx.coroutines.*
+import retrofit2.HttpException
 import java.io.IOException
 
 abstract class CommonListPagingHandler<T>(application: Application) : AndroidViewModel(application){
@@ -54,6 +56,10 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
                 hasMore = false
             }
         }catch (error: IOException){
+            networkStatus.postValue(NetworkState.ERROR)
+        }
+        catch (error: HttpException){
+            Log.d("CARRR", error.message())
             networkStatus.postValue(NetworkState.ERROR)
         }
         isRunning = false

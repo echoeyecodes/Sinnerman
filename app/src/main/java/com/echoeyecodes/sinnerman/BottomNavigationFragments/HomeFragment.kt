@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Adapters.HomeFragmentRecyclerViewAdapter
+import com.echoeyecodes.sinnerman.Interface.PagingListener
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.RootBottomFragment
@@ -18,7 +19,7 @@ import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.HomeFragment
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
 
-class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener {
+class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener, PagingListener {
     private lateinit var recyclerView: RecyclerView
     private var adapter: HomeFragmentRecyclerViewAdapter? = null
     private lateinit var viewModel: HomeFragmentViewModel
@@ -91,7 +92,7 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener 
         super.onResume()
         mainActivityContext.setActiveBottomViewFragment(0)
     }
-    fun retry(){
+    override fun retry(){
         viewModel.retry()
     }
 

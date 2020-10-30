@@ -46,8 +46,8 @@ class VideoRepository(context: Context) {
         return videoDao.getVideos()
     }
 
-    fun getVideoFromDB(id: String) : VideoResponseBody{
-        return videoDao.getVideo(id)
+    suspend fun getVideoByTag(id: String, offset: String) : List<VideoResponseBody>{
+        return apiClient.fetchExploreItem(id, "5", offset)
     }
 
 }
