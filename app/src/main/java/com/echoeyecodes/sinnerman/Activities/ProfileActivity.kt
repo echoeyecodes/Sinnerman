@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toFile
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -21,6 +22,7 @@ import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.File
+import java.io.FileOutputStream
 
 
 class ProfileActivity : AppCompatActivity(){
@@ -91,13 +93,41 @@ class ProfileActivity : AppCompatActivity(){
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), UPLOAD_IMAGE_PRESET)
     }
 
+    private fun getImagePath(uri:Uri) : Boolean{
+        val file = File(cacheDir, "temp_store")
+        val inputStream = contentResolver.openInputStream(uri)
+        if(inputStream != null){
+         try{
+             val outputStream = FileOutputStream(file)
+             val buffer = ByteArray(1024)
+             var len: Int
 
+             len = inputStream.read(buffer)
+             while(len > 0){
+                 outputStream.write(buffer, 0, len)
+                 len = inputStream.read(buffer)
+             }
+             outputStream.close()
+             inputStream.close()
+             return true
+         }catch (exception:Exception){
+             return false
+         }
+        }else{
+            return false
+        }
+    }
+
+
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     fun uploadImage() {
-        val file = File(userModel.profile_url)
-
-        val requestBody =  RequestBody.create(MediaType.parse("multipart/form-data"), file)
-        val body = MultipartBody.Part.createFormData("image", file.name, requestBody)
-        profileActivityViewModel.uploadPhoto(body)
+        val eval = getImagePath(Uri.parse(userModel.profile_url))
+        if(eval){
+            val file = File(cacheDir, "temp_store")
+            val requestBody =  RequestBody.create(MediaType.parse("multipart/form-data"), file)
+            val body = MultipartBody.Part.createFormData("image", file.name, requestBody)
+            profileActivityViewModel.uploadPhoto(body)
+        }
     }
 
     private fun setNewImage(path:String){
@@ -106,10 +136,14 @@ class ProfileActivity : AppCompatActivity(){
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == UPLOAD_IMAGE_PRESET){
-            data?.let {
-                Log.d("CARRR", it.data.toString())
-                setNewImage(it.data.toString())
+            if(data != null){
+                uploadBtn.isEnabled = true
+                Log.d("CARRR", data.data.toString())
+                setNewImage(data.data.toString())
+            }else{
+                uploadBtn.isEnabled = false
             }
         }
     }

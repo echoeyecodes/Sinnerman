@@ -14,7 +14,7 @@ interface UserDao {
     fun getCurrentUser(): Call<UserModel>
 
     @Multipart
-    @POST("api/v1/user")
+    @POST("api/v1/user/upload")
     suspend fun uploadPhoto(@Part image : MultipartBody.Part)
 
 

@@ -71,11 +71,14 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         }
         UserModel userModel = AuthUserManager.getInstance().getUser(this);
         circleImageView = findViewById(R.id.user_profile_btn);
-
-
         if(userModel != null){
             Glide.with(this).load(Uri.parse(userModel.getProfile_url())).into(circleImageView);
         }
+        refreshUserData();
+    }
+
+    public void refreshUserData(){
+        mainActivityViewModel.updateCurrentUser();
     }
 
     public Boolean userExists(){
