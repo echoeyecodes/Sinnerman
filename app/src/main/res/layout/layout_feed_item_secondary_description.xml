@@ -5,6 +5,8 @@
               android:layout_weight="1"
               android:layout_marginLeft="10dp"
               android:layout_marginStart="10dp"
+              android:layout_marginEnd="5dp"
+              android:layout_marginRight="5dp"
               tools:showIn="@layout/layout_feed_item_secondary"
               android:layout_height="wrap_content">
 
@@ -47,18 +49,6 @@
                     android:layout_marginLeft="10dp"
                     android:textColor="@color/grey"
                     android:text="Universal Studios ~ 216k views ~ 2 mins ago"
-            />
-
-            <TextView
-                    android:id="@+id/video_timestamp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/RegularText"
-                    android:textSize="12sp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="@color/grey"
-                    android:text="2 mins ago"
             />
         </LinearLayout>
     </LinearLayout>

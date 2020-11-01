@@ -61,4 +61,14 @@
     </androidx.cardview.widget.CardView>
 
     <include layout="@layout/layout_feed_item_secondary_description"/>
+
+    <ImageButton
+            android:id="@+id/video_option_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_more_vert_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:tint="@color/black"
+            android:paddingHorizontal="5dp"
+    />
 </LinearLayout>

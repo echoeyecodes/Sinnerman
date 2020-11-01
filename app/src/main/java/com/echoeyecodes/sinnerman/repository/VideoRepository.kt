@@ -23,7 +23,6 @@ class VideoRepository(context: Context) {
          CoroutineScope(Dispatchers.IO).launch {
              videoDao.deleteVideoAndUsers()
          }
-
     }
 
     suspend fun updateVideoInDB(videoResponseBody: VideoResponseBody){

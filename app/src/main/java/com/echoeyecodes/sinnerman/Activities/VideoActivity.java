@@ -19,7 +19,9 @@ import com.echoeyecodes.sinnerman.Models.UserModel;
 import com.echoeyecodes.sinnerman.Models.VideoModel;
 import com.echoeyecodes.sinnerman.R;
 import com.echoeyecodes.sinnerman.Singleton.VideoCacheSingleton;
+import com.echoeyecodes.sinnerman.Utils.AuthenticationManager;
 import com.echoeyecodes.sinnerman.Utils.CustomExoPlayerDataSourceFactory;
+import com.echoeyecodes.sinnerman.Utils.IntegerToDp;
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState;
 import com.echoeyecodes.sinnerman.viewmodel.VideoActivityViewModel;
 import com.google.android.exoplayer2.*;
@@ -68,6 +70,8 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
 
         setContentView(R.layout.activity_video);
         videoActivityViewModel = new ViewModelProvider(this).get(VideoActivityViewModel.class);
+
+
         playerView = findViewById(R.id.video_player_view);
 
         loading_layout = findViewById(R.id.video_activity_loading_layout);
@@ -86,18 +90,35 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
         like_btn = findViewById(R.id.like_btn);
         reload_btn = findViewById(R.id.video_retry_btn);
 
-        video_id = getIntent().getStringExtra("video_id");
 
-        valueAnimator = ValueAnimator.ofFloat(1,1.3f,1);
+        Intent intent = getIntent();
+//        String action = intent.getAction();
+        Uri data = intent.getData();
+
+        if (data != null) {
+            AuthenticationManager authenticationManager = new AuthenticationManager();
+            String token = authenticationManager.checkToken(this);
+            if (token == null || token.equals("")) {
+                authenticationManager.startAuthActivity(this);
+                return;
+            }
+            video_id = data.getLastPathSegment();
+        } else {
+            video_id = getIntent().getStringExtra("video_id");
+        }
+
+        valueAnimator = ValueAnimator.ofFloat(1, 1.3f, 1);
         valueAnimator.setDuration(100);
 
         valueAnimator.addUpdateListener(this);
 
         videoActivityViewModel.isFullScreen().observe(this, (isFullScreen) -> {
             if (isFullScreen) {
+                fullscreen_btn.setImageResource(R.drawable.ic_fullscreen_exit);
                 adjustPlayerViewMargins(0);
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             } else {
+                fullscreen_btn.setImageResource(R.drawable.ic_fullscreen);
                 adjustPlayerViewMargins(getNavigationBarHeight());
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             }
@@ -114,8 +135,8 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
 
         like_btn.setOnClickListener(v -> animateLikeButton());
 
-        videoActivityViewModel.getVideoObserver().observe(this, (video) ->{
-            if(video != null){
+        videoActivityViewModel.getVideoObserver().observe(this, (video) -> {
+            if (video != null) {
                 UserModel userModel = video.getUser();
                 VideoModel videoModel = video.getVideo();
 
@@ -129,18 +150,22 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
             }
         });
 
-        videoActivityViewModel.getRequest_status().observe(this, (status) ->{
-            if(status == NetworkState.LOADING){
+        videoActivityViewModel.getRequest_status().observe(this, (status) -> {
+            if (status == NetworkState.ERROR) {
+                Toast.makeText(this, "Couldn't get resource. Please try again", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+            if (status == NetworkState.LOADING) {
                 loading_layout.setVisibility(View.VISIBLE);
-            }else{
+            } else {
                 loading_layout.setVisibility(View.GONE);
             }
         });
 
-        videoActivityViewModel.getDidLike().observe(this, (like) ->{
-            if(like){
+        videoActivityViewModel.getDidLike().observe(this, (like) -> {
+            if (like) {
                 like_btn.setBackgroundResource(R.drawable.like_icon);
-            }else{
+            } else {
                 like_btn.setBackgroundResource(R.drawable.unlike_icon);
             }
         });
@@ -148,28 +173,29 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
         videoActivityViewModel.fetchVideo(video_id);
 
         resolution_btn.setOnClickListener(v -> {
-            Log.d("CARRR", "HEYEYE");
             ResolutionListFragment.Companion.getInstance(videoActivityViewModel.getResolutions()).show(getSupportFragmentManager(), RESOLUTION_FRAGMENT_TAG);
         });
     }
 
-    private int getNavigationBarHeight(){
+
+    private int getNavigationBarHeight() {
         Resources resources = Resources.getSystem();
         int resource = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-        if(resource > 0){
+        if (resource > 0) {
             return resources.getDimensionPixelSize(resource);
         }
         return 0;
     }
 
-    private void animateLikeButton(){
+    private void animateLikeButton() {
         valueAnimator.start();
         videoActivityViewModel.likeVideo();
     }
-    private void adjustPlayerViewMargins(int margin){
+
+    private void adjustPlayerViewMargins(int margin) {
         View controlView = findViewById(R.id.video_controls);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) controlView.getLayoutParams();
-        params.setMargins(0,0,0, margin);
+        params.setMargins(IntegerToDp.intToDp(10), IntegerToDp.intToDp(10), IntegerToDp.intToDp(10), margin);
         controlView.setLayoutParams(params);
     }
 
@@ -202,16 +228,16 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
         player.prepare(mediaSource, false, false);
     }
 
-    private void changeResolution(int position, ResolutionDimensions dimensions){
-        if(position == 0){
+    private void changeResolution(int position, ResolutionDimensions dimensions) {
+        if (position == 0) {
             defaultTrackSelector.setParameters(defaultTrackSelector.buildUponParameters().setMaxVideoSizeSd());
-        }else{
+        } else {
             defaultTrackSelector.setParameters(defaultTrackSelector.buildUponParameters().setMaxVideoSize(dimensions.getWidth(), dimensions.getHeight()));
         }
 
         videoActivityViewModel.setSelectedItemPosition(position);
         ResolutionListFragment resolutionListFragment = (ResolutionListFragment) getSupportFragmentManager().findFragmentByTag(RESOLUTION_FRAGMENT_TAG);
-        if(resolutionListFragment != null && resolutionListFragment.isVisible()){
+        if (resolutionListFragment != null && resolutionListFragment.isVisible()) {
             resolutionListFragment.dismiss();
         }
     }
@@ -231,7 +257,7 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     @Override
     public void onPause() {
         super.onPause();
-        if(Util.SDK_INT < 24){
+        if (Util.SDK_INT < 24) {
             releasePlayer();
         }
     }
@@ -239,7 +265,7 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     @Override
     protected void onStop() {
         super.onStop();
-        if(Util.SDK_INT >= 24){
+        if (Util.SDK_INT >= 24) {
             releasePlayer();
         }
     }
@@ -263,8 +289,8 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     @Override
     protected void onStart() {
         super.onStart();
-        if(Util.SDK_INT >= 24){
-            if(mediaSource != null){
+        if (Util.SDK_INT >= 24) {
+            if (mediaSource != null) {
                 initializePlayer();
             }
         }
@@ -274,8 +300,8 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     public void onResume() {
         super.onResume();
         hideSystemUI();
-        if(Util.SDK_INT < 24 || player == null){
-            if(mediaSource != null){
+        if (Util.SDK_INT < 24 || player == null) {
+            if (mediaSource != null) {
                 initializePlayer();
             }
         }
@@ -309,7 +335,7 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
         ArrayList<ResolutionDimensions> resolutions = new ArrayList<>();
         resolutions.add(new ResolutionDimensions(0, 0));
 
-        if(manifest!= null){
+        if (manifest != null) {
             HlsManifest hlsManifest = (HlsManifest) manifest;
             List<HlsMasterPlaylist.Variant> variableDefinitions = hlsManifest.masterPlaylist.variants;
 
@@ -330,13 +356,13 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
 
     @Override
     public void onAnimationUpdate(ValueAnimator animation) {
-            float value = (float) animation.getAnimatedValue();
-            like_btn.setScaleX(value);
-            like_btn.setScaleY(value);
+        float value = (float) animation.getAnimatedValue();
+        like_btn.setScaleX(value);
+        like_btn.setScaleY(value);
     }
 
     @Override
     public void onResolutionSelected(int position, ResolutionDimensions resolutionDimensions) {
-            changeResolution(position, resolutionDimensions);
+        changeResolution(position, resolutionDimensions);
     }
 }

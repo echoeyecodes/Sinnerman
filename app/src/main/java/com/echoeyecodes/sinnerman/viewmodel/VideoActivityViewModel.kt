@@ -61,7 +61,7 @@ class VideoActivityViewModel(application: Application) : AndroidViewModel(applic
                     videoRepository.updateVideoInDB(video)
                     videoObserver.postValue(video)
                     didLike.postValue(video.video.has_liked)
-                    Log.d("CARRR", video.video.has_liked.toString())
+//                    Log.d("CARRR", video.video.has_liked.toString())
                     request_status.postValue(NetworkState.SUCCESS)
                 }catch (exception: IOException){
                     request_status.postValue(NetworkState.ERROR)

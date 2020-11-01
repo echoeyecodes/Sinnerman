@@ -61,7 +61,10 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
         recyclerView.adapter = adapter
 
         viewModel.getVideos().observe(viewLifecycleOwner, Observer<List<VideoResponseBody>> { videos ->
-            adapter?.submitList(videos)
+            val status = viewModel.networkStatus.value
+            if(status == NetworkState.SUCCESS){
+                adapter?.submitList(videos)
+            }
         })
 
         viewModel.networkStatus.observe(viewLifecycleOwner, Observer<NetworkState> { state ->

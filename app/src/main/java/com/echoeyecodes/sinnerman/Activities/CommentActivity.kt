@@ -2,6 +2,7 @@ package com.echoeyecodes.sinnerman.Activities;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
@@ -40,6 +41,7 @@ private lateinit var swipeRefreshLayout : SwipeRefreshLayout
 private lateinit var profile_image : CircleImageView
 private lateinit var back_button : ImageButton
 private lateinit var adapter : CommentsAdapter
+    private lateinit var empty_container: LinearLayout
 private lateinit var comment_field : TextInputEditText
 
     override fun onCreate(savedInstanceState : Bundle?) {
@@ -53,6 +55,7 @@ private lateinit var comment_field : TextInputEditText
         val authUserManager = AuthUserManager.getInstance()
         val userModel = authUserManager.getUser(this)
         recyclerView = findViewById(R.id.comments_recycler_view)
+        empty_container = findViewById(R.id.empty_recycler_view_layout);
         toolbar = findViewById(R.id.comments_toolbar)
         swipeRefreshLayout = findViewById(R.id.comments_refresh_layout)
         profile_image = findViewById(R.id.comment_creator_image)
@@ -73,7 +76,7 @@ private lateinit var comment_field : TextInputEditText
         recyclerView.layoutManager = linearLayoutManager
         swipeRefreshLayout.setOnRefreshListener(this)
         val commentModelItemCallback: DiffUtil.ItemCallback<CommentResponseBody> = CommentItemCallback();
-        adapter = CommentsAdapter(commentModelItemCallback, this);
+        adapter = CommentsAdapter(this, commentModelItemCallback, this);
         recyclerView.adapter = adapter;
 
 
@@ -82,7 +85,17 @@ private lateinit var comment_field : TextInputEditText
         };
 
         commentActivityViewModel.getComments().observe(this, Observer<List<CommentResponseBody>> { value ->
-            adapter.submitList(value)
+            val status = commentActivityViewModel.networkStatus.value
+            if(status == NetworkState.SUCCESS){
+                if(value.isEmpty()){
+                    empty_container.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                }else{
+                    empty_container.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                }
+                adapter.submitList(value)
+            }
         })
 
         commentActivityViewModel.networkStatus.observe(this, Observer<NetworkState> { state ->
@@ -99,6 +112,7 @@ private lateinit var comment_field : TextInputEditText
                 adapter.onNetworkStateChanged(state)
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
+
         })
 
 
@@ -137,6 +151,10 @@ private lateinit var comment_field : TextInputEditText
                 }
             }
         }
+
+    override fun retry() {
+        commentActivityViewModel.retry()
+    }
 
     inner class CommentItemCallback : DiffUtil.ItemCallback<CommentResponseBody>(){
 

@@ -1,6 +1,7 @@
 package com.echoeyecodes.sinnerman.repository
 
 import android.content.Context
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.echoeyecodes.sinnerman.JobDispatchers.LikeDispatch
@@ -9,6 +10,8 @@ import com.echoeyecodes.sinnerman.Room.PersistenceDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 class LikeRepository(private val context: Context){
     val likeDao = PersistenceDatabase.getInstance(context.applicationContext).likeDao()
@@ -20,8 +23,10 @@ class LikeRepository(private val context: Context){
         }
     }
 
-    fun deleteLike(likeModel: LikeModel){
-        likeDao.deleteLike(likeModel)
+    suspend fun deleteLike(likeModel: LikeModel){
+        withContext(Dispatchers.Unconfined){
+            likeDao.deleteLike(likeModel)
+        }
     }
 
     fun getUnsentLikes():List<LikeModel>{
@@ -29,8 +34,8 @@ class LikeRepository(private val context: Context){
     }
 
     private fun initiateLikeWorkRequest(){
-        val workRequest = OneTimeWorkRequest.Builder(LikeDispatch::class.java).build()
-        val workManager = WorkManager.getInstance(context)
-        workManager.enqueue(workRequest)
+        val workRequest = OneTimeWorkRequest.Builder(LikeDispatch::class.java).setInitialDelay(1500, TimeUnit.MILLISECONDS).addTag("like_work_request").build()
+        val workManager = WorkManager.getInstance(context.applicationContext)
+        workManager.enqueueUniqueWork("like_work_request", ExistingWorkPolicy.REPLACE, workRequest)
     }
 }

@@ -1,11 +1,15 @@
 package com.echoeyecodes.sinnerman.API.ApiUtils;
 
 import android.content.Context;
+import android.content.Intent;
+import com.echoeyecodes.sinnerman.Activities.AuthActivities.SignUpActivity;
+import com.echoeyecodes.sinnerman.BuildConfig;
 import com.echoeyecodes.sinnerman.Utils.AuthenticationManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -39,12 +43,18 @@ public class ApiClient{
         OkHttpClient.Builder httpclient = new OkHttpClient.Builder();
         httpclient.addInterceptor(chain -> {
             Request originalRequest = chain.request();
-            Request.Builder builder = originalRequest.newBuilder().header("x-api-key", "123456789").header("Content-Type", "application/json");
 
             String token = new AuthenticationManager().checkToken(context);
-            builder.header("token", token);
+            Request request = originalRequest.newBuilder().header("x-api-key", BuildConfig.SINNERMAN_SERVER_API_KEY).header("Content-Type", "application/json").header("token", token).build();
 
-            return chain.proceed(builder.build());
+            Response response = chain.proceed(request);
+            if(response.code() == 401){
+                AuthenticationManager authenticationManager = new AuthenticationManager();
+                authenticationManager.startAuthActivity(context.getApplicationContext());
+                response.close();
+                return response;
+            }
+            return response;
         });
 
         retrofitBuilder = new Retrofit.Builder().baseUrl(BASE_URL)

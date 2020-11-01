@@ -43,6 +43,7 @@ public class SignUpActivity extends AppCompatActivity implements FormEditTextLis
 
         signUpViewModel.getRequestStatusObserver().observe(this, (value) ->{
             sign_up_btn.setEnabled(value != RequestStatus.LOADING);
+            have_account_btn.setEnabled(value != RequestStatus.LOADING);
 
             if(value == RequestStatus.SUCCESS){
                 Intent intent = new Intent(this, OtpVerificationActivity.class);

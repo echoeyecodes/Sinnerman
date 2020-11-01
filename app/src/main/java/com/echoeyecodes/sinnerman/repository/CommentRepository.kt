@@ -1,23 +1,32 @@
 package com.echoeyecodes.sinnerman.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.liveData
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.echoeyecodes.sinnerman.API.ApiUtils.ApiClient
 import com.echoeyecodes.sinnerman.API.DAO.CommentDao
+import com.echoeyecodes.sinnerman.JobDispatchers.CommentDispatch
 import com.echoeyecodes.sinnerman.Models.CommentModel
 import com.echoeyecodes.sinnerman.Models.CommentResponseBody
 import com.echoeyecodes.sinnerman.Room.CommentDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlin.coroutines.coroutineContext
 
-class CommentRepository(context: Context){
+class CommentRepository(private val context: Context){
     val apiClient = ApiClient.getInstance(context.applicationContext).getClient(CommentDao::class.java)
     val commentDao = CommentDatabase.getInstance(context.applicationContext).commentDao()
 
     fun addCommentToDB(commentResponseBody: CommentResponseBody){
-        commentDao.insertCommentAndUser(commentResponseBody)
+        CoroutineScope(Dispatchers.IO).launch {
+            commentDao.insertCommentAndUser(commentResponseBody)
+            initiateCommentWorkRequest()
+        }
     }
 
     fun updateCommentInDB(commentResponseBody: CommentResponseBody){
@@ -29,7 +38,7 @@ class CommentRepository(context: Context){
     }
 
     fun getCommentsFromDB(id: String):LiveData<List<CommentResponseBody>>{
-        return liveData { emitSource(commentDao.getComments(id)) }
+        return commentDao.getComments(id)
     }
 
     fun deleteComments(){
@@ -38,12 +47,19 @@ class CommentRepository(context: Context){
         }
     }
 
+    private fun initiateCommentWorkRequest(){
+        val workRequest = OneTimeWorkRequest.Builder(CommentDispatch::class.java).addTag("comment_work_request").build()
+        val workManager = WorkManager.getInstance(context.applicationContext)
+        workManager.enqueueUniqueWork("upload_comment", ExistingWorkPolicy.REPLACE, workRequest)
+    }
+
+
     suspend fun getComments(id:String, offset:String) : List<CommentResponseBody>{
         return apiClient.getComments(id, "10", offset)
     }
 
 
-    suspend fun getUnsentComments(): List<CommentModel>{
+     fun getUnsentComments(): List<CommentModel>{
         return commentDao.getUnsentComments()
     }
 }

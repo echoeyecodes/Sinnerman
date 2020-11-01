@@ -1,5 +1,7 @@
 package com.echoeyecodes.sinnerman.Adapters;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import com.echoeyecodes.sinnerman.Interface.CommentActivityListener;
@@ -17,6 +20,7 @@ import com.echoeyecodes.sinnerman.Models.UserModel;
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingListeners;
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingViewHolder;
 import com.echoeyecodes.sinnerman.R;
+import com.echoeyecodes.sinnerman.Utils.AuthUserManager;
 import com.echoeyecodes.sinnerman.Utils.TimestampConverter;
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState;
 import com.squareup.picasso.Picasso;
@@ -26,9 +30,11 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
 
     CommentActivityListener commentActivityListener;
     private NetworkState networkState;
-    public CommentsAdapter(@NonNull DiffUtil.ItemCallback<CommentResponseBody> diffCallback, CommentActivityListener commentActivityListener) {
+    private UserModel currentUser;
+    public CommentsAdapter(Context context,  @NonNull DiffUtil.ItemCallback<CommentResponseBody> diffCallback, CommentActivityListener commentActivityListener) {
         super(diffCallback);
         this.commentActivityListener = commentActivityListener;
+        currentUser = AuthUserManager.getInstance().getUser(context.getApplicationContext());
     }
 
 
@@ -53,11 +59,17 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
         holder.getLoading_container().setVisibility(View.GONE);
         CommentModel commentModel = commentResponseBody.getComment();
         UserModel userModel = commentResponseBody.getUser();
-        if(commentModel.getStatus() == 1){
-            holder.progressBar.setVisibility(View.VISIBLE);
-        }else{
-            holder.progressBar.setVisibility(View.GONE);
+
+        if(currentUser.getId().equals(userModel.getId())){
+            holder.cardView.setCardBackgroundColor(Color.WHITE);
+        }else {
+            holder.cardView.setCardBackgroundColor(Color.rgb(241,242,246));
         }
+//        if(commentModel.getStatus() == 1){
+//            holder.progressBar.setVisibility(View.VISIBLE);
+//        }else{
+//            holder.progressBar.setVisibility(View.GONE);
+//        }
 
         holder.comment_author.setText(userModel.getFullname());
         holder.comment.setText(commentModel.getComment());
@@ -68,7 +80,7 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
 
     @Override
     public void retry() {
-
+        commentActivityListener.retry();
     }
 
     @Override
@@ -82,8 +94,9 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
 
         private final TextView comment_author;
         private final TextView comment;
-        private LinearLayout linearLayout;
+        private final LinearLayout linearLayout;
         private final TextView timestamp;
+        private final CardView cardView;
         private final CircleImageView comment_author_image;
 
         public ViewHolder(View itemView, CommonListPagingListeners commonListPagingListeners){
@@ -93,6 +106,7 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
             comment = itemView.findViewById(R.id.comment);
             linearLayout = itemView.findViewById(R.id.comment_item_container);
             timestamp = itemView.findViewById(R.id.comment_timestamp);
+            cardView = itemView.findViewById(R.id.comment_background_layout);
 
             comment_author = itemView.findViewById(R.id.comment_author_name);
             comment_author_image = itemView.findViewById(R.id.comment_author_image);

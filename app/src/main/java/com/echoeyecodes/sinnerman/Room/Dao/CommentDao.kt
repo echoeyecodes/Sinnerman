@@ -23,11 +23,12 @@ import com.echoeyecodes.sinnerman.Models.UserModel;
     abstract fun updateUser(userModel: UserModel)
 
 
+    @Transaction
     @Query("SELECT * FROM comments INNER JOIN users ON comments.comment_user_id = users.user_id WHERE comments.video_id = :id ORDER BY createdAt DESC")
     abstract fun getComments(id:String) :  LiveData<List<CommentResponseBody>>
 
     @Query("SELECT * FROM comments WHERE status = 1")
-    abstract suspend fun getUnsentComments() : List<CommentModel>
+    abstract fun getUnsentComments() : List<CommentModel>
 
     @Delete
     abstract suspend fun deleteComment(comment : CommentModel)
@@ -54,8 +55,8 @@ import com.echoeyecodes.sinnerman.Models.UserModel;
 
     @Transaction
     open fun updateCommentAndUser(commentResponseBody : CommentResponseBody){
-        updateUser(commentResponseBody.user)
         updateComment(commentResponseBody.comment)
+        updateUser(commentResponseBody.user)
     }
 
     @Transaction

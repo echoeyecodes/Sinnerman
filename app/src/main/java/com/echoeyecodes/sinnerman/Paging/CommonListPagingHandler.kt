@@ -40,7 +40,7 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
     }
 
     private fun resetState() {
-        networkStatus.postValue(NetworkState.IDLE)
+        networkStatus.postValue(NetworkState.SUCCESS)
         isRunning = false
     }
 

@@ -2,9 +2,11 @@ package com.echoeyecodes.sinnerman.BottomNavigationFragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
@@ -24,10 +26,11 @@ import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
 
 class NotificationFragment : RootBottomFragment(), NotificationFragmentListener, SwipeRefreshLayout.OnRefreshListener {
-    private var recyclerView: RecyclerView? = null
+    private lateinit var recyclerView: RecyclerView
     private lateinit var swipeRefreshLayout:SwipeRefreshLayout
     private lateinit var notificationViewModel: NotificationViewModel
     private lateinit var adapter: NotificationsAdapter
+    private lateinit var empty_container: LinearLayout
      init{
          TAG ="NOTIFICATION_FRAGMENT"
      }
@@ -61,12 +64,13 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
 
         recyclerView = view.findViewById(R.id.fragment_notifications_recycler_view)
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh)
+        empty_container = view.findViewById(R.id.empty_recycler_view_layout);
         val notificationItemCallback = NotificationItemCallback()
 
-        recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         adapter = NotificationsAdapter(context, notificationItemCallback, mainActivityContext, this)
-        recyclerView?.addItemDecoration( CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)))
-        recyclerView?.adapter = adapter
+        recyclerView.addItemDecoration( CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)))
+        recyclerView.adapter = adapter
 
         swipeRefreshLayout.setOnRefreshListener(this)
 
@@ -86,7 +90,18 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
         })
 
         notificationViewModel.getNotifications().observe(viewLifecycleOwner, Observer<List<UploadNotificationModel>> { notification ->
-            adapter.submitList(notification)
+            val status = notificationViewModel.networkStatus.value
+            if(status == NetworkState.SUCCESS){
+
+                if(notification.isEmpty()){
+                    empty_container.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                }else{
+                    empty_container.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                }
+                adapter.submitList(notification)
+            }
         })
     }
 

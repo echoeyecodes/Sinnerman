@@ -9,11 +9,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.echoeyecodes.sinnerman.Fragments.MoreOptionsFragment
+import com.echoeyecodes.sinnerman.Fragments.MoreOptionsFragment.Companion.newInstance
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.Utils.DurationConverter
@@ -28,7 +32,10 @@ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>,
          const val SECONDARY = 1
      }
 
-    override fun onCreateViewHolder( parent : ViewGroup, viewType : Int): ExploreItemAdapter.CustomViewHolder {
+    private var fragmentManager: FragmentManager = (context as AppCompatActivity).supportFragmentManager
+    private lateinit var moreOptionsFragment: MoreOptionsFragment
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExploreItemAdapter.CustomViewHolder {
         return if(viewType == PRIMARY){
             val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_feed_item, parent, false)
             ExplorePrimaryItemViewHolder(view)
@@ -38,7 +45,7 @@ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>,
         }
     }
 
-    override fun onBindViewHolder(holder : ExploreItemAdapter.CustomViewHolder, position : Int) {
+    override fun onBindViewHolder(holder: ExploreItemAdapter.CustomViewHolder, position: Int) {
         val videoResponseBody = getItem(position);
 
         if(videoResponseBody != null) {
@@ -51,6 +58,12 @@ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>,
             val timestamp = TimestampConverter.getInstance().convertToTimeDifference(videoResponseBody.video.createdAt)
             holder.author.text = videoResponseBody.user.username + " \u2022 " + videoResponseBody.video.views.toString() + " views" + " \u2022 " + timestamp
             holder.linearLayout.setOnClickListener{ navigate(videoResponseBody.video.id) }
+
+
+            holder.options_btn.setOnClickListener {
+                moreOptionsFragment = newInstance(getItem(position))
+                moreOptionsFragment.show(fragmentManager, "more_options_fragment")
+            }
         }
     }
 
@@ -66,6 +79,7 @@ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>,
          val linearLayout : LinearLayout = itemView.findViewById(R.id.video_item)
          val author_image:CircleImageView = itemView.findViewById(R.id.author_image)
          val title : TextView = itemView.findViewById(R.id.video_title)
+         val options_btn : ImageView = itemView.findViewById(R.id.video_option_btn);
          val author : TextView = itemView.findViewById(R.id.video_author)
          val duration : TextView = itemView.findViewById(R.id.video_duration)
      }

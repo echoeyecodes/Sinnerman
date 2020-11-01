@@ -1,5 +1,6 @@
 package com.echoeyecodes.sinnerman.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -10,12 +11,15 @@ import android.view.ViewGroup;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.*;
 
 import androidx.recyclerview.widget.ListAdapter;
 import com.bumptech.glide.Glide;
 import com.echoeyecodes.sinnerman.BottomNavigationFragments.HomeFragment;
+import com.echoeyecodes.sinnerman.Fragments.MoreOptionsFragment;
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext;
 import com.echoeyecodes.sinnerman.Interface.PagingListener;
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody;
@@ -32,12 +36,16 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
     private final Context context;
     private PagingListener pagingListener;
     private NetworkState networkState;
+    private FragmentManager fragmentManager;
+    private MoreOptionsFragment moreOptionsFragment;
 
     public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<VideoResponseBody> itemCallback, Context context, PagingListener pagingListener) {
         super(itemCallback);
         this.mainActivityContext = (MainActivityContext) context;
         this.pagingListener = pagingListener;
         this.context = context.getApplicationContext();
+
+        fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
     }
 
     @NonNull
@@ -78,6 +86,11 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
             viewHolder.linearLayout.setOnClickListener(v -> {
                 mainActivityContext.navigateToVideos(videoResponseBody.getVideo().getId());
             });
+
+            viewHolder.options_btn.setOnClickListener(v ->{
+                moreOptionsFragment = MoreOptionsFragment.Companion.newInstance(getItem(position));
+                moreOptionsFragment.show(fragmentManager, "more_options_fragment");
+            });
     }
 
     @Override
@@ -91,6 +104,7 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
         private final TextView title;
         private final TextView author;
         private final CardView cardView;
+        private final ImageView options_btn;
         private final LinearLayout linearLayout;
         private final TextView duration;
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
@@ -102,6 +116,7 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
             imageView = itemView.findViewById(R.id.video_thumbnail);
             cardView = itemView.findViewById(R.id.video_card_frame);
             title = itemView.findViewById(R.id.video_title);
+            options_btn = itemView.findViewById(R.id.video_option_btn);
             author_image = itemView.findViewById(R.id.author_image);
             author = itemView.findViewById(R.id.video_author);
             duration = itemView.findViewById(R.id.video_duration);

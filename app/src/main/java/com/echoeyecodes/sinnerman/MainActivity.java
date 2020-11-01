@@ -1,12 +1,20 @@
 package com.echoeyecodes.sinnerman;
 
+import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -21,16 +29,29 @@ import com.echoeyecodes.sinnerman.BottomNavigationFragments.ExploreFragment;
 import com.echoeyecodes.sinnerman.BottomNavigationFragments.HomeFragment;
 import com.echoeyecodes.sinnerman.BottomNavigationFragments.NotificationFragment;
 import com.echoeyecodes.sinnerman.Activities.VideoActivity;
+import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment;
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext;
 import com.echoeyecodes.sinnerman.Models.UserModel;
+import com.echoeyecodes.sinnerman.Models.VideoResponseBody;
+import com.echoeyecodes.sinnerman.Room.CommentDatabase;
+import com.echoeyecodes.sinnerman.Room.Dao.CommentDao;
 import com.echoeyecodes.sinnerman.Utils.AuthUserManager;
 import com.echoeyecodes.sinnerman.Utils.AuthenticationManager;
+import com.echoeyecodes.sinnerman.repository.CommentRepository;
 import com.echoeyecodes.sinnerman.viewmodel.MainActivityViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.dynamiclinks.DynamicLink;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.ShortDynamicLink;
 import de.hdodenhof.circleimageview.CircleImageView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements MainActivityContext, BottomNavigationView.OnNavigationItemSelectedListener, FragmentManager.OnBackStackChangedListener {
     private MainActivityViewModel mainActivityViewModel;
@@ -39,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     private CircleImageView circleImageView;
     private RootBottomFragment active_fragment;
     private ImageView user_profile;
+    private FrameLayout frameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         }
 
 
-        mainActivityViewModel.getIsLoaded().observe(this, (value) ->{
-            if(value){
+        mainActivityViewModel.getIsLoaded().observe(this, (value) -> {
+            if (value) {
                 initUserData();
             }
         });
@@ -65,48 +87,36 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
 
 
     public void initUserData() {
-        if(!userExists()){
-            mainActivityViewModel.updateCurrentUser();
-            return;
-        }
         UserModel userModel = AuthUserManager.getInstance().getUser(this);
         circleImageView = findViewById(R.id.user_profile_btn);
-        if(userModel != null){
+        if (userModel != null) {
             Glide.with(this).load(Uri.parse(userModel.getProfile_url())).into(circleImageView);
         }
-        refreshUserData();
     }
 
-    public void refreshUserData(){
+    public void refreshUserData() {
         mainActivityViewModel.updateCurrentUser();
-    }
-
-    public Boolean userExists(){
-        AuthUserManager authUserManager = AuthUserManager.getInstance();
-        return authUserManager.dataExists(this);
     }
 
     public void beginActivity() {
         setContentView(R.layout.activity_main);
 
         initUserData();
+        refreshUserData();
         initViews();
     }
 
     private void initViews() {
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         user_profile = findViewById(R.id.user_profile_btn);
+        frameLayout = findViewById(R.id.main_activity_root);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
 
         search_btn = findViewById(R.id.search_input_button);
 
-        search_btn.setOnClickListener(v -> {
-            startActivity(new Intent(this, SearchActivity.class));
-        });
-
         user_profile.setOnClickListener(v -> {
-            startActivity(new Intent(this, ProfileActivity.class));
+            startActivityForResult(new Intent(this, ProfileActivity.class), 0);
         });
 
         getSupportFragmentManager().addOnBackStackChangedListener(this);
@@ -171,6 +181,62 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     }
 
     @Override
+    public void onOptionSelected(VideoResponseBody video, int position) {
+
+        ProgressDialogFragment progressDialogFragment = new ProgressDialogFragment("Creating Link");
+        progressDialogFragment.setCancelable(false);
+        progressDialogFragment.show(getSupportFragmentManager(), "link_sync_fragment");
+
+        String title = video.getVideo().getTitle();
+        String description = video.getVideo().getDescription();
+        String imageUrl = video.getVideo().getThumbnail();
+
+        FirebaseDynamicLinks.getInstance().createDynamicLink()
+                .setLink(Uri.parse("https://www.sinnerman.com/videos/" + video.getVideo().getId()))
+                .setDomainUriPrefix("https://sinnerman.page.link")
+                .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().setFallbackUrl(Uri.parse(BuildConfig.APP_REDIRECT_URL))
+                        .build()).setSocialMetaTagParameters(new DynamicLink.SocialMetaTagParameters.Builder()
+                .setTitle(title).setDescription(description).setImageUrl(Uri.parse(imageUrl)).build())
+                .buildShortDynamicLink().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                String link = Objects.requireNonNull(task.getResult().getShortLink()).toString();
+
+                if(position == 0){
+                    copyLinkToClipboard(link);
+                }else if (position == 1){
+                    openShareIntent(link);
+                }
+            }else{
+                progressDialogFragment.dismiss();
+                Toast.makeText(this, "Could not create link", Toast.LENGTH_SHORT).show();
+            }
+            progressDialogFragment.dismiss();
+        }).addOnFailureListener(e -> {
+            progressDialogFragment.dismiss();
+            Toast.makeText(this, "Could not create link", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void copyLinkToClipboard(String link){
+        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clipData = ClipData.newPlainText("Share link", link);
+        clipboardManager.setPrimaryClip(clipData);
+        showSnackBarMessage();
+    }
+
+    private void showSnackBarMessage(){
+        Snackbar.make(frameLayout, "Video link copied to clipboard", Snackbar.LENGTH_LONG).show();
+    }
+
+    private void openShareIntent(String link){
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, link);
+        intent.setType("text/plain");
+        startActivity(intent);
+    }
+
+    @Override
     public boolean onNavigationItemSelected(@NonNull @NotNull MenuItem item) {
         RootBottomFragment fragment;
         switch (item.getItemId()) {
@@ -197,6 +263,15 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         Fragment fragment = fragments.get(fragments.size() - 1);
         if (fragment instanceof RootBottomFragment) {
             active_fragment = (RootBottomFragment) fragment;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 0 && resultCode == Activity.RESULT_OK){
+            refreshUserData();
         }
     }
 }

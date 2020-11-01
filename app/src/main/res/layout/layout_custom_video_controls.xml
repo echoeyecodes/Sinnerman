@@ -75,6 +75,17 @@
             />
         </FrameLayout>
 
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                android:id="@+id/exo_position"
+                android:textColor="@color/white"
+                style="@style/RegularText"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+        />
+
         <com.google.android.exoplayer2.ui.DefaultTimeBar
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -88,7 +99,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="00:00"
-                android:id="@+id/exo_position"
+                android:id="@+id/exo_duration"
                 android:textColor="@color/white"
                 style="@style/RegularText"
                 android:layout_marginStart="5dp"
@@ -99,7 +110,8 @@
                 android:id="@+id/full_screen_btn"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/exo_icon_fullscreen_enter"
+                android:src="@drawable/ic_fullscreen"
+                android:tint="@color/white"
                 android:background="?attr/selectableItemBackground"
                 android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
@@ -107,9 +119,9 @@
 
         <ImageButton
                 android:id="@+id/show_resolutions_btn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_baseline_settings_24"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_timer"
                 android:background="?attr/selectableItemBackground"
                 android:layout_marginStart="5dp"
                 android:tint="@color/white"

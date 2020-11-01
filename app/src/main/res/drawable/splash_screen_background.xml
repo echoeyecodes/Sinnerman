@@ -3,12 +3,11 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:opacity="opaque">
 
-    <item android:drawable="@android:color/white" />
+    <item android:drawable="@android:color/transparent" />
     <item>
         <bitmap
                 android:gravity="center"
-                android:src="@drawable/sinnerman" />
+                android:src="@drawable/splash" />
     </item>
-
 
 </layer-list>

@@ -1,6 +1,7 @@
 package com.echoeyecodes.sinnerman.viewmodel;
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
@@ -17,8 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CommentActivityViewModel(application: Application) : CommonListPagingHandler<CommentResponseBody>(application) {
-    val commentRepository = CommentRepository(getApplication())
-    val commentDao = CommentDatabase.getInstance(getApplication()).commentDao()
+    private val commentRepository = CommentRepository(getApplication())
     var video_id: String =""
 
 
@@ -32,28 +32,21 @@ class CommentActivityViewModel(application: Application) : CommonListPagingHandl
      }
 
     fun sendComment(commentModel: CommentModel) {
-        viewModelScope.launch(Dispatchers.IO){
             commentModel.video_id = video_id
             val currentUser = AuthUserManager.getInstance().getUser(getApplication())
             commentModel.user_id = currentUser.id
 
             val commentResponseBody = CommentResponseBody(currentUser, commentModel)
             commentRepository.addCommentToDB(commentResponseBody)
-            initiateCommentWorkRequest()
-        }
     }
 
      fun getComments() : LiveData<List<CommentResponseBody>>{
          val mediatorLiveData = MediatorLiveData<List<CommentResponseBody>>()
-         mediatorLiveData.addSource(commentRepository.getCommentsFromDB(video_id)){ mediatorLiveData.postValue(it) }
+         mediatorLiveData.addSource(commentRepository.getCommentsFromDB(video_id)){
+             mediatorLiveData.postValue(it)
+         }
          return mediatorLiveData
      }
-
-    private fun initiateCommentWorkRequest(){
-            val workRequest = OneTimeWorkRequest.Builder(CommentDispatch::class.java).build()
-            val workManager = WorkManager.getInstance(getApplication())
-            workManager.enqueue(workRequest)
-    }
 
     override suspend fun fetchList(): List<CommentResponseBody> {
         return commentRepository.getComments(video_id, state.size.toString())

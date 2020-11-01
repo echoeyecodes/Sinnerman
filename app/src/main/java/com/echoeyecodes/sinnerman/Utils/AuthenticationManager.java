@@ -1,5 +1,6 @@
 package com.echoeyecodes.sinnerman.Utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;

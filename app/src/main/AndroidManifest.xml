@@ -7,8 +7,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
+        android:name=".ApplicationClass"
         android:theme="@style/AppTheme">
         <activity android:name="com.echoeyecodes.sinnerman.Activities.SplashScreenActivity" android:theme="@style/SplashScreenTheme" android:configChanges="orientation|screenSize|screenLayout" android:screenOrientation="portrait">
             <intent-filter>
@@ -16,7 +17,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.echoeyecodes.sinnerman.Activities.VideoActivity" android:configChanges="orientation|screenSize|screenLayout" android:screenOrientation="portrait" />
+        <activity android:name="com.echoeyecodes.sinnerman.Activities.VideoActivity" android:configChanges="orientation|screenSize|screenLayout" android:screenOrientation="portrait">
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                      android:host="www.sinnerman.com"
+                      android:pathPrefix="/videos" />
+            </intent-filter>
+            <intent-filter android:label="@string/google_app_id">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <data android:scheme="sinnerman"
+                      android:host="videos" />
+            </intent-filter>
+        </activity>
         <activity android:name="com.echoeyecodes.sinnerman.Activities.CommentActivity" />
         <activity android:windowSoftInputMode="adjustResize" android:name="com.echoeyecodes.sinnerman.Activities.AuthActivities.LoginActivity" />
         <activity android:windowSoftInputMode="adjustResize" android:name="com.echoeyecodes.sinnerman.Activities.AuthActivities.SignUpActivity" />

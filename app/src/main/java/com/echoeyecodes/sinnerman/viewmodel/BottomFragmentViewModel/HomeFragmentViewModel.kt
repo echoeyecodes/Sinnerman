@@ -28,7 +28,7 @@ class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<
     }
 
     override suspend fun onDataReceived(result: List<VideoResponseBody>) {
+        super.onDataReceived(result)
        videoRepository.addVideosToDB(ArrayList(result))
-            super.onDataReceived(result)
     }
 }

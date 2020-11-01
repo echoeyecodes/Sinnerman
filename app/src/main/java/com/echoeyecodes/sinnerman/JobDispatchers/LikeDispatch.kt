@@ -1,6 +1,7 @@
 package com.echoeyecodes.sinnerman.JobDispatchers
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.echoeyecodes.sinnerman.API.ApiUtils.ApiClient
@@ -20,7 +21,7 @@ class LikeDispatch(context: Context, workerParameters: WorkerParameters) : Worke
         var status = false
 
         val job = CoroutineScope(Dispatchers.IO).launch{
-            status = withContext(Dispatchers.IO) { sendLike() }
+            status = withContext(Dispatchers.Unconfined) { sendLike() }
         }
 
         while(!job.isCompleted){
@@ -40,12 +41,12 @@ class LikeDispatch(context: Context, workerParameters: WorkerParameters) : Worke
         return Result.success()
     }
 
-    private suspend fun sendLike(): Boolean = withContext(Dispatchers.IO) {
-        var status = false
+    private suspend fun sendLike(): Boolean = withContext(Dispatchers.Unconfined) {
         val likes = likeRepository.getUnsentLikes()
         if(likes.isNotEmpty()){
+            var state = false
             for ( likeModel in likes) {
-                status = try {
+                state = try {
                     val response = apiClient.sendLike(likeModel.type, likeModel)
                     videoRepository.updateVideoInDB(response)
                     likeRepository.deleteLike(likeModel)
@@ -54,9 +55,9 @@ class LikeDispatch(context: Context, workerParameters: WorkerParameters) : Worke
                     false
                 }
             }
-            status
+            return@withContext state
         }else{
-            true
+            return@withContext true
         }
     }
 }

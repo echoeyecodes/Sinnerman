@@ -1,10 +1,11 @@
 package com.echoeyecodes.sinnerman.Activities
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Adapters.HomeFragmentRecyclerViewAdapter
+import com.echoeyecodes.sinnerman.BuildConfig
+import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.Interface.PagingListener
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
@@ -23,13 +26,22 @@ import com.echoeyecodes.sinnerman.Utils.IntegerToDp
 import com.echoeyecodes.sinnerman.Utils.VideosItemCallback
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import com.echoeyecodes.sinnerman.viewmodel.VideoListViewModel
+import com.google.android.gms.tasks.Task
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.dynamiclinks.DynamicLink.AndroidParameters
+import com.google.firebase.dynamiclinks.DynamicLink.SocialMetaTagParameters
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.google.firebase.dynamiclinks.ShortDynamicLink
+import java.util.*
+import kotlin.collections.ArrayList
 
 class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, MainActivityContext, PagingListener{
     private lateinit var toolbar: LinearLayout
     private lateinit var toolbar_text: TextView
     private lateinit var toolbar_back_btn: ImageButton
+    private lateinit var relativeLayout: RelativeLayout
     private lateinit var recyclerView: RecyclerView
-    private var adapter: HomeFragmentRecyclerViewAdapter? = null
+    private lateinit var adapter: HomeFragmentRecyclerViewAdapter
     private lateinit var viewModel: VideoListViewModel
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -38,15 +50,18 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_list)
+
+        relativeLayout = findViewById(R.id.video_list_activity_root)
         toolbar = findViewById(R.id.video_list_toolbar)
         toolbar_text = toolbar.findViewById(R.id.sub_activity_title)
         toolbar_back_btn = toolbar.findViewById(R.id.sub_activity_back_btn)
         val title = intent.getStringExtra("title")
-        toolbar_text.text = title
+        val key = intent.getStringExtra("key")
+        toolbar_text.text = title ?: ""
         toolbar_back_btn.setOnClickListener { super.onBackPressed() }
 
         viewModel = ViewModelProvider(this).get(VideoListViewModel::class.java)
-        viewModel.tag_id = title!!
+        viewModel.tag_id = key ?: ""
 
 
 
@@ -67,14 +82,17 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
         recyclerView.adapter = adapter
 
         viewModel.videos.observe(this, Observer<List<VideoResponseBody>> { videos ->
-            adapter?.submitList(videos)
+            val status = viewModel.networkStatus.value
+            if (status == NetworkState.SUCCESS) {
+                adapter.submitList(videos)
+            }
         })
 
         viewModel.networkStatus.observe(this, Observer<NetworkState> { state ->
-            if(state == NetworkState.LOADING || state == NetworkState.ERROR){
+            if (state == NetworkState.LOADING || state == NetworkState.ERROR) {
                 val originalList = ArrayList<VideoResponseBody?>(viewModel.state)
                 originalList.add(null)
-                adapter?.let{
+                adapter.let {
                     it.submitList(originalList)
 
                     //necessary call to force notification update
@@ -105,6 +123,59 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
     override fun navigateToVideos(video_url: String?) {
         val intent = Intent(this, VideoActivity::class.java)
         intent.putExtra("video_id", video_url)
+        startActivity(intent)
+    }
+
+    override fun onOptionSelected(video: VideoResponseBody, position: Int) {
+        val progressDialogFragment = ProgressDialogFragment("Creating Link")
+        progressDialogFragment.isCancelable = false
+        progressDialogFragment.show(supportFragmentManager, "link_sync_fragment")
+
+        val title = video.video.title
+        val description = video.video.description
+        val imageUrl = video.video.thumbnail
+
+        FirebaseDynamicLinks.getInstance().createDynamicLink()
+                .setLink(Uri.parse("https://www.sinnerman.com/videos/" + video.video.id))
+                .setDomainUriPrefix("https://sinnerman.page.link")
+                .setAndroidParameters(AndroidParameters.Builder().setFallbackUrl(Uri.parse(BuildConfig.APP_REDIRECT_URL))
+                        .build()).setSocialMetaTagParameters(SocialMetaTagParameters.Builder()
+                        .setTitle(title).setDescription(description).setImageUrl(Uri.parse(imageUrl)).build())
+                .buildShortDynamicLink().addOnCompleteListener { task: Task<ShortDynamicLink?> ->
+                    if (task.isSuccessful && task.result != null) {
+                        val link = Objects.requireNonNull(task.result!!.shortLink).toString()
+                        if (position == 0) {
+                            copyLinkToClipboard(link)
+                        } else if (position == 1) {
+                            openShareIntent(link)
+                        }
+                    } else {
+                        progressDialogFragment.dismiss()
+                        Toast.makeText(this, "Could not create link", Toast.LENGTH_SHORT).show()
+                    }
+                    progressDialogFragment.dismiss()
+                }.addOnFailureListener {
+                    progressDialogFragment.dismiss()
+                    Toast.makeText(this, "Could not create link", Toast.LENGTH_SHORT).show()
+                }
+    }
+
+    private fun copyLinkToClipboard(link: String) {
+        val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("Share link", link)
+        clipboardManager.setPrimaryClip(clipData)
+        showSnackBarMessage()
+    }
+
+    private fun showSnackBarMessage() {
+        Snackbar.make(relativeLayout, "Video link copied to clipboard", Snackbar.LENGTH_LONG).show()
+    }
+
+    private fun openShareIntent(link: String) {
+        val intent = Intent()
+        intent.action = Intent.ACTION_SEND
+        intent.putExtra(Intent.EXTRA_TEXT, link)
+        intent.type = "text/plain"
         startActivity(intent)
     }
 

@@ -1,9 +1,29 @@
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/'}
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.9, 0.99.99]'
+    }
+}
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+
+repositories {
+    maven { url 'https://maven.google.com' }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+
+
+def credentialsPropertiesFile = rootProject.file("credentials.properties")
+def credentialsProperties = new Properties()
+credentialsProperties.load(new FileInputStream(credentialsPropertiesFile))
+
 
 android {
     compileSdkVersion 29
@@ -15,6 +35,8 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        buildConfigField("String", "SINNERMAN_SERVER_API_KEY", credentialsProperties['SINNERMAN_SERVER_API_KEY'])
+        buildConfigField("String", "APP_REDIRECT_URL", credentialsProperties['APP_REDIRECT_URL'])
         kapt {
             arguments {
                 arg("room.schemaLocation", "$projectDir/schemas".toString())
@@ -22,6 +44,11 @@ android {
                 arg("room.expandProjection", "true")
             }
         }
+        manifestPlaceholders = [
+                onesignal_app_id: 'e8eb18fb-8b68-43df-91f1-95520f63d2cc',
+                // Project number pulled from dashboard, local value is ignored.
+                onesignal_google_project_number: 'REMOTE'
+        ]
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments["room.incremental"] = "true"
@@ -118,5 +145,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-dynamic-links'
+
+
+    implementation 'com.onesignal:OneSignal:[3.15.4, 3.99.99]'
 
 }

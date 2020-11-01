@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity implements FormEditTextList
 
         loginViewModel.getRequestStatusObserver().observe(this, (value) ->{
             sign_in_btn.setEnabled(value != RequestStatus.LOADING);
+            change_to_sign_up_btn.setEnabled(value != RequestStatus.LOADING);
 
             if(value == RequestStatus.NOT_VERIFIED){
                 Intent intent = new Intent(this, OtpVerificationActivity.class);

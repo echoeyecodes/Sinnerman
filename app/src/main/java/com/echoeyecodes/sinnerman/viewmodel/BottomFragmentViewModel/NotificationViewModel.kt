@@ -29,7 +29,7 @@ class NotificationViewModel(application: Application) : CommonListPagingHandler<
     }
 
     override suspend fun onDataReceived(result: List<UploadNotificationModel>) {
-            notificationRepository.addNotificationToDB(ArrayList(result))
             super.onDataReceived(result)
+            notificationRepository.addNotificationToDB(ArrayList(result))
     }
 }

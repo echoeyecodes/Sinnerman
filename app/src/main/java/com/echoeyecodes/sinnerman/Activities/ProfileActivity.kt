@@ -6,11 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toFile
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment
+import com.echoeyecodes.sinnerman.MainActivity
 import com.echoeyecodes.sinnerman.Models.UserModel
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.Utils.AuthUserManager
@@ -55,7 +55,7 @@ class ProfileActivity : AppCompatActivity(){
         changePhotoBtn = findViewById(R.id.choose_image_btn)
 
         profileActivityViewModel = ViewModelProvider(this).get(ProfileActivityViewModel::class.java)
-        progressDialog = ProgressDialogFragment()
+        progressDialog = ProgressDialogFragment("Uploading Photo")
         progressDialog.isCancelable = false
 
 
@@ -72,14 +72,16 @@ class ProfileActivity : AppCompatActivity(){
 
         setNewImage(userModel.profile_url)
 
-        profileActivityViewModel.getStatus().observe(this, Observer<NetworkState> {state ->
-            if(state == NetworkState.LOADING){
+        profileActivityViewModel.getStatus().observe(this, Observer<NetworkState> { state ->
+            if (state == NetworkState.LOADING) {
                 progressDialog.show(supportFragmentManager, PROGRESS_DIALOG_FRAGMENT_TAG)
-            }else{
-                    progressDialog.dismiss()
-                if(state == NetworkState.ERROR){
+            } else {
+                progressDialog.dismiss()
+                if (state == NetworkState.ERROR) {
                     Toast.makeText(this, "An error occurred during upload", Toast.LENGTH_SHORT).show()
-                }else if(state == NetworkState.SUCCESS){
+                } else if (state == NetworkState.SUCCESS) {
+                    val intent = Intent(this, MainActivity::class.java)
+                    setResult(RESULT_OK, intent)
                     finish()
                 }
             }
@@ -93,7 +95,7 @@ class ProfileActivity : AppCompatActivity(){
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), UPLOAD_IMAGE_PRESET)
     }
 
-    private fun getImagePath(uri:Uri) : Boolean{
+    private fun getImagePath(uri: Uri) : Boolean{
         val file = File(cacheDir, "temp_store")
         val inputStream = contentResolver.openInputStream(uri)
         if(inputStream != null){
@@ -110,7 +112,7 @@ class ProfileActivity : AppCompatActivity(){
              outputStream.close()
              inputStream.close()
              return true
-         }catch (exception:Exception){
+         }catch (exception: Exception){
              return false
          }
         }else{
@@ -130,7 +132,7 @@ class ProfileActivity : AppCompatActivity(){
         }
     }
 
-    private fun setNewImage(path:String){
+    private fun setNewImage(path: String){
         this.userModel.profile_url = path
         Glide.with(this).load(Uri.parse(this.userModel.profile_url)).into(profileImage)
     }

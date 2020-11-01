@@ -21,9 +21,9 @@ import com.echoeyecodes.sinnerman.Utils.VideosItemCallback
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import com.google.android.material.button.MaterialButton
 
-typealias navigateToDestination = (String) -> Unit
+typealias navigateToDestination = (String, String) -> Unit
 
-class ExploreAdapter(private val exploreFragment: ExploreFragment, private val navigateToMore: navigateToDestination, private val navigateToVideo: navigateToDestination, itemCallback: DiffUtil.ItemCallback<ExploreResponseBody>) : ListAdapter<ExploreResponseBody, ExploreAdapter.ExploreViewHolder>(itemCallback), CommonListPagingListeners {
+class ExploreAdapter(private val exploreFragment: ExploreFragment, private val navigateToMore: navigateToDestination, private val navigateToVideo: (String) -> Unit, itemCallback: DiffUtil.ItemCallback<ExploreResponseBody>) : ListAdapter<ExploreResponseBody, ExploreAdapter.ExploreViewHolder>(itemCallback), CommonListPagingListeners {
     private val videosItemCallback = VideosItemCallback.newInstance()
     private var networkState: NetworkState? = null
 
@@ -50,13 +50,13 @@ class ExploreAdapter(private val exploreFragment: ExploreFragment, private val n
         val adapter = ExploreItemAdapter(videosItemCallback, exploreFragment.requireContext(), navigateToVideo)
         holder.recycler_view.adapter = adapter
         adapter.submitList(exploreResponseBody.videos)
-        holder.bindClickListener(exploreResponseBody.id)
+        holder.bindClickListener(exploreResponseBody.id, exploreResponseBody.name)
 
-//        if (exploreResponseBody.videos.size > 3) {
-//            holder.more_btn.visibility = View.VISIBLE
-//        } else {
-//            holder.more_btn.visibility = View.GONE
-//        }
+        if (exploreResponseBody.videos.size > 3) {
+            holder.more_btn.visibility = View.VISIBLE
+        } else {
+            holder.more_btn.visibility = View.GONE
+        }
     }
 
     inner class ExploreViewHolder(itemView: View, adapter: ExploreAdapter) : CommonListPagingViewHolder(itemView, adapter) {
@@ -73,8 +73,8 @@ class ExploreAdapter(private val exploreFragment: ExploreFragment, private val n
             recycler_view.addItemDecoration(CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15), IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)))
         }
 
-        fun bindClickListener(key: String) {
-            more_btn.setOnClickListener { navigateToMore(key) }
+        fun bindClickListener(key: String, value:String) {
+            more_btn.setOnClickListener { navigateToMore(key, value) }
         }
     }
 

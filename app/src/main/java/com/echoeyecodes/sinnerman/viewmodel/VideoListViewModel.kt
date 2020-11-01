@@ -19,7 +19,7 @@ class VideoListViewModel(application: Application) : CommonListPagingHandler<Vid
     }
 
     override fun initialize() {
-        videos = MutableLiveData()
+        videos.postValue(null)
         super.initialize()
     }
 
@@ -32,8 +32,7 @@ class VideoListViewModel(application: Application) : CommonListPagingHandler<Vid
     }
 
     override suspend fun onDataReceived(result: List<VideoResponseBody>) {
-        videos.postValue(result)
-        Log.d("CARRR", result.size.toString())
         super.onDataReceived(result)
+        videos.postValue(result)
     }
 }

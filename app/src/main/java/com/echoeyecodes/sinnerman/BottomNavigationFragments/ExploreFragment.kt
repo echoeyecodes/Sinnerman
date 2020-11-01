@@ -112,9 +112,10 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
         exploreViewModel.retry()
     }
 
-    override fun navigateToVideoListActivity(title: String?) {
+    override fun navigateToVideoListActivity(key:String, title: String) {
         val intent =Intent(context, VideoListActivity::class.java)
         intent.putExtra("title", title)
+        intent.putExtra("key", key)
         startActivity(intent)
     }
 

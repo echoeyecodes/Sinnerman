@@ -9,7 +9,7 @@ import com.echoeyecodes.sinnerman.Models.UserModel
 import com.echoeyecodes.sinnerman.Room.Dao.CommentDao
 import com.echoeyecodes.sinnerman.Room.Dao.UserDao
 
-@Database(entities = [UserModel::class, CommentModel::class], version = 2)
+@Database(entities = [UserModel::class, CommentModel::class], version = 1)
 abstract class CommentDatabase : RoomDatabase() {
     abstract fun commentDao(): CommentDao
     abstract fun userDao(): UserDao
