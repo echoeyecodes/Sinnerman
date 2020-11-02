@@ -213,8 +213,11 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
         if (player != null) {
             currentWindow = player.getCurrentWindowIndex();
             playBackPosition = player.getCurrentPosition();
+            player.setPlayWhenReady(false);
+            player.stop();
             player.release();
             player.removeListener(this);
+            playerView.setPlayer(null);
             player = null;
         }
     }

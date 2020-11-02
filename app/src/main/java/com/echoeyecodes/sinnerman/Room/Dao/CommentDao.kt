@@ -49,14 +49,14 @@ import com.echoeyecodes.sinnerman.Models.UserModel;
 
     @Transaction
     open fun insertCommentAndUser(commentResponseBody : CommentResponseBody){
-        insertUser(commentResponseBody.user)
-        insertComment(commentResponseBody.comment)
+        commentResponseBody.user?.let { insertUser(it) }
+        commentResponseBody.comment?.let { insertComment(it) }
     }
 
     @Transaction
     open fun updateCommentAndUser(commentResponseBody : CommentResponseBody){
-        updateComment(commentResponseBody.comment)
-        updateUser(commentResponseBody.user)
+        commentResponseBody.comment?.let { updateComment(it) }
+        commentResponseBody.user?.let { updateUser(it) }
     }
 
     @Transaction

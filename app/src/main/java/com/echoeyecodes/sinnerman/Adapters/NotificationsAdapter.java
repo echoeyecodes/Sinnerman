@@ -23,9 +23,10 @@ import com.echoeyecodes.sinnerman.viewmodel.NetworkState;
 import de.hdodenhof.circleimageview.CircleImageView;
 import org.jetbrains.annotations.NotNull;
 
-public class NotificationsAdapter extends ListAdapter<UploadNotificationModel, NotificationsAdapter.RecentsViewHolder> implements CommonListPagingListeners {
+import java.util.List;
+
+public class NotificationsAdapter extends ListAdapter<UploadNotificationModel, NotificationsAdapter.RecentsViewHolder> {
 private final MainActivityContext mainActivityContext;
-private NetworkState networkState;
 private final NotificationFragmentListener notificationFragmentListener;
 private final Context context;
 
@@ -41,7 +42,13 @@ private final Context context;
     @Override
     public RecentsViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_notification_item, parent, false);
-        return new RecentsViewHolder(view, this);
+        return new RecentsViewHolder(view, notificationFragmentListener);
+    }
+
+    @Override
+    public void onCurrentListChanged(@NonNull @NotNull List<UploadNotificationModel> previousList, @NonNull @NotNull List<UploadNotificationModel> currentList) {
+        super.onCurrentListChanged(previousList, currentList);
+        notificationFragmentListener.onItemsChanged();
     }
 
     @Override
@@ -50,7 +57,7 @@ private final Context context;
 
         if(uploadNotificationModel == null){
             holder.linearLayout.setVisibility(View.GONE);
-            holder.handleNetworkStateChanged(networkState);
+            holder.handleNetworkStateChanged(notificationFragmentListener.onNetworkStateChanged());
             return;
         }
         holder.linearLayout.setVisibility(View.VISIBLE);
@@ -63,15 +70,6 @@ private final Context context;
         holder.linearLayout.setOnClickListener(v -> mainActivityContext.navigateToVideos(uploadNotificationModel.getVideo_id()));
     }
 
-    @Override
-    public void retry() {
-        notificationFragmentListener.retry();
-    }
-
-    @Override
-    public void onNetworkStateChanged(@NonNull NetworkState networkState) {
-        this.networkState = networkState;
-    }
 
     protected static class RecentsViewHolder extends CommonListPagingViewHolder {
         private final ImageView image_thumbnail;
@@ -80,8 +78,8 @@ private final Context context;
         private final TextView message;
         private final CircleImageView circleImageView;
 
-        public RecentsViewHolder(@NonNull @NotNull View itemView, NotificationsAdapter notificationsAdapter) {
-            super(itemView, notificationsAdapter);
+        public RecentsViewHolder(@NonNull @NotNull View itemView, NotificationFragmentListener notificationFragmentListener) {
+            super(itemView, notificationFragmentListener);
 
             image_thumbnail = itemView.findViewById(R.id.notification_thumbnail);
             linearLayout = itemView.findViewById(R.id.notification_item);

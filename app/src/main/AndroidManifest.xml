@@ -35,7 +35,7 @@
                       android:host="videos" />
             </intent-filter>
         </activity>
-        <activity android:name="com.echoeyecodes.sinnerman.Activities.CommentActivity" />
+        <activity android:configChanges="orientation|screenSize|screenLayout" android:screenOrientation="portrait" android:name="com.echoeyecodes.sinnerman.Activities.CommentActivity" />
         <activity android:windowSoftInputMode="adjustResize" android:name="com.echoeyecodes.sinnerman.Activities.AuthActivities.LoginActivity" />
         <activity android:windowSoftInputMode="adjustResize" android:name="com.echoeyecodes.sinnerman.Activities.AuthActivities.SignUpActivity" />
         <activity android:windowSoftInputMode="adjustResize" android:name="com.echoeyecodes.sinnerman.Activities.AuthActivities.OtpVerificationActivity" />

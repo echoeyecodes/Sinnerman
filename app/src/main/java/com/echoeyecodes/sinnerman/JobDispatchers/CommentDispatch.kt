@@ -10,6 +10,7 @@ import com.echoeyecodes.sinnerman.repository.CommentRepository
 import com.echoeyecodes.sinnerman.util.AppHandlerThread
 import kotlinx.coroutines.*
 import retrofit2.HttpException
+import java.io.IOException
 import kotlin.coroutines.coroutineContext
 
 class CommentDispatch(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
@@ -50,7 +51,7 @@ class CommentDispatch(context: Context, workerParameters: WorkerParameters) : Wo
                     val response = apiClient.sendComment(commentModel)
                     commentRepository.addCommentToDB(response)
                     true
-                } catch (e : HttpException) {
+                }  catch (e : Exception) {
                     false
                 }
             }

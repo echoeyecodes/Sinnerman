@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Adapters.HomeFragmentRecyclerViewAdapter
+import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener
 import com.echoeyecodes.sinnerman.Interface.PagingListener
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
@@ -19,7 +20,7 @@ import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.HomeFragment
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
 
-class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener, PagingListener {
+class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener, HomeFragmentListener {
     private lateinit var recyclerView: RecyclerView
     private var adapter: HomeFragmentRecyclerViewAdapter? = null
     private lateinit var viewModel: HomeFragmentViewModel
@@ -78,7 +79,6 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
                     // due to the diffutil.callback comparison when
                     //the state changes from loading to error or vice-versa
                     it.notifyItemChanged(it.itemCount - 1)
-                    it.onNetworkStateChanged(state)
                 }
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
@@ -97,6 +97,14 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
     }
     override fun retry(){
         viewModel.retry()
+    }
+
+    override fun onItemsChanged() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onNetworkStateChanged(): NetworkState {
+        return viewModel.networkStatus.value!!
     }
 
     override fun onRefresh() {

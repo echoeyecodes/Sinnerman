@@ -84,7 +84,6 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
                 // due to the diffutil.callback comparison when
                 //the state changes from loading to error or vice-versa
                 adapter.notifyItemChanged(adapter.itemCount - 1)
-                adapter.onNetworkStateChanged(state)
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
         })
@@ -92,17 +91,19 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
         notificationViewModel.getNotifications().observe(viewLifecycleOwner, Observer<List<UploadNotificationModel>> { notification ->
             val status = notificationViewModel.networkStatus.value
             if(status == NetworkState.SUCCESS){
-
-                if(notification.isEmpty()){
-                    empty_container.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                }else{
-                    empty_container.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
-                }
                 adapter.submitList(notification)
             }
         })
+    }
+
+    private fun checkListEmpty(){
+        if(adapter.itemCount == 0){
+            empty_container.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        }else{
+            empty_container.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
     }
 
     inner class NotificationItemCallback : DiffUtil.ItemCallback<UploadNotificationModel>(){
@@ -123,6 +124,14 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
 
     override fun retry() {
         notificationViewModel.retry()
+    }
+
+    override fun onItemsChanged() {
+        checkListEmpty()
+    }
+
+    override fun onNetworkStateChanged() : NetworkState {
+        return notificationViewModel.networkStatus.value!!
     }
 
     override fun onRefresh() {

@@ -25,11 +25,13 @@ import com.echoeyecodes.sinnerman.Utils.TimestampConverter;
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
+import org.jetbrains.annotations.NotNull;
 
-public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAdapter.ViewHolder> implements CommonListPagingListeners {
+import java.util.List;
+
+public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAdapter.ViewHolder> {
 
     CommentActivityListener commentActivityListener;
-    private NetworkState networkState;
     private UserModel currentUser;
     public CommentsAdapter(Context context,  @NonNull DiffUtil.ItemCallback<CommentResponseBody> diffCallback, CommentActivityListener commentActivityListener) {
         super(diffCallback);
@@ -37,12 +39,17 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
         currentUser = AuthUserManager.getInstance().getUser(context.getApplicationContext());
     }
 
+    @Override
+    public void onCurrentListChanged(@NonNull @NotNull List<CommentResponseBody> previousList, @NonNull @NotNull List<CommentResponseBody> currentList) {
+        super.onCurrentListChanged(previousList, currentList);
+        commentActivityListener.onItemsChanged();
+    }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_comment_item, parent, false);
-        return new ViewHolder(view, this);
+        return new ViewHolder(view, commentActivityListener);
     }
 
     @Override
@@ -51,7 +58,7 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
 
         if (commentResponseBody == null) {
             holder.linearLayout.setVisibility(View.GONE);
-            holder.handleNetworkStateChanged(networkState);
+            holder.handleNetworkStateChanged(commentActivityListener.onNetworkStateChanged());
             return;
         }
 
@@ -78,16 +85,6 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
         Picasso.get().load(Uri.parse(userModel.getProfile_url())).into(holder.comment_author_image);
     }
 
-    @Override
-    public void retry() {
-        commentActivityListener.retry();
-    }
-
-    @Override
-    public void onNetworkStateChanged(@NonNull NetworkState networkState) {
-        this.networkState = networkState;
-    }
-
     public static class ViewHolder extends CommonListPagingViewHolder {
 
         private final ProgressBar progressBar;
@@ -99,8 +96,8 @@ public class CommentsAdapter extends ListAdapter<CommentResponseBody, CommentsAd
         private final CardView cardView;
         private final CircleImageView comment_author_image;
 
-        public ViewHolder(View itemView, CommonListPagingListeners commonListPagingListeners){
-            super(itemView, commonListPagingListeners);
+        public ViewHolder(View itemView, CommentActivityListener commentActivityListener){
+            super(itemView, commentActivityListener);
 
             progressBar = itemView.findViewById(R.id.comment_status_indicator);
             comment = itemView.findViewById(R.id.comment);

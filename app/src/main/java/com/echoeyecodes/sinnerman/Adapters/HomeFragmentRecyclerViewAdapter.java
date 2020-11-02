@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import com.bumptech.glide.Glide;
 import com.echoeyecodes.sinnerman.BottomNavigationFragments.HomeFragment;
 import com.echoeyecodes.sinnerman.Fragments.MoreOptionsFragment;
+import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener;
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext;
 import com.echoeyecodes.sinnerman.Interface.PagingListener;
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody;
@@ -31,18 +32,17 @@ import com.echoeyecodes.sinnerman.Utils.TimestampConverter;
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBody, RecyclerView.ViewHolder> implements CommonListPagingListeners {
+public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBody, RecyclerView.ViewHolder> {
     private final MainActivityContext mainActivityContext;
     private final Context context;
-    private PagingListener pagingListener;
-    private NetworkState networkState;
+    private final HomeFragmentListener homeFragmentListener;
     private FragmentManager fragmentManager;
     private MoreOptionsFragment moreOptionsFragment;
 
-    public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<VideoResponseBody> itemCallback, Context context, PagingListener pagingListener) {
+    public HomeFragmentRecyclerViewAdapter(DiffUtil.ItemCallback<VideoResponseBody> itemCallback, Context context, HomeFragmentListener homeFragmentListener) {
         super(itemCallback);
         this.mainActivityContext = (MainActivityContext) context;
-        this.pagingListener = pagingListener;
+        this.homeFragmentListener = homeFragmentListener;
         this.context = context.getApplicationContext();
 
         fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
@@ -52,13 +52,9 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_feed_item, parent, false);
-        return new HomeFragmentRecyclerViewItemViewHolder(view, this);
+        return new HomeFragmentRecyclerViewItemViewHolder(view, homeFragmentListener);
     }
 
-    @Override
-    public void onNetworkStateChanged(@NonNull NetworkState netState) {
-        this.networkState = netState;
-    }
 
 
     @Override
@@ -70,7 +66,7 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
 
         if(videoResponseBody == null){
             viewHolder.linearLayout.setVisibility(View.GONE);
-            viewHolder.handleNetworkStateChanged(networkState);
+            viewHolder.handleNetworkStateChanged(homeFragmentListener.onNetworkStateChanged());
             return;
         }
             viewHolder.linearLayout.setVisibility(View.VISIBLE);
@@ -93,10 +89,6 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
             });
     }
 
-    @Override
-    public void retry() {
-        pagingListener.retry();
-    }
 
     public static class HomeFragmentRecyclerViewItemViewHolder extends CommonListPagingViewHolder {
         private final ImageView imageView;
@@ -109,8 +101,8 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
         private final TextView duration;
         DisplayMetrics displayMetrics = Resources.getSystem().getDisplayMetrics();
 
-        public HomeFragmentRecyclerViewItemViewHolder(@NonNull View itemView, HomeFragmentRecyclerViewAdapter adapter) {
-            super(itemView, adapter);
+        public HomeFragmentRecyclerViewItemViewHolder(@NonNull View itemView, HomeFragmentListener homeFragmentListener) {
+            super(itemView, homeFragmentListener);
 
             linearLayout = itemView.findViewById(R.id.video_item);
             imageView = itemView.findViewById(R.id.video_thumbnail);

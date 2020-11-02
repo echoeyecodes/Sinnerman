@@ -14,7 +14,7 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
 
     var hasMore = true
     var isRunning= false
-    val networkStatus = MutableLiveData<NetworkState>(NetworkState.IDLE)
+    var networkStatus = MutableLiveData<NetworkState>()
     var state = ArrayList<T>()
 
 
@@ -70,13 +70,22 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
     }
 
     fun refresh(){
-        viewModelScope.launch {
-            hasMore = true
-            load(NetworkState.REFRESHING)
-        }
+        Log.d("CARRR", "Resfrsjig")
+        hasMore = true
+        load(NetworkState.REFRESHING)
     }
 
     fun retry(){
         fetchMore(NetworkState.LOADING)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        networkStatus.postValue(null)
+        state.clear()
+        isRunning=false
+        hasMore = true
+
     }
 }

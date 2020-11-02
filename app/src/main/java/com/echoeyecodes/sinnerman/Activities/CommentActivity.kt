@@ -2,6 +2,7 @@ package com.echoeyecodes.sinnerman.Activities;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log
 import android.view.View
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -87,21 +88,15 @@ private lateinit var comment_field : TextInputEditText
         commentActivityViewModel.getComments().observe(this, Observer<List<CommentResponseBody>> { value ->
             val status = commentActivityViewModel.networkStatus.value
             if(status == NetworkState.SUCCESS){
-                if(value.isEmpty()){
-                    empty_container.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
-                }else{
-                    empty_container.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
-                }
                 adapter.submitList(value)
             }
         })
 
         commentActivityViewModel.networkStatus.observe(this, Observer<NetworkState> { state ->
+            Log.d("CARRR", state.toString())
 
             if (state == NetworkState.LOADING || state == NetworkState.ERROR) {
-                val originalList = ArrayList<CommentResponseBody?>(commentActivityViewModel.state)
+                val originalList = ArrayList<CommentResponseBody?>(adapter.currentList)
                 originalList.add(null)
                 adapter.submitList(originalList)
 
@@ -109,10 +104,8 @@ private lateinit var comment_field : TextInputEditText
                 // due to the diffutil.callback comparison when
                 //the state changes from loading to error or vice-versa
                 adapter.notifyItemChanged(adapter.itemCount - 1)
-                adapter.onNetworkStateChanged(state)
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
-
         })
 
 
@@ -120,6 +113,16 @@ private lateinit var comment_field : TextInputEditText
             fetchMore()
         })
 
+    }
+
+    private fun checkListEmpty(){
+        if(adapter.itemCount == 0){
+            empty_container.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        }else{
+            empty_container.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
     }
 
         private fun sendComment() {
@@ -156,10 +159,18 @@ private lateinit var comment_field : TextInputEditText
         commentActivityViewModel.retry()
     }
 
+    override fun onNetworkStateChanged(): NetworkState {
+        return commentActivityViewModel.networkStatus.value!!
+    }
+
+    override fun onItemsChanged() {
+        checkListEmpty()
+    }
+
     inner class CommentItemCallback : DiffUtil.ItemCallback<CommentResponseBody>(){
 
         override fun areItemsTheSame( oldItem : CommentResponseBody, newItem : CommentResponseBody) :Boolean {
-            return oldItem.comment.id == newItem.comment.id
+            return oldItem.comment?.id == newItem.comment?.id
         }
 
         override fun areContentsTheSame(oldItem : CommentResponseBody, newItem : CommentResponseBody) : Boolean{

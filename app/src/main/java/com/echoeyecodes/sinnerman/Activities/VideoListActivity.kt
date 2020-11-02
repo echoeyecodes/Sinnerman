@@ -16,6 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Adapters.HomeFragmentRecyclerViewAdapter
 import com.echoeyecodes.sinnerman.BuildConfig
 import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment
+import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.Interface.PagingListener
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
@@ -35,7 +36,7 @@ import com.google.firebase.dynamiclinks.ShortDynamicLink
 import java.util.*
 import kotlin.collections.ArrayList
 
-class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, MainActivityContext, PagingListener{
+class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, MainActivityContext, HomeFragmentListener{
     private lateinit var toolbar: LinearLayout
     private lateinit var toolbar_text: TextView
     private lateinit var toolbar_back_btn: ImageButton
@@ -99,7 +100,6 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
                     // due to the diffutil.callback comparison when
                     //the state changes from loading to error or vice-versa
                     it.notifyItemChanged(it.itemCount - 1)
-                    it.onNetworkStateChanged(state)
                 }
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
@@ -114,6 +114,13 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
 
     override fun retry(){
         viewModel.retry()
+    }
+
+    override fun onItemsChanged() {
+    }
+
+    override fun onNetworkStateChanged(): NetworkState {
+        return viewModel.networkStatus.value!!
     }
 
     override fun onRefresh() {

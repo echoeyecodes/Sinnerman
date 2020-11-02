@@ -58,7 +58,8 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
 
         recyclerView.layoutManager = linearLayoutManager
         exploreAdapter = ExploreAdapter(
-                exploreFragment = this,
+                exploreFragmentContext = this,
+                context = requireContext(),
                 navigateToMore =  this::navigateToVideoListActivity,
                 navigateToVideo = mainActivity::navigateToVideos,
                 itemCallback = ExploreResponseItemCallback())
@@ -79,7 +80,6 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
                 // due to the diffutil.callback comparison when
                 //the state changes from loading to error or vice-versa
                 exploreAdapter.notifyItemChanged(exploreAdapter.itemCount - 1)
-                exploreAdapter.onNetworkStateChanged(state)
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
         })
@@ -108,8 +108,16 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
         mainActivityContext.setActiveBottomViewFragment(1)
     }
 
-    fun retry(){
+    override fun retry(){
         exploreViewModel.retry()
+    }
+
+    override fun onNetworkStateChanged(): NetworkState {
+        return exploreViewModel.networkStatus.value!!
+    }
+
+    override fun onItemsChanged() {
+
     }
 
     override fun navigateToVideoListActivity(key:String, title: String) {

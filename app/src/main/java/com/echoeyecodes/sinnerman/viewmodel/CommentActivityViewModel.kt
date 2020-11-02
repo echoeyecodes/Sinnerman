@@ -23,7 +23,9 @@ class CommentActivityViewModel(application: Application) : CommonListPagingHandl
 
 
     init {
-        load(NetworkState.LOADING)
+        viewModelScope.launch {
+            load(NetworkState.LOADING)
+        }
     }
 
      override fun initialize() {
@@ -53,8 +55,8 @@ class CommentActivityViewModel(application: Application) : CommonListPagingHandl
     }
 
      override suspend fun onDataReceived(result: List<CommentResponseBody>) {
+                super.onDataReceived(result)
              commentRepository.addCommentsToDB(ArrayList(result))
-             super.onDataReceived(result)
      }
 
 }

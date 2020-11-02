@@ -50,7 +50,7 @@ class CommentRepository(private val context: Context){
     private fun initiateCommentWorkRequest(){
         val workRequest = OneTimeWorkRequest.Builder(CommentDispatch::class.java).addTag("comment_work_request").build()
         val workManager = WorkManager.getInstance(context.applicationContext)
-        workManager.enqueueUniqueWork("upload_comment", ExistingWorkPolicy.REPLACE, workRequest)
+        workManager.enqueueUniqueWork("upload_comment", ExistingWorkPolicy.APPEND, workRequest)
     }
 
 

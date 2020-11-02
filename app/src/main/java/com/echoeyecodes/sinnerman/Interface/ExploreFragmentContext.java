@@ -1,6 +1,8 @@
 package com.echoeyecodes.sinnerman.Interface;
 
-public interface ExploreFragmentContext {
+import com.echoeyecodes.sinnerman.Paging.CommonListPagingListeners;
+
+public interface ExploreFragmentContext extends CommonListPagingListeners {
 
     void navigateToVideoListActivity(String key, String title);
 }

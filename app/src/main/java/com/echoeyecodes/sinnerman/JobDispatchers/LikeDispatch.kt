@@ -10,6 +10,7 @@ import com.echoeyecodes.sinnerman.repository.LikeRepository
 import com.echoeyecodes.sinnerman.repository.VideoRepository
 import kotlinx.coroutines.*
 import retrofit2.HttpException
+import java.io.IOException
 
 class LikeDispatch(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
 
@@ -51,7 +52,7 @@ class LikeDispatch(context: Context, workerParameters: WorkerParameters) : Worke
                     videoRepository.updateVideoInDB(response)
                     likeRepository.deleteLike(likeModel)
                     true
-                } catch (e : HttpException) {
+                } catch (e : Exception) {
                     false
                 }
             }
