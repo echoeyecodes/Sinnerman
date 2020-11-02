@@ -1,21 +1,19 @@
 package com.echoeyecodes.sinnerman.viewmodel;
 
-import android.app.Application;
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.MutableLiveData;
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.echoeyecodes.sinnerman.Models.LikeModel
 import com.echoeyecodes.sinnerman.Models.ResolutionDimensions
-import com.echoeyecodes.sinnerman.Models.VideoResponseBody;
+import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.repository.LikeRepository
 import com.echoeyecodes.sinnerman.repository.VideoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
-
-import java.io.IOException;
+import java.io.IOException
 
 
 class VideoActivityViewModel(application: Application) : AndroidViewModel(application) {

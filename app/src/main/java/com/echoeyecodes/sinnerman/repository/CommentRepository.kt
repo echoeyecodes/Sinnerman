@@ -1,11 +1,7 @@
 package com.echoeyecodes.sinnerman.repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.liveData
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
@@ -15,8 +11,9 @@ import com.echoeyecodes.sinnerman.JobDispatchers.CommentDispatch
 import com.echoeyecodes.sinnerman.Models.CommentModel
 import com.echoeyecodes.sinnerman.Models.CommentResponseBody
 import com.echoeyecodes.sinnerman.Room.CommentDatabase
-import kotlinx.coroutines.*
-import kotlin.coroutines.coroutineContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CommentRepository(private val context: Context){
     val apiClient = ApiClient.getInstance(context.applicationContext).getClient(CommentDao::class.java)

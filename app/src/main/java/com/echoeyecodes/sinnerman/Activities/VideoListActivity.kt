@@ -18,7 +18,6 @@ import com.echoeyecodes.sinnerman.BuildConfig
 import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment
 import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
-import com.echoeyecodes.sinnerman.Interface.PagingListener
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.Utils.CustomItemDecoration

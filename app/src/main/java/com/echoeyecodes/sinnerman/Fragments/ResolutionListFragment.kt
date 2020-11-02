@@ -2,19 +2,19 @@ package com.echoeyecodes.sinnerman.Fragments
 
 import android.content.Context
 import android.os.Bundle
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.echoeyecodes.sinnerman.Adapters.ResolutionListFragmentAdapter
 import com.echoeyecodes.sinnerman.Interface.VideoActivityListener
 import com.echoeyecodes.sinnerman.Models.ResolutionDimensions
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.viewmodel.VideoActivityViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 /**
  *

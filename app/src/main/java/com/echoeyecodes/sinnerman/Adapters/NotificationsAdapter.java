@@ -15,11 +15,9 @@ import com.bumptech.glide.Glide;
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext;
 import com.echoeyecodes.sinnerman.Interface.NotificationFragmentListener;
 import com.echoeyecodes.sinnerman.Models.UploadNotificationModel;
-import com.echoeyecodes.sinnerman.Paging.CommonListPagingListeners;
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingViewHolder;
 import com.echoeyecodes.sinnerman.R;
 import com.echoeyecodes.sinnerman.Utils.TimestampConverter;
-import com.echoeyecodes.sinnerman.viewmodel.NetworkState;
 import de.hdodenhof.circleimageview.CircleImageView;
 import org.jetbrains.annotations.NotNull;
 

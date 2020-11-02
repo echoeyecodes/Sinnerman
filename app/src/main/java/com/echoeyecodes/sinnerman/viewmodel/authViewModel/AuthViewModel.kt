@@ -4,11 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.echoeyecodes.sinnerman.API.ApiUtils.ApiClient
-import com.echoeyecodes.sinnerman.API.DAO.AuthDao
 import com.echoeyecodes.sinnerman.API.ApiUtils.RequestStatus
+import com.echoeyecodes.sinnerman.API.DAO.AuthDao
 import com.echoeyecodes.sinnerman.Utils.FieldErrorStatus
-
-import java.util.HashMap
+import java.util.*
 
 open class AuthViewModel(application: Application) : AndroidViewModel(application) {
     val requestStatusObserver = MutableLiveData<RequestStatus>()

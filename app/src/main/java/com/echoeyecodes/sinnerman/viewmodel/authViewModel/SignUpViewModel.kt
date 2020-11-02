@@ -4,8 +4,10 @@ import android.app.Application
 import android.util.Log
 import com.echoeyecodes.sinnerman.API.ApiUtils.RequestStatus
 import com.echoeyecodes.sinnerman.Models.UserModel
-import kotlinx.coroutines.*
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
 class SignUpViewModel(application: Application) : AuthViewModel(application) {

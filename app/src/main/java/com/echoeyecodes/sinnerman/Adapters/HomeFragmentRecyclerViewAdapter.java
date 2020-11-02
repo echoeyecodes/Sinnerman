@@ -1,38 +1,32 @@
 package com.echoeyecodes.sinnerman.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.*;
-
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
-import com.echoeyecodes.sinnerman.BottomNavigationFragments.HomeFragment;
 import com.echoeyecodes.sinnerman.Fragments.MoreOptionsFragment;
 import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener;
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext;
-import com.echoeyecodes.sinnerman.Interface.PagingListener;
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody;
-import com.echoeyecodes.sinnerman.Paging.CommonListPagingListeners;
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingViewHolder;
 import com.echoeyecodes.sinnerman.R;
 import com.echoeyecodes.sinnerman.Utils.DurationConverter;
 import com.echoeyecodes.sinnerman.Utils.ImageColorDrawable;
 import com.echoeyecodes.sinnerman.Utils.TimestampConverter;
-import com.echoeyecodes.sinnerman.viewmodel.NetworkState;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBody, RecyclerView.ViewHolder> {

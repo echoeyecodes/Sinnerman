@@ -1,8 +1,6 @@
 package com.echoeyecodes.sinnerman.API.ApiUtils;
 
 import android.content.Context;
-import android.content.Intent;
-import com.echoeyecodes.sinnerman.Activities.AuthActivities.SignUpActivity;
 import com.echoeyecodes.sinnerman.BuildConfig;
 import com.echoeyecodes.sinnerman.Utils.AuthenticationManager;
 import com.google.gson.Gson;

@@ -1,10 +1,13 @@
 package com.echoeyecodes.sinnerman.util;
+
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.echoeyecodes.sinnerman.BottomNavigationFragments.HomeFragment;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class BottomNavigationHandler extends ViewModel {
     private final List<Fragment> fragments;
