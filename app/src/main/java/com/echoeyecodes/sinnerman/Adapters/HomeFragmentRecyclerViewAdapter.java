@@ -3,6 +3,8 @@ package com.echoeyecodes.sinnerman.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -28,6 +30,7 @@ import com.echoeyecodes.sinnerman.Paging.CommonListPagingListeners;
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingViewHolder;
 import com.echoeyecodes.sinnerman.R;
 import com.echoeyecodes.sinnerman.Utils.DurationConverter;
+import com.echoeyecodes.sinnerman.Utils.ImageColorDrawable;
 import com.echoeyecodes.sinnerman.Utils.TimestampConverter;
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -71,8 +74,8 @@ public class HomeFragmentRecyclerViewAdapter extends ListAdapter<VideoResponseBo
         }
             viewHolder.linearLayout.setVisibility(View.VISIBLE);
             viewHolder.getLoading_container().setVisibility(View.GONE);
-            Glide.with(context).load(Uri.parse(videoResponseBody.getVideo().getThumbnail())).into(viewHolder.imageView);
-            Glide.with(context).load(Uri.parse(videoResponseBody.getUser().getProfile_url())).into(viewHolder.author_image);
+            Glide.with(context).load(Uri.parse(videoResponseBody.getVideo().getThumbnail())).placeholder(ImageColorDrawable.Companion.getInstance()).into(viewHolder.imageView);
+            Glide.with(context).load(Uri.parse(videoResponseBody.getUser().getProfile_url())).placeholder(ImageColorDrawable.Companion.getInstance()).into(viewHolder.author_image);
 
             viewHolder.title.setText(videoResponseBody.getVideo().getTitle());
             viewHolder.duration.setText(DurationConverter.Companion.getInstance().convertToDuration(videoResponseBody.getVideo().getDuration()));

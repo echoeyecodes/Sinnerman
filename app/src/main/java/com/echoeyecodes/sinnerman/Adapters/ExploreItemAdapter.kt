@@ -21,6 +21,7 @@ import com.echoeyecodes.sinnerman.Fragments.MoreOptionsFragment.Companion.newIns
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.Utils.DurationConverter
+import com.echoeyecodes.sinnerman.Utils.ImageColorDrawable
 import com.echoeyecodes.sinnerman.Utils.TimestampConverter
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.Serializable
@@ -49,8 +50,8 @@ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>,
         val videoResponseBody = getItem(position);
 
         if(videoResponseBody != null) {
-            Glide.with(context).load(Uri.parse(videoResponseBody.video.thumbnail)).into(holder.imageView);
-            Glide.with(context).load(Uri.parse(videoResponseBody.user.profile_url)).into(holder.author_image);
+            Glide.with(context).load(Uri.parse(videoResponseBody.video.thumbnail)).placeholder(ImageColorDrawable.Companion.getInstance()).into(holder.imageView);
+            Glide.with(context).load(Uri.parse(videoResponseBody.user.profile_url)).placeholder(ImageColorDrawable.Companion.getInstance()).into(holder.author_image);
             holder.title.text = videoResponseBody.video.title
             holder.author.text = videoResponseBody.user.fullname
 
