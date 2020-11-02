@@ -22,7 +22,7 @@ import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
 class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener, HomeFragmentListener {
     private lateinit var recyclerView: RecyclerView
-    private var adapter: HomeFragmentRecyclerViewAdapter? = null
+    private lateinit var adapter: HomeFragmentRecyclerViewAdapter
     private lateinit var viewModel: HomeFragmentViewModel
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -64,7 +64,7 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
         viewModel.getVideos().observe(viewLifecycleOwner, Observer<List<VideoResponseBody>> { videos ->
             val status = viewModel.networkStatus.value
             if(status == NetworkState.SUCCESS){
-                adapter?.submitList(videos)
+                adapter.submitList(videos)
             }
         })
 
@@ -72,15 +72,13 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
             if(state == NetworkState.LOADING || state == NetworkState.ERROR){
                 val originalList = ArrayList<VideoResponseBody?>(viewModel.state)
                 originalList.add(null)
-                adapter?.let{
-                    it.submitList(originalList)
+                    adapter.submitList(originalList)
 
                     //necessary call to force notification update
                     // due to the diffutil.callback comparison when
                     //the state changes from loading to error or vice-versa
-                    it.notifyItemChanged(it.itemCount - 1)
+                adapter.notifyItemChanged(adapter.itemCount - 1)
                 }
-            }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
         })
 
@@ -100,7 +98,7 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
     }
 
     override fun onItemsChanged() {
-        TODO("Not yet implemented")
+
     }
 
     override fun onNetworkStateChanged(): NetworkState {
