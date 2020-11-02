@@ -41,6 +41,10 @@ class CommentRepository(private val context: Context){
         return commentDao.getComments(id)
     }
 
+    suspend fun deleteComment(commentModel: CommentModel){
+        commentDao.deleteComment(commentModel)
+    }
+
     fun deleteComments(){
         CoroutineScope(Dispatchers.IO).launch {
             commentDao.deleteAllCommentData()
@@ -48,9 +52,9 @@ class CommentRepository(private val context: Context){
     }
 
     private fun initiateCommentWorkRequest(){
-        val workRequest = OneTimeWorkRequest.Builder(CommentDispatch::class.java).addTag("comment_work_request").build()
+        val workRequest = OneTimeWorkRequest.Builder(CommentDispatch::class.java).build()
         val workManager = WorkManager.getInstance(context.applicationContext)
-        workManager.enqueueUniqueWork("upload_comment", ExistingWorkPolicy.APPEND, workRequest)
+        workManager.enqueueUniqueWork("upload_comment", ExistingWorkPolicy.REPLACE, workRequest)
     }
 
 
@@ -59,7 +63,7 @@ class CommentRepository(private val context: Context){
     }
 
 
-     fun getUnsentComments(): List<CommentModel>{
+     suspend fun getUnsentComments(): List<CommentModel>{
         return commentDao.getUnsentComments()
     }
 }
