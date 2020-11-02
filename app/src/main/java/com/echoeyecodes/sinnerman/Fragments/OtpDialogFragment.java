@@ -3,11 +3,11 @@ package com.echoeyecodes.sinnerman.Fragments;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
+import android.view.LayoutInflater;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import com.echoeyecodes.sinnerman.R;
-import android.view.LayoutInflater;
 import org.jetbrains.annotations.NotNull;
 
 /**

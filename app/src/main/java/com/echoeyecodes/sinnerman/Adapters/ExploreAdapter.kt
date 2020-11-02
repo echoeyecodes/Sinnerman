@@ -1,7 +1,6 @@
 package com.echoeyecodes.sinnerman.Adapters;
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,16 +10,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.echoeyecodes.sinnerman.BottomNavigationFragments.ExploreFragment
 import com.echoeyecodes.sinnerman.Interface.ExploreFragmentContext
 import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
-import com.echoeyecodes.sinnerman.Paging.CommonListPagingListeners
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingViewHolder
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.Utils.CustomItemDecoration
 import com.echoeyecodes.sinnerman.Utils.IntegerToDp
 import com.echoeyecodes.sinnerman.Utils.VideosItemCallback
-import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import com.google.android.material.button.MaterialButton
 
 typealias navigateToDestination = (String, String) -> Unit

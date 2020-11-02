@@ -1,7 +1,6 @@
 package com.echoeyecodes.sinnerman.viewmodel;
 
 import android.app.Application;
-
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;

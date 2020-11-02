@@ -1,7 +1,6 @@
 package com.echoeyecodes.sinnerman.viewmodel
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody

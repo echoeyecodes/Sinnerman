@@ -10,7 +10,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
-import java.lang.Exception
 
 class UserRepository(context: Context) {
     private val apiClient = ApiClient.getInstance(context).getClient(UserDao::class.java)

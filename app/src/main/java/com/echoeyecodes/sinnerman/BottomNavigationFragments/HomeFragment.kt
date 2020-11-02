@@ -11,11 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Adapters.HomeFragmentRecyclerViewAdapter
 import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener
-import com.echoeyecodes.sinnerman.Interface.PagingListener
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.RootBottomFragment
-import com.echoeyecodes.sinnerman.Utils.*
+import com.echoeyecodes.sinnerman.Utils.CustomItemDecoration
+import com.echoeyecodes.sinnerman.Utils.CustomScrollListener
+import com.echoeyecodes.sinnerman.Utils.IntegerToDp
+import com.echoeyecodes.sinnerman.Utils.VideosItemCallback
 import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.HomeFragmentViewModel
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 

@@ -1,16 +1,12 @@
 package com.echoeyecodes.sinnerman.JobDispatchers
 
 import android.content.Context
-import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.echoeyecodes.sinnerman.API.ApiUtils.ApiClient
 import com.echoeyecodes.sinnerman.API.DAO.CommentDao
 import com.echoeyecodes.sinnerman.repository.CommentRepository
-import com.echoeyecodes.sinnerman.util.AppHandlerThread
 import kotlinx.coroutines.*
-import retrofit2.HttpException
-import java.io.IOException
 import kotlin.coroutines.coroutineContext
 
 class CommentDispatch(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {

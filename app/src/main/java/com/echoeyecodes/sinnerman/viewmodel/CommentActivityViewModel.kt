@@ -1,20 +1,14 @@
 package com.echoeyecodes.sinnerman.viewmodel;
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkManager
-import com.echoeyecodes.sinnerman.JobDispatchers.CommentDispatch
 import com.echoeyecodes.sinnerman.Models.CommentModel
 import com.echoeyecodes.sinnerman.Models.CommentResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
-import com.echoeyecodes.sinnerman.Room.CommentDatabase
 import com.echoeyecodes.sinnerman.Utils.AuthUserManager
 import com.echoeyecodes.sinnerman.repository.CommentRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CommentActivityViewModel(application: Application) : CommonListPagingHandler<CommentResponseBody>(application) {

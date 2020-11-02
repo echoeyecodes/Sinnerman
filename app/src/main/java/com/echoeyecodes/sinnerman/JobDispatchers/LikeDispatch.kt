@@ -1,7 +1,6 @@
 package com.echoeyecodes.sinnerman.JobDispatchers
 
 import android.content.Context
-import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.echoeyecodes.sinnerman.API.ApiUtils.ApiClient
@@ -9,8 +8,6 @@ import com.echoeyecodes.sinnerman.API.DAO.LikeDao
 import com.echoeyecodes.sinnerman.repository.LikeRepository
 import com.echoeyecodes.sinnerman.repository.VideoRepository
 import kotlinx.coroutines.*
-import retrofit2.HttpException
-import java.io.IOException
 
 class LikeDispatch(context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
 
