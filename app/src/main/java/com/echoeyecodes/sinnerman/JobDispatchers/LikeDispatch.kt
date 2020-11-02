@@ -18,28 +18,20 @@ class LikeDispatch(context: Context, workerParameters: WorkerParameters) : Worke
     private val likeRepository: LikeRepository = LikeRepository(context)
     private val videoRepository: VideoRepository = VideoRepository(context)
 
-    override fun doWork() : Result {
+    override fun doWork() : Result = runBlocking {
         var status = false
 
         val job = CoroutineScope(Dispatchers.IO).launch{
             status = withContext(Dispatchers.Unconfined) { sendLike() }
         }
 
-        while(!job.isCompleted){
-            try{
-                CoroutineScope(Dispatchers.IO).launch {
-                    delay(1500)
-                }
-            }catch (exception: InterruptedException){
-                exception.printStackTrace()
-            }
-        }
+        job.join()
 
 
         if(!status){
-            return Result.retry()
+            return@runBlocking Result.retry()
         }
-        return Result.success()
+        return@runBlocking Result.success()
     }
 
     private suspend fun sendLike(): Boolean = withContext(Dispatchers.Unconfined) {

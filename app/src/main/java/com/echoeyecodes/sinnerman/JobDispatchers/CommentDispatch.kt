@@ -18,28 +18,20 @@ class CommentDispatch(context: Context, workerParameters: WorkerParameters) : Wo
     private val apiClient = ApiClient.getInstance(context).getClient(CommentDao::class.java)
     private val commentRepository: CommentRepository = CommentRepository(context)
 
-    override fun doWork() : Result {
+    override fun doWork() : Result = runBlocking {
         var status = false
 
             val job = CoroutineScope(Dispatchers.IO).launch{
                 status = withContext(Dispatchers.Unconfined) { sendComments() }
             }
 
-        while(!job.isCompleted){
-            try{
-                CoroutineScope(Dispatchers.IO).launch {
-                    delay(1500)
-                }
-            }catch (exception: InterruptedException){
-                exception.printStackTrace()
-            }
-        }
+        job.join()
 
 
         if(!status){
-            return Result.retry()
+            return@runBlocking Result.retry()
         }
-        return Result.success()
+        return@runBlocking Result.success()
     }
 
     private suspend fun sendComments(): Boolean = withContext(coroutineContext) {
@@ -49,7 +41,7 @@ class CommentDispatch(context: Context, workerParameters: WorkerParameters) : Wo
             for ( commentModel in comments) {
                 status = try {
                     val response = apiClient.sendComment(commentModel)
-                    commentRepository.addCommentToDB(response)
+                    commentRepository.updateCommentInDB(response)
                     true
                 }  catch (e : Exception) {
                     false
