@@ -1,34 +1,36 @@
 package com.echoeyecodes.sinnerman.Activities;
 
-import android.net.Uri;
-import android.os.Bundle;
+import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.*;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.lifecycle.*
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import com.bumptech.glide.Glide;
-import com.echoeyecodes.sinnerman.Adapters.CommentsAdapter;
-import com.echoeyecodes.sinnerman.Interface.CommentActivityListener;
-import com.echoeyecodes.sinnerman.Models.CommentModel;
-import com.echoeyecodes.sinnerman.Models.CommentResponseBody;
-import com.echoeyecodes.sinnerman.R;
-import com.echoeyecodes.sinnerman.Utils.AuthUserManager;
-import com.echoeyecodes.sinnerman.viewmodel.CommentActivityViewModel;
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
+import com.echoeyecodes.sinnerman.Adapters.CommentsAdapter
+import com.echoeyecodes.sinnerman.Interface.CommentActivityListener
+import com.echoeyecodes.sinnerman.Models.CommentModel
+import com.echoeyecodes.sinnerman.Models.CommentResponseBody
+import com.echoeyecodes.sinnerman.R
+import com.echoeyecodes.sinnerman.Utils.AuthUserManager
+import com.echoeyecodes.sinnerman.Utils.ImageColorDrawable
+import com.echoeyecodes.sinnerman.viewmodel.CommentActivityViewModel
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
-import com.google.android.material.textfield.TextInputEditText;
-import de.hdodenhof.circleimageview.CircleImageView;
+import com.google.android.material.textfield.TextInputEditText
+import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -68,7 +70,7 @@ private lateinit var comment_field : TextInputEditText
 
 
         if (userModel != null) {
-            Glide.with(this).load(Uri.parse(userModel.profile_url)).into(profile_image)
+            Glide.with(this).load(Uri.parse(userModel.profile_url)).placeholder(ImageColorDrawable.Companion.getInstance()).into(profile_image)
         }
 
         back_button.setOnClickListener { super.onBackPressed() }
@@ -93,10 +95,8 @@ private lateinit var comment_field : TextInputEditText
         })
 
         commentActivityViewModel.networkStatus.observe(this, Observer<NetworkState> { state ->
-            Log.d("CARRR", state.toString())
-
             if (state == NetworkState.LOADING || state == NetworkState.ERROR) {
-                val originalList = ArrayList<CommentResponseBody?>(adapter.currentList)
+                val originalList = ArrayList<CommentResponseBody?>(commentActivityViewModel.state)
                 originalList.add(null)
                 adapter.submitList(originalList)
 
@@ -104,6 +104,11 @@ private lateinit var comment_field : TextInputEditText
                 // due to the diffutil.callback comparison when
                 //the state changes from loading to error or vice-versa
                 adapter.notifyItemChanged(adapter.itemCount - 1)
+            }
+
+            //Only submit an empty list
+            if(state == NetworkState.SUCCESS && commentActivityViewModel.state.isEmpty()){
+                adapter.submitList(ArrayList())
             }
             swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
         })
@@ -170,7 +175,7 @@ private lateinit var comment_field : TextInputEditText
     inner class CommentItemCallback : DiffUtil.ItemCallback<CommentResponseBody>(){
 
         override fun areItemsTheSame( oldItem : CommentResponseBody, newItem : CommentResponseBody) :Boolean {
-            return oldItem.comment?.id == newItem.comment?.id
+            return oldItem.comment.id == newItem.comment.id
         }
 
         override fun areContentsTheSame(oldItem : CommentResponseBody, newItem : CommentResponseBody) : Boolean{
