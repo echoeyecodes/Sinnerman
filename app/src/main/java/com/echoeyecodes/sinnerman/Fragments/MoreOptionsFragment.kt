@@ -1,6 +1,7 @@
 package com.echoeyecodes.sinnerman.Fragments
 
 import android.content.Context
+import android.content.res.Resources
 import android.os.Bundle
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
@@ -54,8 +56,14 @@ class MoreOptionsFragment(private val video:VideoResponseBody) : BottomSheetDial
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             when (position) {
-                0 -> holder.text.text = "Copy Link"
-                1 -> holder.text.text = "Share Link"
+                0 -> {
+                    holder.text.text = "Copy Link"
+                    holder.text.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_link, null), null,null,null)
+                }
+                1 -> {
+                    holder.text.text = "Share Link"
+                    holder.text.setCompoundDrawablesWithIntrinsicBounds(ResourcesCompat.getDrawable(requireContext().resources, R.drawable.ic_share, null), null,null,null)
+                }
             }
 
             holder.text.setOnClickListener {

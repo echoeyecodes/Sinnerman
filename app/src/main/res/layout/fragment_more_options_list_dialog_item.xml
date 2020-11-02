@@ -4,12 +4,11 @@
           android:id="@+id/text"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:paddingBottom="@dimen/list_item_spacing_half"
           android:paddingLeft="@dimen/list_item_spacing"
+          android:drawablePadding="15dp"
           android:paddingRight="@dimen/list_item_spacing"
           style="@style/SemiBold"
           android:textSize="18sp"
-          android:paddingTop="@dimen/list_item_spacing_half"
-          android:textAppearance="@style/TextAppearance.AppCompat.Large"
+          android:paddingVertical="10dp"
           android:background="?attr/selectableItemBackground"
-          tools:text="Hello"/>
+          tools:text="Hello" />
