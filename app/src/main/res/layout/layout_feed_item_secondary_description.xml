@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="0dp"
+              android:layout_weight="1"
+              android:layout_marginLeft="10dp"
+              android:layout_marginStart="10dp"
+              android:layout_marginEnd="5dp"
+              android:layout_marginRight="5dp"
+              tools:showIn="@layout/layout_feed_item_secondary"
+              android:layout_height="wrap_content">
+
+    <TextView
+            android:id="@+id/video_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/MediumText"
+            android:textSize="14sp"
+            android:maxLines="2"
+            android:text="LOVE AND MONSTERS | Official Trailer"
+    />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/author_image"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/avatar"
+        />
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            <TextView
+                    android:id="@+id/video_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/RegularText"
+                    android:textSize="12sp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/grey"
+                    android:text="Universal Studios ~ 216k views ~ 2 mins ago"
+            />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

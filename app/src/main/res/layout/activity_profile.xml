@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <include android:id="@+id/profile_toolbar" layout="@layout/layout_sub_activity_action_bar" />
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_below="@id/profile_toolbar"
+            android:layout_height="match_parent">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+        >
+            <include layout="@layout/layout_profile_bio" />
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:orientation="vertical"
+            >
+
+
+                <com.echoeyecodes.sinnerman.CustomView.ProfileItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:profile_context="Full Name"
+                        app:profile_text="John Doe"
+                        app:profile_icon="0"
+                />
+
+                <com.echoeyecodes.sinnerman.CustomView.ProfileItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:profile_context="Username"
+                        app:profile_text="echoeyecodes"
+                        app:profile_icon="1"
+                />
+
+                <com.echoeyecodes.sinnerman.CustomView.ProfileItem
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:profile_context="Email"
+                        app:profile_text="john_doe\@gmail.com"
+                        app:profile_icon="2"
+                />
+
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                    android:layout_width="match_parent"
+                    android:text="Update Profile"
+                    android:id="@+id/upload_btn"
+                    android:fontFamily="@font/raleway_regular"
+                    android:padding="15dp"
+                    android:enabled="false"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="50dp"
+                    android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

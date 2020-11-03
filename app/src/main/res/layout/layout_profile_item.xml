@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_marginVertical="15dp"
+        android:layout_height="wrap_content">
+
+    <ImageView
+            android:id="@+id/profile_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_person_24"
+            android:tint="@color/colorPrimary"
+    />
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+    >
+        <TextView
+                android:id="@+id/profile_context"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                style="@style/SemiBold"
+        />
+
+        <TextView
+                android:id="@+id/profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Oluwafemi Obajuluwa"
+                style="@style/RegularText"
+        />
+
+    </LinearLayout>
+
+
+    <ImageButton
+            android:id="@+id/profile_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_edit_24"
+            android:padding="5dp"
+            android:tint="@color/grey"
+            android:visibility="gone"
+            android:background="?attr/selectableItemBackgroundBorderless"
+    />
+</LinearLayout>

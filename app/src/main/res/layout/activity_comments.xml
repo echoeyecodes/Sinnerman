@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="@color/white"
+        android:layout_height="match_parent"
+        tools:context="com.echoeyecodes.sinnerman.Activities.CommentActivity">
+
+    <include android:id="@+id/comments_toolbar" layout="@layout/layout_sub_activity_action_bar" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:id="@+id/comments_refresh_layout"
+            android:layout_below="@+id/comments_toolbar"
+            android:layout_above="@+id/comments_divider"
+            android:layout_height="match_parent">
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/comments_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/list_item_spacing_half"
+                    android:paddingTop="@dimen/list_item_spacing_half"
+            />
+
+            <LinearLayout
+                    android:id="@+id/empty_recycler_view_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="20dp"
+                    android:visibility="gone"
+                    android:orientation="vertical"
+                    android:gravity="center"
+            >
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_empty_comment"
+                />
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Oops nothing to see here... Be the first to comment!"
+                        style="@style/SemiBold"
+                        android:textAlignment="center"
+                        android:layout_marginTop="20dp"
+                        android:gravity="center_horizontal"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <include layout="@layout/layout_divider" />
+        <include layout="@layout/layout_comment_area" />
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_below="@id/comments_toolbar"
+            android:layout_above="@+id/comments_divider"
+            android:layout_height="match_parent">
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
-    <com.google.android.exoplayer2.ui.PlayerView
-            android:id="@+id/video_play_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:resize_mode="zoom"
-            app:use_artwork="true"
-            app:controller_layout_id="@layout/layout_custom_video_controls"
-    />
+<androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="0dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+>
     <RelativeLayout
-            android:id="@+id/video_play_view_overlay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/drawable_overlay"
-    />
+            android:layout_height="match_parent">
 
-</RelativeLayout>
+        <com.google.android.exoplayer2.ui.PlayerView
+                android:id="@+id/video_play_view"
+                app:auto_show="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:resize_mode="fill"
+                app:use_artwork="true"
+                app:controller_layout_id="@layout/layout_custom_video_controls"
+        />
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

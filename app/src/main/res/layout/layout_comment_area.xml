@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="horizontal"
+        android:id="@+id/comments_input_field"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        tools:showIn="@layout/activity_comments"
+>
+
+    <RelativeLayout
+            android:layout_width="46dp"
+            android:layout_gravity="bottom"
+            android:layout_height="46dp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/avatar"
+                android:layout_centerInParent="true"
+                android:id="@+id/comment_creator_image"
+        />
+    </RelativeLayout>
+
+    <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/comment_text_input_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:minHeight="46dp"
+            android:layout_weight="1"
+            android:maxLines="5"
+            android:inputType="textMultiLine|textCapSentences"
+            android:background="@null"
+            android:gravity="center_vertical"
+            android:hint="Enter comment..."
+            android:textColorHint="@color/grey"
+            style="@style/RegularText"
+            android:padding="5dp"
+    >
+
+    </com.google.android.material.textfield.TextInputEditText>
+
+    <ImageButton
+            android:id="@+id/comment_send_btn"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:src="@drawable/ic_baseline_send_24"
+            android:padding="10dp"
+            android:layout_gravity="bottom"
+            android:tint="@color/colorPrimary"
+            android:background="?attr/selectableItemBackground"
+    />
+
+</LinearLayout>
