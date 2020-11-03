@@ -8,35 +8,24 @@
         android:padding="10dp"
         tools:showIn="@layout/activity_main"
 >
-    <ImageButton
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:src="@drawable/ic_baseline_menu_24"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/initial_overlay_dark_color"
-    />
     <TextView
             android:id="@+id/search_input_button"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:text="Search video titles, authors"
+            android:text="SinnermanTV"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:textSize="12sp"
-            android:clickable="true"
-            android:textColor="@color/grey"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground"
+            android:textSize="20sp"
+            android:textColor="@color/black"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            style="@style/RegularText"
+            style="@style/BoldText"
     />
 
     <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_profile_btn"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@drawable/avatar"
             android:tint="@color/white"
             android:padding="5dp"
             android:background="?attr/selectableItemBackground"

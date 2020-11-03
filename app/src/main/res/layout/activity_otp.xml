@@ -40,7 +40,7 @@
                 android:orientation="vertical"
         >
 
-            <com.example.myapplication.CustomView.FormEditText
+            <com.echoeyecodes.sinnerman.CustomView.FormEditText
                     android:id="@+id/otp_input_field"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

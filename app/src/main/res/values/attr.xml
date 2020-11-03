@@ -7,4 +7,10 @@
         <attr name="inputType" format="integer" />
         <attr name="isSecure" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="ProfileItem">
+        <attr name="profile_text" format="string" />
+        <attr name="profile_context" format="string" />
+        <attr name="profile_icon" format="integer" />
+    </declare-styleable>
 </resources>

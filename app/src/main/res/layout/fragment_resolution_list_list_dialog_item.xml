@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        android:id="@+id/resolution_item"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/list_item_spacing_half"
+        android:clickable="true"
+        android:drawablePadding="15dp"
+        android:gravity="center_vertical"
+        android:focusable="true"
+        android:paddingLeft="@dimen/list_item_spacing"
+        android:paddingRight="@dimen/list_item_spacing"
+        android:paddingTop="@dimen/list_item_spacing_half"
+        android:background="?attr/selectableItemBackground">
+
+    <ImageView
+            android:id="@+id/resolution_selected_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:visibility="gone"
+            android:src="@drawable/ic_baseline_check_24"
+            android:tint="@color/black"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+    />
+
+    <TextView
+              android:id="@+id/resolution_list_text"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              style="@style/MediumText"
+              android:textSize="18sp"
+              tools:text="Hello"/>
+
+</LinearLayout>
