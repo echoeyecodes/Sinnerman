@@ -8,6 +8,7 @@ import com.echoeyecodes.sinnerman.Models.CommentModel
 import com.echoeyecodes.sinnerman.Models.CommentResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
 import com.echoeyecodes.sinnerman.Utils.AuthUserManager
+import com.echoeyecodes.sinnerman.Utils.Result
 import com.echoeyecodes.sinnerman.repository.CommentRepository
 import kotlinx.coroutines.launch
 
@@ -18,7 +19,7 @@ class CommentActivityViewModel(application: Application) : CommonListPagingHandl
 
     init {
         viewModelScope.launch {
-            load(NetworkState.LOADING)
+            load(Result.Loading)
         }
     }
 

@@ -20,10 +20,7 @@ import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
-import com.echoeyecodes.sinnerman.Utils.CustomItemDecoration
-import com.echoeyecodes.sinnerman.Utils.CustomScrollListener
-import com.echoeyecodes.sinnerman.Utils.IntegerToDp
-import com.echoeyecodes.sinnerman.Utils.VideosItemCallback
+import com.echoeyecodes.sinnerman.Utils.*
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import com.echoeyecodes.sinnerman.viewmodel.VideoListViewModel
 import com.google.android.gms.tasks.Task
@@ -72,7 +69,7 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
 
         val videosItemCallback = VideosItemCallback.newInstance()
 
-        adapter = HomeFragmentRecyclerViewAdapter(videosItemCallback, this, this)
+        adapter = HomeFragmentRecyclerViewAdapter(SealedClassDiffUtil(), this, this)
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = linearLayoutManager
@@ -82,33 +79,32 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
         recyclerView.adapter = adapter
 
         viewModel.videos.observe(this, Observer<List<VideoResponseBody>> { videos ->
-            val status = viewModel.networkStatus.value
-            if (status == NetworkState.SUCCESS) {
-                adapter.submitList(videos)
-            }
+            val items = videos.map { Result.Success(it) }
+            adapter.submitList(items)
         })
 
-        viewModel.networkStatus.observe(this, Observer<NetworkState> { state ->
-            if (state == NetworkState.LOADING || state == NetworkState.ERROR) {
-                val originalList = ArrayList<VideoResponseBody?>(viewModel.state)
-                originalList.add(null)
-                adapter.let {
-                    it.submitList(originalList)
-
-                    //necessary call to force notification update
-                    // due to the diffutil.callback comparison when
-                    //the state changes from loading to error or vice-versa
-                    it.notifyItemChanged(it.itemCount - 1)
+        viewModel.networkStatus.observe(this, Observer<Result<VideoResponseBody>> { state ->
+            when (state) {
+                is Result.Loading -> {
+                    val originalItems = ArrayList(viewModel.state.map { Result.Success(it) }) + Result.Loading
+                    adapter.submitList(originalItems)
                 }
+                is Result.Error -> {
+                    val originalItems = ArrayList(viewModel.state.map { Result.Success(it) }) + Result.Error
+                    adapter.submitList(originalItems)
+                }
+                is Result.Refreshing -> swipeRefreshLayout.isRefreshing = true
+                else -> {}
             }
-            swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
+
+            swipeRefreshLayout.isRefreshing = state == Result.Refreshing
         })
 
         recyclerView.addOnScrollListener(CustomScrollListener(fetchMore = this::fetchMore))
     }
 
     fun fetchMore(){
-        viewModel.fetchMore(NetworkState.LOADING);
+        viewModel.fetchMore(Result.Loading);
     }
 
     override fun retry(){
@@ -119,7 +115,7 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
     }
 
     override fun onNetworkStateChanged(): NetworkState {
-        return viewModel.networkStatus.value!!
+        return NetworkState.LOADING
     }
 
     override fun onRefresh() {
@@ -186,10 +182,10 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
     }
 
     override fun openFragment(fragment: Fragment?, tag: String?) {
-        TODO("Not yet implemented")
+
     }
 
     override fun setActiveBottomViewFragment(position: Int) {
-        TODO("Not yet implemented")
+
     }
 }

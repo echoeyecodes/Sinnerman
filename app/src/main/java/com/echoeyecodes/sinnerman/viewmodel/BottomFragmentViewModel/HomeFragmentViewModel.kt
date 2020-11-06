@@ -4,14 +4,14 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
+import com.echoeyecodes.sinnerman.Utils.Result
 import com.echoeyecodes.sinnerman.repository.VideoRepository
-import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
 class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<VideoResponseBody>(application) {
     val videoRepository = VideoRepository(getApplication())
 
     init {
-        load(NetworkState.LOADING)
+        load(Result.Loading)
     }
 
     override fun initialize() {
@@ -29,6 +29,6 @@ class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<
 
     override suspend fun onDataReceived(result: List<VideoResponseBody>) {
         super.onDataReceived(result)
-       videoRepository.addVideosToDB(ArrayList(result))
+        videoRepository.addVideosToDB(ArrayList(result))
     }
 }

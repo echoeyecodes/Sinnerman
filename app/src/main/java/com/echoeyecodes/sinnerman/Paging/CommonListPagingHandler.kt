@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import com.echoeyecodes.sinnerman.Utils.Result
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -12,11 +13,11 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-abstract class CommonListPagingHandler<T>(application: Application) : AndroidViewModel(application){
+abstract class CommonListPagingHandler<T : Any>(application: Application) : AndroidViewModel(application){
 
     var hasMore = true
     var isRunning= false
-    var networkStatus = MutableLiveData<NetworkState>()
+    var networkStatus = MutableLiveData<Result<T>>()
     var state = ArrayList<T>()
 
 
@@ -25,12 +26,12 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
         state = ArrayList();
     }
 
-    fun load(state: NetworkState){
+    fun load(state: Result<T>){
         initialize()
         fetchMore(state)
     }
 
-    fun fetchMore(state: NetworkState){
+    fun fetchMore(state: Result<T>){
         networkStatus.postValue(state)
         if(hasMore && !isRunning){
             CoroutineScope(Dispatchers.IO).launch{
@@ -42,7 +43,7 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
     }
 
     private fun resetState() {
-        networkStatus.postValue(NetworkState.SUCCESS)
+        networkStatus.postValue(Result.Idle)
         isRunning = false
     }
 
@@ -58,27 +59,26 @@ abstract class CommonListPagingHandler<T>(application: Application) : AndroidVie
                 hasMore = false
             }
         }catch (error: IOException){
-            networkStatus.postValue(NetworkState.ERROR)
+            networkStatus.postValue(Result.Error)
         }
         catch (error: HttpException){
             Log.d("CARRR", error.message())
-            networkStatus.postValue(NetworkState.ERROR)
+            networkStatus.postValue(Result.Error)
         }
         isRunning = false
     }
 
     open suspend fun onDataReceived(result: List<T>){
-        networkStatus.postValue(NetworkState.SUCCESS)
+        networkStatus.postValue(Result.Idle)
     }
 
     fun refresh(){
-        Log.d("CARRR", "Resfrsjig")
         hasMore = true
-        load(NetworkState.REFRESHING)
+        load(Result.Refreshing)
     }
 
     fun retry(){
-        fetchMore(NetworkState.LOADING)
+        fetchMore(Result.Loading)
     }
 
     override fun onCleared() {

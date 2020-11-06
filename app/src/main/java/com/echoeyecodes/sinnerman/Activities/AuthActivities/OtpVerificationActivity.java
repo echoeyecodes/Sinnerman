@@ -37,7 +37,6 @@ public class OtpVerificationActivity extends AppCompatActivity implements FormEd
         assert verification_response != null;
         otpViewModel.setVerification_response(verification_response);
 
-        Toast.makeText(this, verification_response, Toast.LENGTH_LONG).show();
         otp_verify_btn = findViewById(R.id.otp_verify_button);
 
         otpViewModel.getRequestStatusObserver().observe(this, (value) -> {

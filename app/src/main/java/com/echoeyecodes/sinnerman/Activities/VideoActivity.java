@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.annotation.Nullable;
@@ -18,7 +19,6 @@ import com.echoeyecodes.sinnerman.Models.ResolutionDimensions;
 import com.echoeyecodes.sinnerman.Models.UserModel;
 import com.echoeyecodes.sinnerman.Models.VideoModel;
 import com.echoeyecodes.sinnerman.R;
-import com.echoeyecodes.sinnerman.Singleton.VideoCacheSingleton;
 import com.echoeyecodes.sinnerman.Utils.AuthenticationManager;
 import com.echoeyecodes.sinnerman.Utils.CustomExoPlayerDataSourceFactory;
 import com.echoeyecodes.sinnerman.Utils.IntegerToDp;
@@ -28,6 +28,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.database.ExoDatabaseProvider;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.hls.HlsManifest;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -35,11 +36,14 @@ import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
+import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +56,6 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     private TextView video_title;
     private TextView video_description;
     private ImageButton comment_btn;
-    private DefaultTrackSelector defaultTrackSelector;
     private ImageButton like_btn;
     private LinearLayout reload_btn;
     private SimpleExoPlayer player;
@@ -61,11 +64,13 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     private VideoActivityViewModel videoActivityViewModel;
     private ProgressBar progressBar;
     private ValueAnimator valueAnimator;
+    private SimpleCache simpleCache;
     private MediaSource mediaSource;
     private int currentWindow = 0;
     private long playBackPosition = 0;
     private String video_id;
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onCreate(@Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +84,6 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
         loading_layout = findViewById(R.id.video_activity_loading_layout);
         loading_layout.setBackgroundColor(R.color.black);
 
-        defaultTrackSelector = new DefaultTrackSelector(this);
         video_author_image = findViewById(R.id.video_author_image);
         video_author_username = findViewById(R.id.video_author_username);
         video_title = findViewById(R.id.video_title);
@@ -225,7 +229,7 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     }
 
     public void initializePlayer() {
-        player = new SimpleExoPlayer.Builder(this).setTrackSelector(defaultTrackSelector).build();
+        player = new SimpleExoPlayer.Builder(this).setTrackSelector(videoActivityViewModel.getDefaultTrackSelector()).build();
         playerView.setPlayer(player);
         player.setPlayWhenReady(true);
         player.seekTo(currentWindow, playBackPosition);
@@ -235,9 +239,10 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
 
     private void changeResolution(int position, ResolutionDimensions dimensions) {
         if (position == 0) {
-            defaultTrackSelector.setParameters(defaultTrackSelector.buildUponParameters().setMaxVideoSizeSd());
+            videoActivityViewModel.getDefaultTrackSelector().setParameters(DefaultTrackSelector.Parameters.getDefaults(this));
         } else {
-            defaultTrackSelector.setParameters(defaultTrackSelector.buildUponParameters().setMaxVideoSize(dimensions.getWidth(), dimensions.getHeight()));
+            DefaultTrackSelector.Parameters parameters = new DefaultTrackSelector.ParametersBuilder(this).clearSelectionOverrides().clearVideoSizeConstraints().setMaxVideoSize(dimensions.getWidth(), dimensions.getHeight()).build();
+            videoActivityViewModel.getDefaultTrackSelector().setParameters(parameters);
         }
 
         videoActivityViewModel.setSelectedItemPosition(position);
@@ -254,7 +259,9 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     }
 
     private MediaSource buildMediaSource(Uri uri) {
-        DataSource.Factory dataSourceFactory = new CustomExoPlayerDataSourceFactory(this, 100 * 1024 * 1024, 5 * 1024 * 1024, VideoCacheSingleton.getVideoCache(this));
+        LeastRecentlyUsedCacheEvictor leastRecentlyUsedCacheEvictor = new LeastRecentlyUsedCacheEvictor(Long.MAX_VALUE);
+        simpleCache = new SimpleCache(new File(getCacheDir(), "media"), leastRecentlyUsedCacheEvictor, new ExoDatabaseProvider(this));
+        DataSource.Factory dataSourceFactory = new CustomExoPlayerDataSourceFactory(this, Long.MAX_VALUE, Long.MAX_VALUE, simpleCache);
         HlsMediaSource.Factory hlsFactory = new HlsMediaSource.Factory(dataSourceFactory);
         return hlsFactory.createMediaSource(uri);
     }
@@ -316,6 +323,13 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         hideSystemUI();
+    }
+
+    @Override
+    protected void onDestroy() {
+        simpleCache.release();
+        simpleCache = null;
+        super.onDestroy();
     }
 
     @Override

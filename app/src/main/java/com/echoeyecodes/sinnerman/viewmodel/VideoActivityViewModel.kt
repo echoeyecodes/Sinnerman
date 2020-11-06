@@ -9,6 +9,7 @@ import com.echoeyecodes.sinnerman.Models.ResolutionDimensions
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.repository.LikeRepository
 import com.echoeyecodes.sinnerman.repository.VideoRepository
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -22,10 +23,15 @@ class VideoActivityViewModel(application: Application) : AndroidViewModel(applic
     val request_status = MutableLiveData<NetworkState>(NetworkState.LOADING)
     val videoObserver = MutableLiveData<VideoResponseBody>()
     var resolutions = ArrayList<ResolutionDimensions>()
+    var defaultTrackSelector:DefaultTrackSelector = DefaultTrackSelector(application)
     var selectedItemPosition = 0;
     private val likeRepository = LikeRepository(application)
     private val videoRepository = VideoRepository(application)
     var didLike = MutableLiveData<Boolean>(false)
+
+    init {
+        defaultTrackSelector.setParameters(defaultTrackSelector.buildUponParameters().setMaxVideoSizeSd())
+    }
 
      fun getFullScreenValue() : Boolean{
         return fullscreen

@@ -18,9 +18,12 @@ import com.echoeyecodes.sinnerman.Adapters.CommentsAdapter
 import com.echoeyecodes.sinnerman.Interface.CommentActivityListener
 import com.echoeyecodes.sinnerman.Models.CommentModel
 import com.echoeyecodes.sinnerman.Models.CommentResponseBody
+import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.Utils.AuthUserManager
 import com.echoeyecodes.sinnerman.Utils.ImageColorDrawable
+import com.echoeyecodes.sinnerman.Utils.Result
+import com.echoeyecodes.sinnerman.Utils.SealedClassDiffUtil
 import com.echoeyecodes.sinnerman.viewmodel.CommentActivityViewModel
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import com.google.android.material.textfield.TextInputEditText
@@ -77,8 +80,7 @@ private lateinit var comment_field : TextInputEditText
         val linearLayoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
         recyclerView.layoutManager = linearLayoutManager
         swipeRefreshLayout.setOnRefreshListener(this)
-        val commentModelItemCallback: DiffUtil.ItemCallback<CommentResponseBody> = CommentItemCallback();
-        adapter = CommentsAdapter(this, commentModelItemCallback, this);
+        adapter = CommentsAdapter(this, SealedClassDiffUtil(), this);
         recyclerView.adapter = adapter;
 
 
@@ -86,30 +88,35 @@ private lateinit var comment_field : TextInputEditText
             sendComment();
         };
 
-        commentActivityViewModel.getComments().observe(this, Observer<List<CommentResponseBody>> { value ->
-            val status = commentActivityViewModel.networkStatus.value
-            if(status == NetworkState.SUCCESS){
-                adapter.submitList(value)
+        commentActivityViewModel.getComments().observe(this, Observer<List<CommentResponseBody>> { videos ->
+            val currentState = commentActivityViewModel.networkStatus.value
+
+            if(currentState == Result.Idle){
+                val items = videos.map { Result.Success(it) }
+                adapter.submitList(items)
             }
         })
 
-        commentActivityViewModel.networkStatus.observe(this, Observer<NetworkState> { state ->
-            if (state == NetworkState.LOADING || state == NetworkState.ERROR) {
-                val originalList = ArrayList<CommentResponseBody?>(commentActivityViewModel.state)
-                originalList.add(null)
-                adapter.submitList(originalList)
 
-                //necessary call to force notification update
-                // due to the diffutil.callback comparison when
-                //the state changes from loading to error or vice-versa
-                adapter.notifyItemChanged(adapter.itemCount - 1)
+        commentActivityViewModel.networkStatus.observe(this, Observer<Result<CommentResponseBody>> { state ->
+            when (state) {
+                is Result.Loading -> {
+                    val originalItems = ArrayList(commentActivityViewModel.state.map { Result.Success(it) }) + Result.Loading
+                    adapter.submitList(originalItems)
+                }
+                is Result.Error -> {
+                    val originalItems = ArrayList(commentActivityViewModel.state.map { Result.Success(it) }) + Result.Error
+                    adapter.submitList(originalItems)
+                }
+                is Result.Refreshing -> swipeRefreshLayout.isRefreshing = true
+                else -> {}
             }
 
-            //Only submit an empty list
-            if(state == NetworkState.SUCCESS && commentActivityViewModel.state.isEmpty()){
+            swipeRefreshLayout.isRefreshing = state == Result.Refreshing
+
+            if(state == Result.Idle && commentActivityViewModel.state.size == 0){
                 adapter.submitList(ArrayList())
             }
-            swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
         })
 
 
@@ -142,7 +149,7 @@ private lateinit var comment_field : TextInputEditText
         }
 
         fun fetchMore() {
-            commentActivityViewModel.fetchMore(NetworkState.LOADING);
+            commentActivityViewModel.fetchMore(Result.Loading);
         }
 
 
@@ -164,7 +171,7 @@ private lateinit var comment_field : TextInputEditText
     }
 
     override fun onNetworkStateChanged(): NetworkState {
-        return commentActivityViewModel.networkStatus.value!!
+        return NetworkState.LOADING
     }
 
     override fun onItemsChanged() {

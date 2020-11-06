@@ -22,7 +22,6 @@ open class CommonListPagingViewHolder(itemView: View, listener: CommonListPaging
     }
 
     fun handleNetworkStateChanged(networkState: NetworkState) {
-        loading_container.visibility = View.VISIBLE
         when (networkState) {
             NetworkState.LOADING -> {
                 loading_error_container.visibility = View.GONE

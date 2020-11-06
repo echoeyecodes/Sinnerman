@@ -14,46 +14,75 @@ import com.echoeyecodes.sinnerman.Interface.ExploreFragmentContext
 import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingViewHolder
 import com.echoeyecodes.sinnerman.R
-import com.echoeyecodes.sinnerman.Utils.CustomItemDecoration
-import com.echoeyecodes.sinnerman.Utils.IntegerToDp
-import com.echoeyecodes.sinnerman.Utils.VideosItemCallback
+import com.echoeyecodes.sinnerman.Utils.*
+import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import com.google.android.material.button.MaterialButton
+import java.lang.Exception
 
 typealias navigateToDestination = (String, String) -> Unit
 
-class ExploreAdapter(private val exploreFragmentContext: ExploreFragmentContext, private val context:Context, private val navigateToMore: navigateToDestination, private val navigateToVideo: (String) -> Unit, itemCallback: DiffUtil.ItemCallback<ExploreResponseBody>) : ListAdapter<ExploreResponseBody, ExploreAdapter.ExploreViewHolder>(itemCallback) {
+class ExploreAdapter(private val exploreFragmentContext: ExploreFragmentContext, private val context:Context, private val navigateToMore: navigateToDestination, private val navigateToVideo: (String) -> Unit, itemCallback: DiffUtil.ItemCallback<Result<ExploreResponseBody>>) : ListAdapter<Result<ExploreResponseBody>, RecyclerView.ViewHolder>(itemCallback) {
     private val videosItemCallback = VideosItemCallback.newInstance()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExploreViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        if(viewType == LOADING_LAYOUT){
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.paging_loading_layout, parent, false);
+            return CommonListPagingViewHolder(view, exploreFragmentContext)
+        }
         val view = LayoutInflater.from(parent.context).inflate(R.layout.explore_recycler_item, parent, false)
         return ExploreViewHolder(view)
     }
 
+    companion object{
+        const val LOADING_LAYOUT = 0
+        const val NORMAL_LAYOUT = 1
+    }
 
-    override fun onBindViewHolder(holder: ExploreViewHolder, position: Int) {
-        val exploreResponseBody = getItem(position)
 
-        if (exploreResponseBody == null) {
-            holder.linearLayout.visibility = View.GONE
-            holder.handleNetworkStateChanged(exploreFragmentContext.onNetworkStateChanged())
-            return
-        }
-        holder.linearLayout.visibility = View.VISIBLE
-        holder.loading_container.visibility = View.GONE
-        holder.recycler_header.text = exploreResponseBody.name
-        val adapter = ExploreItemAdapter(videosItemCallback, context, navigateToVideo)
-        holder.recycler_view.adapter = adapter
-        adapter.submitList(exploreResponseBody.videos)
-        holder.bindClickListener(exploreResponseBody.id, exploreResponseBody.name)
-
-        if (exploreResponseBody.videos.size > 3) {
-            holder.more_btn.visibility = View.VISIBLE
-        } else {
-            holder.more_btn.visibility = View.GONE
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is Result.Loading -> LOADING_LAYOUT
+            is Result.Error -> LOADING_LAYOUT
+            is Result.Success<*> -> NORMAL_LAYOUT
+            else -> throw Exception("Invalid network state")
         }
     }
 
-    inner class ExploreViewHolder(itemView: View) : CommonListPagingViewHolder(itemView, exploreFragmentContext) {
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
+        when (getItem(position)) {
+            is Result.Loading -> {
+                val networkStateHolder = holder as CommonListPagingViewHolder
+                networkStateHolder.handleNetworkStateChanged(NetworkState.LOADING)
+            }
+            is Result.Error -> {
+                val networkStateHolder = holder as CommonListPagingViewHolder
+                networkStateHolder.handleNetworkStateChanged(NetworkState.ERROR)
+            }
+            is Result.Success<ExploreResponseBody> -> {
+                val viewHolder = holder as ExploreViewHolder
+                val exploreResponseBody = (getItem(position) as Result.Success<ExploreResponseBody>).data
+
+                viewHolder.recycler_header.text = exploreResponseBody.name
+                val adapter = ExploreItemAdapter(videosItemCallback, context, navigateToVideo)
+                viewHolder.recycler_view.adapter = adapter
+                adapter.submitList(exploreResponseBody.videos)
+                viewHolder.bindClickListener(exploreResponseBody.id, exploreResponseBody.name)
+
+                if (exploreResponseBody.videos.size > 3) {
+                    viewHolder.more_btn.visibility = View.VISIBLE
+                } else {
+                    viewHolder.more_btn.visibility = View.GONE
+                }
+            }
+            else -> {
+            }
+
+        }
+    }
+
+    inner class ExploreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val recycler_header: TextView = itemView.findViewById(R.id.explore_recycler_item_text_view)
         val recycler_view: RecyclerView = itemView.findViewById(R.id.explore_recycler_item_recycler_view)

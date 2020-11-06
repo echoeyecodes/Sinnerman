@@ -6,6 +6,7 @@ import com.echoeyecodes.sinnerman.API.ApiUtils.ApiClient
 import com.echoeyecodes.sinnerman.API.DAO.VideosDao
 import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
+import com.echoeyecodes.sinnerman.Utils.Result
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.coroutineContext
 
@@ -15,11 +16,11 @@ class ExploreViewModel(application: Application) : CommonListPagingHandler<Explo
     var categories: MutableLiveData<List<ExploreResponseBody>> = MutableLiveData()
 
     init {
-        load(NetworkState.LOADING)
+        load(Result.Loading)
     }
 
     override fun initialize() {
-            categories.postValue(null)
+            categories.postValue(ArrayList())
             super.initialize()
     }
 
@@ -30,7 +31,7 @@ class ExploreViewModel(application: Application) : CommonListPagingHandler<Explo
     }
 
     override suspend fun onDataReceived(result: List<ExploreResponseBody>) {
-            categories.postValue(ArrayList(result))
             super.onDataReceived(result)
+            categories.postValue(ArrayList(result))
         }
     }

@@ -16,10 +16,13 @@ import com.echoeyecodes.sinnerman.Adapters.NotificationsAdapter
 import com.echoeyecodes.sinnerman.Interface.NotificationFragmentListener
 import com.echoeyecodes.sinnerman.MainActivity
 import com.echoeyecodes.sinnerman.Models.UploadNotificationModel
+import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.RootBottomFragment
 import com.echoeyecodes.sinnerman.Utils.CustomItemDecoration
 import com.echoeyecodes.sinnerman.Utils.IntegerToDp
+import com.echoeyecodes.sinnerman.Utils.Result
+import com.echoeyecodes.sinnerman.Utils.SealedClassDiffUtil
 import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.NotificationViewModel
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
@@ -67,31 +70,40 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
         val notificationItemCallback = NotificationItemCallback()
 
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        adapter = NotificationsAdapter(context, notificationItemCallback, mainActivityContext, this)
+        adapter = NotificationsAdapter(requireContext(), SealedClassDiffUtil(), mainActivityContext, this)
         recyclerView.addItemDecoration( CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)))
         recyclerView.adapter = adapter
 
         swipeRefreshLayout.setOnRefreshListener(this)
 
-        notificationViewModel.networkStatus.observe(viewLifecycleOwner, Observer<NetworkState> { state ->
-            if(state == NetworkState.LOADING || state == NetworkState.ERROR){
-                val originalList = ArrayList<UploadNotificationModel?>(notificationViewModel.state)
-                originalList.add(null)
-                adapter.submitList(originalList)
+        notificationViewModel.getNotifications().observe(viewLifecycleOwner, Observer<List<UploadNotificationModel>> { notifications ->
+            val currentState = notificationViewModel.networkStatus.value
 
-                //necessary call to force notification update
-                // due to the diffutil.callback comparison when
-                //the state changes from loading to error or vice-versa
-                adapter.notifyItemChanged(adapter.itemCount - 1)
+            if(currentState == Result.Idle){
+                val items = notifications.map { Result.Success(it) }
+                adapter.submitList(items)
             }
-            swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
         })
 
-        notificationViewModel.getNotifications().observe(viewLifecycleOwner, Observer<List<UploadNotificationModel>> { notification ->
-            val status = notificationViewModel.networkStatus.value
-            if(status == NetworkState.SUCCESS){
-                adapter.submitList(notification)
+        notificationViewModel.networkStatus.observe(viewLifecycleOwner, Observer<Result<UploadNotificationModel>> { state ->
+            when (state) {
+                is Result.Loading -> {
+                    val originalItems = ArrayList(notificationViewModel.state.map { Result.Success(it) }) + Result.Loading
+                    adapter.submitList(originalItems)
+                }
+                is Result.Error -> {
+                    val originalItems = ArrayList(notificationViewModel.state.map { Result.Success(it) }) + Result.Error
+                    adapter.submitList(originalItems)
+                }
+                is Result.Refreshing -> swipeRefreshLayout.isRefreshing = true
+                else -> {}
             }
+            swipeRefreshLayout.isRefreshing = state == Result.Refreshing
+
+            if(state == Result.Idle && notificationViewModel.state.size == 0){
+                adapter.submitList(ArrayList())
+            }
+
         })
     }
 
@@ -130,7 +142,7 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
     }
 
     override fun onNetworkStateChanged() : NetworkState {
-        return notificationViewModel.networkStatus.value!!
+        return NetworkState.LOADING
     }
 
     override fun onRefresh() {

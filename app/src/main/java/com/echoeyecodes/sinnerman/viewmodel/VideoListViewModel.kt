@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
+import com.echoeyecodes.sinnerman.Utils.Result
 import com.echoeyecodes.sinnerman.repository.VideoRepository
 
 class VideoListViewModel(application: Application) : CommonListPagingHandler<VideoResponseBody>(application)  {
@@ -14,7 +15,7 @@ class VideoListViewModel(application: Application) : CommonListPagingHandler<Vid
     var tag_id:String = ""
 
     init {
-        load(NetworkState.LOADING)
+        load(Result.Loading)
     }
 
     override fun initialize() {

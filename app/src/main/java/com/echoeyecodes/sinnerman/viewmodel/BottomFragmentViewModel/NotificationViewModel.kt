@@ -4,14 +4,14 @@ import android.app.Application
 import androidx.lifecycle.LiveData
 import com.echoeyecodes.sinnerman.Models.UploadNotificationModel
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
+import com.echoeyecodes.sinnerman.Utils.Result
 import com.echoeyecodes.sinnerman.repository.NotificationRepository
-import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
 class NotificationViewModel(application: Application) : CommonListPagingHandler<UploadNotificationModel>(application) {
     val notificationRepository = NotificationRepository(getApplication())
 
     init {
-        load(NetworkState.LOADING)
+        load(Result.Loading)
     }
 
     override fun initialize() {

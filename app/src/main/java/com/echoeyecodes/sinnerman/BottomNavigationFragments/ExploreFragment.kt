@@ -16,9 +16,12 @@ import com.echoeyecodes.sinnerman.Adapters.ExploreAdapter
 import com.echoeyecodes.sinnerman.Interface.ExploreFragmentContext
 import com.echoeyecodes.sinnerman.MainActivity
 import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
+import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.RootBottomFragment
 import com.echoeyecodes.sinnerman.Utils.CustomScrollListener
+import com.echoeyecodes.sinnerman.Utils.Result
+import com.echoeyecodes.sinnerman.Utils.SealedClassDiffUtil
 import com.echoeyecodes.sinnerman.viewmodel.ExploreViewModel
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
@@ -62,45 +65,42 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
                 context = requireContext(),
                 navigateToMore =  this::navigateToVideoListActivity,
                 navigateToVideo = mainActivity::navigateToVideos,
-                itemCallback = ExploreResponseItemCallback())
+                itemCallback = SealedClassDiffUtil())
 
         recyclerView.adapter = exploreAdapter
 
         exploreViewModel.categories.observe(viewLifecycleOwner, Observer<List<ExploreResponseBody>> { value ->
-            exploreAdapter.submitList(value)
+            val currentState = exploreViewModel.networkStatus.value
+
+            if(currentState == Result.Idle){
+                val items = value.map { Result.Success(it) }
+                exploreAdapter.submitList(items)
+            }
         })
 
-        exploreViewModel.networkStatus.observe(viewLifecycleOwner, Observer<NetworkState> { state ->
-            if(state == NetworkState.LOADING || state == NetworkState.ERROR){
-                val originalList = ArrayList<ExploreResponseBody?>(exploreViewModel.state)
-                originalList.add(null)
-                exploreAdapter.submitList(originalList)
-
-                //necessary call to force notification update
-                // due to the diffutil.callback comparison when
-                //the state changes from loading to error or vice-versa
-                exploreAdapter.notifyItemChanged(exploreAdapter.itemCount - 1)
+        exploreViewModel.networkStatus.observe(viewLifecycleOwner, Observer<Result<ExploreResponseBody>> { state ->
+            when (state) {
+                is Result.Loading -> {
+                    val originalItems = ArrayList(exploreViewModel.state.map { Result.Success(it) }) + Result.Loading
+                    exploreAdapter.submitList(originalItems)
+                }
+                is Result.Error -> {
+                    val originalItems = ArrayList(exploreViewModel.state.map { Result.Success(it) }) + Result.Error
+                    exploreAdapter.submitList(originalItems)
+                }
+                is Result.Refreshing -> swipeRefreshLayout.isRefreshing = true
+                else -> { }
             }
-            swipeRefreshLayout.isRefreshing = state == NetworkState.REFRESHING
+
+            swipeRefreshLayout.isRefreshing = state == Result.Refreshing
         })
 
         recyclerView.addOnScrollListener(CustomScrollListener(fetchMore = this::fetchMore))
     }
 
-    inner class ExploreResponseItemCallback : DiffUtil.ItemCallback<ExploreResponseBody>() {
-
-        override fun areItemsTheSame(oldItem: ExploreResponseBody, newItem: ExploreResponseBody): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: ExploreResponseBody, newItem: ExploreResponseBody): Boolean {
-            return oldItem == newItem
-        }
-
-    }
 
     fun fetchMore(){
-        exploreViewModel.fetchMore(NetworkState.LOADING);
+        exploreViewModel.fetchMore(Result.Loading);
     }
 
     override fun onResume() {
@@ -113,7 +113,7 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
     }
 
     override fun onNetworkStateChanged(): NetworkState {
-        return exploreViewModel.networkStatus.value!!
+        return NetworkState.LOADING
     }
 
     override fun onItemsChanged() {
