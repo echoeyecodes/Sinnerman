@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         circleImageView = findViewById(R.id.user_profile_btn);
         if (userModel != null) {
             Glide.with(this).load(Uri.parse(userModel.getProfile_url())).into(circleImageView);
+            circleImageView.setVisibility(View.VISIBLE);
         }
     }
 

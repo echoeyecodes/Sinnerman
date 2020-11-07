@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.echoeyecodes.sinnerman.CustomView.ProfileItem
 import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment
 import com.echoeyecodes.sinnerman.MainActivity
 import com.echoeyecodes.sinnerman.Models.UserModel
@@ -28,6 +29,9 @@ import java.io.FileOutputStream
 class ProfileActivity : AppCompatActivity(){
     private lateinit var linearLayout: LinearLayout
     private lateinit var title: TextView
+    private lateinit var name: ProfileItem
+    private lateinit var username: ProfileItem
+    private lateinit var email: ProfileItem
     private lateinit var back_btn: ImageButton
     private lateinit var profileImage:ImageView
     private lateinit var changePhotoBtn: ImageButton
@@ -54,6 +58,10 @@ class ProfileActivity : AppCompatActivity(){
         uploadBtn = findViewById(R.id.upload_btn)
         changePhotoBtn = findViewById(R.id.choose_image_btn)
 
+        name = findViewById(R.id.user_profile_name)
+        username = findViewById(R.id.user_profile_username)
+        email = findViewById(R.id.user_profile_email)
+
         profileActivityViewModel = ViewModelProvider(this).get(ProfileActivityViewModel::class.java)
         progressDialog = ProgressDialogFragment("Uploading Photo")
         progressDialog.isCancelable = false
@@ -66,9 +74,11 @@ class ProfileActivity : AppCompatActivity(){
 
         uploadBtn.setOnClickListener { uploadImage() }
 
-        choose_image_btn.setOnClickListener { selectImage() }
+        changePhotoBtn.setOnClickListener { selectImage() }
 
         userModel = AuthUserManager.getInstance().getUser(this)
+
+        initUserData(userModel)
 
         setNewImage(userModel.profile_url)
 
@@ -86,6 +96,12 @@ class ProfileActivity : AppCompatActivity(){
                 }
             }
         })
+    }
+
+    private fun initUserData(userModel: UserModel){
+        username.setName(userModel.username)
+        name.setName(userModel.fullname)
+        email.setName(userModel.email)
     }
 
     fun selectImage() {

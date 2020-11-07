@@ -27,6 +27,7 @@
 
 
                 <com.echoeyecodes.sinnerman.CustomView.ProfileItem
+                        android:id="@+id/user_profile_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:profile_context="Full Name"
@@ -35,6 +36,7 @@
                 />
 
                 <com.echoeyecodes.sinnerman.CustomView.ProfileItem
+                        android:id="@+id/user_profile_username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:profile_context="Username"
@@ -43,6 +45,7 @@
                 />
 
                 <com.echoeyecodes.sinnerman.CustomView.ProfileItem
+                        android:id="@+id/user_profile_email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:profile_context="Email"

@@ -7,7 +7,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.echoeyecodes.sinnerman.R
 
-class ProfileItem(context: Context, attributeSet: AttributeSet) : LinearLayout(context) {
+class ProfileItem(context: Context, attributeSet: AttributeSet) : LinearLayout(context,attributeSet) {
     lateinit var imageView:ImageView
     lateinit var profileContext:TextView
     lateinit var name:TextView
