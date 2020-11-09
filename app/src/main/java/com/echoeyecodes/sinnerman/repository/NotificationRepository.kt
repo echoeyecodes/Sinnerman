@@ -23,7 +23,7 @@ class NotificationRepository(context: Context) {
     }
 
     suspend fun getNotifications(offset: String) : List<UploadNotificationModel>{
-        return apiClient.fetchUploadNotifications("5", offset)
+        return apiClient.fetchUploadNotifications("10", offset)
     }
 
     fun deleteNotifications(){

@@ -16,7 +16,7 @@ class VideoRepository(context: Context) {
     val videoDao = PersistenceDatabase.getInstance(context.applicationContext).videoDao()
 
     suspend fun getVideos(offset:String):List<VideoResponseBody>{
-        return apiClient.fetchVideos("5", offset)
+        return apiClient.fetchVideos("10", offset)
     }
 
      fun deleteVideosFromDB(){
@@ -46,7 +46,7 @@ class VideoRepository(context: Context) {
     }
 
     suspend fun getVideoByTag(id: String, offset: String) : List<VideoResponseBody>{
-        return apiClient.fetchExploreItem(id, "5", offset)
+        return apiClient.fetchExploreItem(id, "10", offset)
     }
 
 }

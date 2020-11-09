@@ -26,7 +26,7 @@ class ExploreViewModel(application: Application) : CommonListPagingHandler<Explo
 
     override suspend fun fetchList(): List<ExploreResponseBody> {
         return withContext(coroutineContext){
-            videoDao.fetchExplore("5", state.size.toString())
+            videoDao.fetchExplore("10", state.size.toString())
         }
     }
 
