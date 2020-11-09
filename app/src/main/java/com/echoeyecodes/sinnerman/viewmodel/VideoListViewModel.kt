@@ -19,7 +19,7 @@ class VideoListViewModel(application: Application) : CommonListPagingHandler<Vid
     }
 
     override fun initialize() {
-        videos.postValue(null)
+        videos.postValue(ArrayList())
         super.initialize()
     }
 
