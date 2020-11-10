@@ -22,7 +22,6 @@ class UserRepository(context: Context) {
                 apiClient.uploadPhoto(body)
                 status.postValue(NetworkState.SUCCESS)
             }catch (exception : Exception){
-                Log.d("CARRR", exception.message)
                 status.postValue(NetworkState.ERROR)
             }
 

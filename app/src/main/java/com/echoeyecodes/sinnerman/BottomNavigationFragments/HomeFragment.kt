@@ -92,7 +92,7 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
         recyclerView.addOnScrollListener(CustomScrollListener(fetchMore = this::fetchMore))
     }
 
-    fun fetchMore(){
+    private fun fetchMore(){
         viewModel.fetchMore(Result.Loading);
     }
 

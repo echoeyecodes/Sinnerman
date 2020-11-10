@@ -19,10 +19,7 @@ import com.echoeyecodes.sinnerman.Models.UploadNotificationModel
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.RootBottomFragment
-import com.echoeyecodes.sinnerman.Utils.CustomItemDecoration
-import com.echoeyecodes.sinnerman.Utils.IntegerToDp
-import com.echoeyecodes.sinnerman.Utils.Result
-import com.echoeyecodes.sinnerman.Utils.SealedClassDiffUtil
+import com.echoeyecodes.sinnerman.Utils.*
 import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.NotificationViewModel
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
@@ -105,6 +102,12 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
             }
 
         })
+
+        recyclerView.addOnScrollListener(CustomScrollListener(fetchMore = this::fetchMore))
+    }
+
+    private fun fetchMore(){
+        notificationViewModel.fetchMore(Result.Loading);
     }
 
     private fun checkListEmpty(){
