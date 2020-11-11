@@ -1,5 +1,6 @@
 package com.echoeyecodes.sinnerman.Adapters;
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Resources
 import android.net.Uri
@@ -26,56 +27,46 @@ import com.echoeyecodes.sinnerman.Utils.TimestampConverter
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.Serializable
 
-class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>, private val context: Context, private val navigate: (String) -> Unit) : ListAdapter<VideoResponseBody, ExploreItemAdapter.CustomViewHolder>(itemCallback), Serializable {
-
-     companion object{
-         const val PRIMARY = 0
-         const val SECONDARY = 1
-     }
+class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>, private val context: Context, private val navigate: (String) -> Unit) : ListAdapter<VideoResponseBody, ExploreItemAdapter.BaseViewHolder>(itemCallback), Serializable {
 
     private var fragmentManager: FragmentManager = (context as AppCompatActivity).supportFragmentManager
     private lateinit var moreOptionsFragment: MoreOptionsFragment
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExploreItemAdapter.CustomViewHolder {
-        return if(viewType == PRIMARY){
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_feed_item, parent, false)
-            ExplorePrimaryItemViewHolder(view)
-        }else{
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_feed_item_secondary, parent, false)
-            ExploreSecondaryItemViewHolder(view)
-        }
-    }
-
-    override fun onBindViewHolder(holder: ExploreItemAdapter.CustomViewHolder, position: Int) {
-        val videoResponseBody = getItem(position);
-
-        if(videoResponseBody != null) {
-            Glide.with(context).load(Uri.parse(videoResponseBody.video.thumbnail)).placeholder(ImageColorDrawable.Companion.getInstance()).into(holder.imageView);
-            Glide.with(context).load(Uri.parse(videoResponseBody.user.profile_url)).placeholder(ImageColorDrawable.Companion.getInstance()).into(holder.author_image);
-            holder.title.text = videoResponseBody.video.title
-            holder.author.text = videoResponseBody.user.fullname
-
-            holder.duration.text = DurationConverter.getInstance().convertToDuration(videoResponseBody.video.duration)
-            val timestamp = TimestampConverter.getInstance().convertToTimeDifference(videoResponseBody.video.createdAt)
-            holder.author.text = videoResponseBody.user.username + " \u2022 " + videoResponseBody.video.views.toString() + " views" + " \u2022 " + timestamp
-            holder.linearLayout.setOnClickListener{ navigate(videoResponseBody.video.id) }
-
-
-            holder.options_btn.setOnClickListener {
-                moreOptionsFragment = newInstance(getItem(position))
-                moreOptionsFragment.show(fragmentManager, "more_options_fragment")
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
+        return when (viewType) {
+            R.layout.layout_feed_item -> {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_feed_item, parent, false)
+                ExplorePrimaryItemViewHolder(view)
+            }
+            else -> {
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_feed_item_secondary, parent, false)
+                ExploreSecondaryItemViewHolder(view)
             }
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
+        val videoResponseBody = getItem(position);
+
+        if(videoResponseBody != null) {
+            holder.bind(videoResponseBody)
+        }
+
+    }
+
      override fun getItemViewType(position: Int): Int {
         if(position == 0){
-            return PRIMARY
+            return R.layout.layout_feed_item
         }
-         return SECONDARY
+         return R.layout.layout_feed_item_secondary
      }
 
-     open inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    abstract class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+        abstract fun bind(videoResponseBody: VideoResponseBody)
+    }
+
+     open inner class CustomViewHolder(itemView: View) : BaseViewHolder(itemView) {
          val imageView : ImageView = itemView.findViewById(R.id.video_thumbnail)
          val linearLayout : LinearLayout = itemView.findViewById(R.id.video_item)
          val author_image:CircleImageView = itemView.findViewById(R.id.author_image)
@@ -83,6 +74,23 @@ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>,
          val options_btn : ImageView = itemView.findViewById(R.id.video_option_btn);
          val author : TextView = itemView.findViewById(R.id.video_author)
          val duration : TextView = itemView.findViewById(R.id.video_duration)
+
+
+         override fun bind(videoResponseBody: VideoResponseBody) {
+             Glide.with(context).load(Uri.parse(videoResponseBody.video.thumbnail)).placeholder(ImageColorDrawable.Companion.getInstance()).into(imageView);
+             Glide.with(context).load(Uri.parse(videoResponseBody.user.profile_url)).placeholder(ImageColorDrawable.Companion.getInstance()).into(author_image);
+             title.text = videoResponseBody.video.title
+             author.text = videoResponseBody.user.fullname
+             duration.text = DurationConverter.getInstance().convertToDuration(videoResponseBody.video.duration)
+
+             linearLayout.setOnClickListener{ navigate(videoResponseBody.video.id) }
+
+             options_btn.setOnClickListener {
+                 moreOptionsFragment = newInstance(getItem(layoutPosition))
+                 moreOptionsFragment.show(fragmentManager, "more_options_fragment")
+             }
+         }
+
      }
 
     inner class ExplorePrimaryItemViewHolder(itemView: View) : CustomViewHolder(itemView) {
@@ -96,18 +104,35 @@ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>,
 
             cardView.layoutParams = cardViewLayoutParams
         }
+
+        @SuppressLint("SetTextI18n")
+        override fun bind(videoResponseBody: VideoResponseBody) {
+            super.bind(videoResponseBody)
+            val timestamp = TimestampConverter.getInstance().convertToTimeDifference(videoResponseBody.video.createdAt)
+            author.text = videoResponseBody.user.username + " \u2022 " + videoResponseBody.video.views.toString() + " views" + " \u2022 " + timestamp
+        }
     }
 
      inner class ExploreSecondaryItemViewHolder(itemView: View) : CustomViewHolder(itemView) {
+         val stats : TextView = itemView.findViewById(R.id.video_stats)
          init {
              val displayMetrics = Resources.getSystem().displayMetrics
              val cardView : CardView = itemView.findViewById(R.id.video_card_frame)
 
              val cardViewLayoutParams = cardView.layoutParams as LinearLayout.LayoutParams
-             cardViewLayoutParams.width = (displayMetrics.widthPixels /2).toInt()
+             cardViewLayoutParams.width = (displayMetrics.widthPixels /2.2).toInt()
              cardViewLayoutParams.height = (displayMetrics.heightPixels / 6).toInt()
 
              cardView.layoutParams = cardViewLayoutParams
+         }
+
+         @SuppressLint("SetTextI18n")
+         override fun bind(videoResponseBody: VideoResponseBody) {
+             super.bind(videoResponseBody)
+
+             val timestamp = TimestampConverter.getInstance().convertToTimeDifference(videoResponseBody.video.createdAt)
+             author.text = videoResponseBody.user.username
+             stats.text = videoResponseBody.video.views.toString() + " views" + " \u2022 " + timestamp
          }
      }
 }
