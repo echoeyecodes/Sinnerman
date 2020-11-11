@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.annotation.Nullable;
@@ -20,30 +19,30 @@ import com.echoeyecodes.sinnerman.Models.UserModel;
 import com.echoeyecodes.sinnerman.Models.VideoModel;
 import com.echoeyecodes.sinnerman.R;
 import com.echoeyecodes.sinnerman.Utils.AuthenticationManager;
-import com.echoeyecodes.sinnerman.Utils.CustomExoPlayerDataSourceFactory;
 import com.echoeyecodes.sinnerman.Utils.IntegerToDp;
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState;
 import com.echoeyecodes.sinnerman.viewmodel.VideoActivityViewModel;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.database.ExoDatabaseProvider;
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MediaSourceFactory;
 import com.google.android.exoplayer2.source.hls.HlsManifest;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +63,6 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     private VideoActivityViewModel videoActivityViewModel;
     private ProgressBar progressBar;
     private ValueAnimator valueAnimator;
-    private SimpleCache simpleCache;
     private MediaSource mediaSource;
     private int currentWindow = 0;
     private long playBackPosition = 0;
@@ -232,16 +230,20 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
         player = new SimpleExoPlayer.Builder(this).setTrackSelector(videoActivityViewModel.getDefaultTrackSelector()).build();
         playerView.setPlayer(player);
         player.setPlayWhenReady(true);
-        player.seekTo(currentWindow, playBackPosition);
+        player.setRepeatMode(Player.REPEAT_MODE_ALL);
         player.addListener(this);
-        player.prepare(mediaSource, false, false);
+        player.setMediaSource(mediaSource, playBackPosition);
+        player.prepare();
+        player.play();
     }
 
     private void changeResolution(int position, ResolutionDimensions dimensions) {
         if (position == 0) {
             videoActivityViewModel.getDefaultTrackSelector().setParameters(DefaultTrackSelector.Parameters.getDefaults(this));
         } else {
-            DefaultTrackSelector.Parameters parameters = new DefaultTrackSelector.ParametersBuilder(this).clearSelectionOverrides().clearVideoSizeConstraints().setMaxVideoSize(dimensions.getWidth(), dimensions.getHeight()).build();
+            DefaultTrackSelector.Parameters parameters = new DefaultTrackSelector.ParametersBuilder(this).clearSelectionOverrides().
+                    clearVideoSizeConstraints().setMinVideoSize(dimensions.getWidth(), dimensions.getHeight())
+                    .setMaxVideoSize(dimensions.getWidth(), dimensions.getHeight()).build();
             videoActivityViewModel.getDefaultTrackSelector().setParameters(parameters);
         }
 
@@ -259,11 +261,10 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
     }
 
     private MediaSource buildMediaSource(Uri uri) {
-        LeastRecentlyUsedCacheEvictor leastRecentlyUsedCacheEvictor = new LeastRecentlyUsedCacheEvictor(Long.MAX_VALUE);
-        simpleCache = new SimpleCache(new File(getCacheDir(), "media"), leastRecentlyUsedCacheEvictor, new ExoDatabaseProvider(this));
-        DataSource.Factory dataSourceFactory = new CustomExoPlayerDataSourceFactory(this, Long.MAX_VALUE, Long.MAX_VALUE, simpleCache);
-        HlsMediaSource.Factory hlsFactory = new HlsMediaSource.Factory(dataSourceFactory);
-        return hlsFactory.createMediaSource(uri);
+        HttpDataSource.Factory httpDataSource = new DefaultHttpDataSourceFactory(Util.getUserAgent(this, getPackageName()), null);
+        CacheDataSource.Factory cacheDataSource = new CacheDataSource.Factory().setCache(videoActivityViewModel.getSimpleCache()).setUpstreamDataSourceFactory(httpDataSource);
+        MediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(cacheDataSource);
+        return mediaSourceFactory.createMediaSource(MediaItem.fromUri(uri));
     }
 
     @Override
@@ -325,22 +326,13 @@ public class VideoActivity extends AppCompatActivity implements VideoActivityLis
         hideSystemUI();
     }
 
-    @Override
-    protected void onDestroy() {
-        simpleCache.release();
-        simpleCache = null;
-        super.onDestroy();
-    }
 
     @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        if (playbackState == Player.STATE_ENDED) {
-            player.prepare(mediaSource, true, true);
-        }
-        if (playbackState == Player.STATE_BUFFERING) {
+    public void onPlaybackStateChanged(int state) {
+        if (state == Player.STATE_BUFFERING) {
             playerView.showController();
             progressBar.setVisibility(View.VISIBLE);
-        } else if (playbackState == Player.STATE_READY) {
+        } else if (state == Player.STATE_READY) {
             if (progressBar.getVisibility() == View.VISIBLE) {
                 progressBar.setVisibility(View.GONE);
             }
