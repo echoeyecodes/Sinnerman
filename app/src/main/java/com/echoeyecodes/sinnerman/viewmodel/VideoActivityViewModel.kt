@@ -9,11 +9,15 @@ import com.echoeyecodes.sinnerman.Models.ResolutionDimensions
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.repository.LikeRepository
 import com.echoeyecodes.sinnerman.repository.VideoRepository
+import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
+import java.io.File
 import java.io.IOException
 
 
@@ -26,6 +30,8 @@ class VideoActivityViewModel(application: Application) : AndroidViewModel(applic
     var defaultTrackSelector:DefaultTrackSelector = DefaultTrackSelector(application)
     var selectedItemPosition = 0;
     private val likeRepository = LikeRepository(application)
+    private val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(Long.MAX_VALUE)
+    val simpleCache: SimpleCache = SimpleCache(File(application.cacheDir, "media"), leastRecentlyUsedCacheEvictor, ExoDatabaseProvider(application))
     private val videoRepository = VideoRepository(application)
     var didLike = MutableLiveData<Boolean>(false)
 
@@ -75,5 +81,10 @@ class VideoActivityViewModel(application: Application) : AndroidViewModel(applic
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        simpleCache.release()
+        super.onCleared()
     }
 }
