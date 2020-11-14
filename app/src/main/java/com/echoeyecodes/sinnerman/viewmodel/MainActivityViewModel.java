@@ -22,6 +22,8 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     private final MainActivityCustomHandler customHandler;
     private UserModel userModel;
+    int selectedPosition = 0;
+    private MutableLiveData<Integer> onPositionChanged = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoaded = new MutableLiveData<>();
 
     public MainActivityViewModel(@NonNull Application application) {
@@ -38,6 +40,19 @@ public class MainActivityViewModel extends AndroidViewModel {
     public void updateCurrentUser(){
         Message message = Message.obtain(customHandler);
         message.sendToTarget();
+    }
+
+    public int getSelectedPosition() {
+        return selectedPosition;
+    }
+
+    public void setSelectedPosition(int selectedPosition) {
+        this.selectedPosition = selectedPosition;
+        onPositionChanged.setValue(selectedPosition);
+    }
+
+    public MutableLiveData<Integer> getOnPositionChanged() {
+        return onPositionChanged;
     }
 
     private void setCurrentUser(UserModel user){

@@ -7,15 +7,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -26,6 +29,7 @@ import com.echoeyecodes.sinnerman.Activities.VideoActivity;
 import com.echoeyecodes.sinnerman.BottomNavigationFragments.ExploreFragment;
 import com.echoeyecodes.sinnerman.BottomNavigationFragments.HomeFragment;
 import com.echoeyecodes.sinnerman.BottomNavigationFragments.NotificationFragment;
+import com.echoeyecodes.sinnerman.Fragments.CategoryBottomSheet;
 import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment;
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext;
 import com.echoeyecodes.sinnerman.Models.UserModel;
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     private BottomNavigationView bottomNavigationView;
     private TextView search_btn;
     private CircleImageView circleImageView;
+    private ImageView categoryBtn;
+    private LinearLayout toolbar;
     private RootBottomFragment active_fragment;
     private ImageView user_profile;
     private FrameLayout frameLayout;
@@ -81,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         circleImageView = findViewById(R.id.user_profile_btn);
         if (userModel != null) {
             Glide.with(this).load(Uri.parse(userModel.getProfile_url())).into(circleImageView);
-            circleImageView.setVisibility(View.VISIBLE);
+            toolbar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -92,14 +98,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
     public void beginActivity() {
         setContentView(R.layout.activity_main);
 
+        initViews();
         initUserData();
         refreshUserData();
-        initViews();
     }
 
     private void initViews() {
         bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         user_profile = findViewById(R.id.user_profile_btn);
+        toolbar=findViewById(R.id.toolbar);
+        categoryBtn = findViewById(R.id.category_btn);
         frameLayout = findViewById(R.id.main_activity_root);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
@@ -113,8 +121,17 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         getSupportFragmentManager().addOnBackStackChangedListener(this);
 
         navigateToBottomFragment(HomeFragment.Companion.newInstance());
-    }
 
+        categoryBtn.setOnClickListener(v -> CategoryBottomSheet.Companion.newInstance(mainActivityViewModel.getSelectedPosition()).show(getSupportFragmentManager(), "CATEGORY_BOTTOM_SHEET"));
+
+        mainActivityViewModel.getOnPositionChanged().observe(this, position ->{
+            if(position == 0){
+                categoryBtn.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_gaming, null));
+            }else{
+                categoryBtn.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_movie, null));
+            }
+        });
+    }
 
     private void navigateToBottomFragment(RootBottomFragment fragment) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -131,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
         active_fragment = fragment;
         fragmentTransaction.commit();
     }
-
 
     @Override
     protected void onResume() {
@@ -206,6 +222,15 @@ public class MainActivity extends AppCompatActivity implements MainActivityConte
             progressDialogFragment.dismiss();
             Toast.makeText(this, "Could not create link", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    @Override
+    public void onCategorySelected(int position) {
+        mainActivityViewModel.setSelectedPosition(position);
+        CategoryBottomSheet fragment = (CategoryBottomSheet) getSupportFragmentManager().findFragmentByTag("CATEGORY_BOTTOM_SHEET");
+        if(fragment != null){
+            fragment.dismiss();
+        }
     }
 
     private void copyLinkToClipboard(String link){

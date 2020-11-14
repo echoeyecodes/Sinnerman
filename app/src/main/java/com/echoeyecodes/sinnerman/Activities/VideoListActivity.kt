@@ -162,6 +162,10 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
                 }
     }
 
+    override fun onCategorySelected(position: Int) {
+
+    }
+
     private fun copyLinkToClipboard(link: String) {
         val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("Share link", link)

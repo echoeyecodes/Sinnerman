@@ -8,4 +8,5 @@ public interface MainActivityContext {
     void setActiveBottomViewFragment(int position);
     void navigateToVideos(String video_url);
     void onOptionSelected(VideoResponseBody video, int position);
+    void onCategorySelected(int position);
 }

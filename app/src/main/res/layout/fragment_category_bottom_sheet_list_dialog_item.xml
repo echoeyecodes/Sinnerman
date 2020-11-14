@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:id="@+id/category_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:paddingLeft="@dimen/list_item_spacing"
+    android:paddingVertical="10dp"
+    android:gravity="center_vertical"
+    android:paddingRight="@dimen/list_item_spacing">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/category_item_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        />
+
+    <TextView
+        android:id="@+id/category_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        style="@style/BoldText"
+        android:textSize="18sp"
+        android:text="Gaming" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <RadioButton
+        android:id="@+id/category_item_checkbox"
+        android:layout_width="wrap_content"
+        android:clickable="false"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/colorPrimary"
+        />
+
+
+</LinearLayout>
