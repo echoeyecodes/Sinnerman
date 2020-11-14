@@ -1,22 +1,35 @@
 package com.echoeyecodes.sinnerman.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.echoeyecodes.sinnerman.API.ApiUtils.ApiClient
 import com.echoeyecodes.sinnerman.API.DAO.VideosDao
+import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.Room.PersistenceDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.echoeyecodes.sinnerman.Utils.PreferenceManager
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.first
 
 class VideoRepository(context: Context) {
     val apiClient = ApiClient.getInstance(context.applicationContext).getClient(VideosDao::class.java)
     val videoDao = PersistenceDatabase.getInstance(context.applicationContext).videoDao()
+    val preferenceManager = PreferenceManager(context)
+
+
+    private suspend fun getCategory() : String{
+        val category = runBlocking { preferenceManager.category.first() }
+        if(category == null){
+            preferenceManager.setPreferences("gaming")
+            return "gaming"
+        }
+        return category
+    }
 
     suspend fun getVideos(offset:String):List<VideoResponseBody>{
-        return apiClient.fetchVideos("10", offset)
+        return apiClient.fetchVideos("10", offset, getCategory())
     }
 
      fun deleteVideosFromDB(){
@@ -35,6 +48,12 @@ class VideoRepository(context: Context) {
         }
     }
 
+    suspend fun fetchExplore(offset:String) : List<ExploreResponseBody>{
+        return withContext(Dispatchers.IO){
+            apiClient.fetchExplore( "10", offset, getCategory())
+        }
+    }
+
     fun addVideosToDB(data:List<VideoResponseBody>){
         CoroutineScope(Dispatchers.IO).launch{
             videoDao.insertVideoAndUsers(data)
@@ -46,7 +65,7 @@ class VideoRepository(context: Context) {
     }
 
     suspend fun getVideoByTag(id: String, offset: String) : List<VideoResponseBody>{
-        return apiClient.fetchExploreItem(id, "10", offset)
+        return apiClient.fetchExploreItem(id, "10", offset, getCategory())
     }
 
 }

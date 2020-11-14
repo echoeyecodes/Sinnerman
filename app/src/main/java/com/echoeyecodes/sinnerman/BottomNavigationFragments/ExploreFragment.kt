@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Activities.VideoListActivity
 import com.echoeyecodes.sinnerman.Adapters.ExploreAdapter
+import com.echoeyecodes.sinnerman.Adapters.PlaylistAdapter
 import com.echoeyecodes.sinnerman.Interface.ExploreFragmentContext
 import com.echoeyecodes.sinnerman.MainActivity
 import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
@@ -30,7 +31,7 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
     private lateinit var recyclerView : RecyclerView
     private lateinit var linearLayoutManager : LinearLayoutManager
     private lateinit var exploreViewModel: ExploreViewModel
-    private lateinit var exploreAdapter : ExploreAdapter
+    private lateinit var exploreAdapter : PlaylistAdapter
     private lateinit var swipeRefreshLayout : SwipeRefreshLayout
 
     init{
@@ -60,7 +61,7 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
         linearLayoutManager = LinearLayoutManager(context)
 
         recyclerView.layoutManager = linearLayoutManager
-        exploreAdapter = ExploreAdapter(
+        exploreAdapter = PlaylistAdapter(
                 exploreFragmentContext = this,
                 context = requireContext(),
                 navigateToMore =  this::navigateToVideoListActivity,
@@ -99,7 +100,7 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
     }
 
 
-    fun fetchMore(){
+    private fun fetchMore(){
         exploreViewModel.fetchMore(Result.Loading);
     }
 

@@ -7,12 +7,13 @@ import com.echoeyecodes.sinnerman.API.DAO.VideosDao
 import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
 import com.echoeyecodes.sinnerman.Utils.Result
+import com.echoeyecodes.sinnerman.repository.VideoRepository
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.coroutineContext
 
 class ExploreViewModel(application: Application) : CommonListPagingHandler<ExploreResponseBody>(application) {
 
-    private val videoDao: VideosDao = ApiClient.getInstance(application.applicationContext).getClient(VideosDao::class.java)
+    private val videoRepository = VideoRepository(application)
     var categories: MutableLiveData<List<ExploreResponseBody>> = MutableLiveData()
 
     init {
@@ -25,9 +26,7 @@ class ExploreViewModel(application: Application) : CommonListPagingHandler<Explo
     }
 
     override suspend fun fetchList(): List<ExploreResponseBody> {
-        return withContext(coroutineContext){
-            videoDao.fetchExplore("10", state.size.toString())
-        }
+        return videoRepository.fetchExplore(state.size.toString())
     }
 
     override suspend fun onDataReceived(result: List<ExploreResponseBody>) {
