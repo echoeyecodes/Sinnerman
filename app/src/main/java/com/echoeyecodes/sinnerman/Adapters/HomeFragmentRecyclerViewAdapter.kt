@@ -20,6 +20,7 @@ import com.echoeyecodes.sinnerman.Fragments.MoreOptionsFragment;
 import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener;
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext;
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody;
+import com.echoeyecodes.sinnerman.Paging.CommonListPagingListeners
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingViewHolder
 import com.echoeyecodes.sinnerman.R;
 import com.echoeyecodes.sinnerman.Utils.*
@@ -27,7 +28,7 @@ import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import de.hdodenhof.circleimageview.CircleImageView;
 import java.lang.Exception
 
-class HomeFragmentRecyclerViewAdapter(itemCallback: DiffUtil.ItemCallback<Result<VideoResponseBody>>, private val context: Context, private val homeFragmentListener: HomeFragmentListener) : ListAdapter<Result<VideoResponseBody>, RecyclerView.ViewHolder>(itemCallback) {
+class HomeFragmentRecyclerViewAdapter(itemCallback: DiffUtil.ItemCallback<Result<VideoResponseBody>>, private val context: Context, private val homeFragmentListener: CommonListPagingListeners) : ListAdapter<Result<VideoResponseBody>, RecyclerView.ViewHolder>(itemCallback) {
     private val fragmentManager : FragmentManager  = (context as AppCompatActivity).supportFragmentManager
     private lateinit var moreOptionsFragment:MoreOptionsFragment
     private val mainActivityContext = context as MainActivityContext

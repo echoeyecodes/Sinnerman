@@ -68,4 +68,8 @@ class VideoRepository(context: Context) {
         return apiClient.fetchExploreItem(id, "10", offset, getCategory())
     }
 
+    suspend fun getVideoActivity(id: String, offset: String) : List<VideoResponseBody>{
+        return apiClient.fetchVideoActivity(id, "10", offset)
+    }
+
 }

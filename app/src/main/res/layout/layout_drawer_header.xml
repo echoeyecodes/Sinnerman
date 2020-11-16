@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+    <LinearLayout
+        android:id="@+id/bio_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:orientation="vertical">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/drawer_profile_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+         />
+
+    <TextView
+        android:id="@+id/drawer_profile_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jane Doe"
+        android:layout_marginTop="5dp"
+        android:textSize="20sp"
+        style="@style/BoldText" />
+
+    <TextView
+        android:id="@+id/drawer_profile_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="\@jane_doe"
+        android:textColor="@color/grey"
+        android:layout_marginTop="2dp"
+        style="@style/RegularText" />
+    </LinearLayout>
+
+    <View
+        android:layout_below="@id/bio_header"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/light_grey"
+        android:layout_marginTop="15dp"
+        />
+</RelativeLayout>

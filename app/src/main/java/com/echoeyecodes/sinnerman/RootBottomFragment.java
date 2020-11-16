@@ -1,13 +1,14 @@
 package com.echoeyecodes.sinnerman;
 
-public abstract class RootBottomFragment extends CustomFragment {
-    public String TAG="";
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
+import android.content.Context;
 
-    public String getTAG() {
-        return TAG;
-    }
+import androidx.annotation.NonNull;
+
+import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext;
+
+import org.jetbrains.annotations.NotNull;
+
+public class RootBottomFragment extends CustomFragment {
+
+
 }

@@ -1,4 +1,4 @@
-package com.echoeyecodes.sinnerman.BottomNavigationFragments
+package com.echoeyecodes.sinnerman.Fragments.BottomNavigationFragments
 
 import android.content.Context
 import android.os.Bundle
@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Adapters.NotificationsAdapter
 import com.echoeyecodes.sinnerman.Interface.NotificationFragmentListener
+import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext
 import com.echoeyecodes.sinnerman.MainActivity
 import com.echoeyecodes.sinnerman.Models.UploadNotificationModel
-import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.RootBottomFragment
 import com.echoeyecodes.sinnerman.Utils.*
@@ -24,7 +24,7 @@ import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.Notification
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
 
-class NotificationFragment : RootBottomFragment(), NotificationFragmentListener, SwipeRefreshLayout.OnRefreshListener {
+class NotificationFragment(private val primaryFragmentContext: PrimaryFragmentContext) : RootBottomFragment(), NotificationFragmentListener, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeRefreshLayout:SwipeRefreshLayout
     private lateinit var notificationViewModel: NotificationViewModel
@@ -35,7 +35,7 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
      }
 
     companion object{
-        fun newInstance(): NotificationFragment = NotificationFragment()
+        fun newInstance(primaryFragmentContext: PrimaryFragmentContext): NotificationFragment = NotificationFragment(primaryFragmentContext)
     }
 
 
@@ -44,17 +44,6 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
         return inflater.inflate(R.layout.fragment_notification, container, false)
     }
 
-    override fun onAttach(context : Context) {
-        super.onAttach(context)
-        mainActivityContext = context as MainActivity
-        if(mainActivityContext !is MainActivity){
-            try {
-                throw Exception("You need to implement Toggle Full Screen")
-            } catch (e : Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     override fun onViewCreated( view : View, savedInstanceState : Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,10 +53,9 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
         recyclerView = view.findViewById(R.id.fragment_notifications_recycler_view)
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh)
         empty_container = view.findViewById(R.id.empty_recycler_view_layout);
-        val notificationItemCallback = NotificationItemCallback()
 
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        adapter = NotificationsAdapter(requireContext(), SealedClassDiffUtil(), mainActivityContext, this)
+        adapter = NotificationsAdapter(requireContext(), SealedClassDiffUtil(), primaryFragmentContext, this)
         recyclerView.addItemDecoration( CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)))
         recyclerView.adapter = adapter
 
@@ -133,7 +121,7 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
 
     override fun onResume() {
         super.onResume()
-        mainActivityContext.setActiveBottomViewFragment(2)
+        primaryFragmentContext.setActiveBottomViewFragment(2)
     }
 
     override fun retry() {
@@ -144,9 +132,6 @@ class NotificationFragment : RootBottomFragment(), NotificationFragmentListener,
         checkListEmpty()
     }
 
-    override fun onNetworkStateChanged() : NetworkState {
-        return NetworkState.LOADING
-    }
 
     override fun onRefresh() {
         notificationViewModel.refresh()

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item android:title="Primary">
+            <menu>
+                    <item
+                        android:id="@+id/home_activity"
+                        android:icon="@drawable/ic_home"
+                        android:checked="true"
+                        android:title="Home" />
+            </menu>
+        </item>
+
+        <item android:title="Your Activity">
+            <menu>
+                    <item
+                        android:id="@+id/history"
+                        android:icon="@drawable/ic_baseline_history_24"
+                        android:iconTint="@color/black"
+                        android:title="Watch History" />
+                    <item
+                        android:id="@+id/favorites"
+                        android:icon="@drawable/ic_baseline_favorite_border_24"
+                        android:iconTint="@color/black"
+                        android:title="Liked Videos" />
+                    <item
+                        android:id="@+id/watch_later"
+                        android:icon="@drawable/ic_calendar"
+                        android:iconTint="@color/black"
+                        android:title="Watch Later" />
+            </menu>
+        </item>
+
+
+        <item android:title="Misc">
+            <menu>
+                    <item
+                        android:id="@+id/promotions"
+                        android:icon="@drawable/ic_promotion"
+                        android:iconTint="@color/black"
+                        android:title="Promotions" />
+                    <item
+                        android:id="@+id/info"
+                        android:icon="@drawable/ic_info"
+                        android:iconTint="@color/black"
+                        android:title="Info" />
+                    <item
+                        android:id="@+id/sign_out"
+                        android:icon="@drawable/ic_logout"
+                        android:iconTint="@color/black"
+                        android:title="Sign Out" />
+            </menu>
+        </item>
+    </group>
+</menu>

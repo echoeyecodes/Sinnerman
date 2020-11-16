@@ -1,7 +1,10 @@
 package com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.liveData
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
 import com.echoeyecodes.sinnerman.Utils.Result
@@ -20,7 +23,9 @@ class HomeFragmentViewModel(application: Application) : CommonListPagingHandler<
     }
 
     fun getVideos():LiveData<List<VideoResponseBody>>{
-        return videoRepository.getVideosFromDB()
+        return Transformations.switchMap(videoRepository.getVideosFromDB()) {
+            liveData { emit(it) }
+        }
     }
 
     override suspend fun fetchList(): List<VideoResponseBody> {

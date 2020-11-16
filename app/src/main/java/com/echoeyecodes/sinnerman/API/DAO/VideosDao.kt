@@ -12,6 +12,9 @@ interface VideosDao {
     @GET("api/v1/video")
     suspend fun fetchVideos(@Query("limit") limit : String, @Query("offset") offset : String, @Query("category") category: String) : List<VideoResponseBody>
 
+    @GET("api/v1/video/activity/{context}")
+    suspend fun fetchVideoActivity(@Path("context") context:String, @Query("limit") limit : String, @Query("offset") offset : String) : List<VideoResponseBody>
+
     @GET("api/v1/video/{id}")
      suspend fun fetchVideo(@Path("id") id : String) : VideoResponseBody
 

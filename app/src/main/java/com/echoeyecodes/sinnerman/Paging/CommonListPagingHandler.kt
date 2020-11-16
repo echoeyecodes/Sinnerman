@@ -72,7 +72,7 @@ abstract class CommonListPagingHandler<T : Any>(application: Application) : Andr
         networkStatus.postValue(Result.Idle)
     }
 
-    fun refresh(){
+    open fun refresh(){
         hasMore = true
         load(Result.Refreshing)
     }

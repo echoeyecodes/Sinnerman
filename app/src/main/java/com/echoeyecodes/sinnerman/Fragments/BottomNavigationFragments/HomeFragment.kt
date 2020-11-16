@@ -1,4 +1,4 @@
-package com.echoeyecodes.sinnerman.BottomNavigationFragments
+package com.echoeyecodes.sinnerman.Fragments.BottomNavigationFragments
 
 import android.os.Bundle
 import android.util.Log
@@ -7,13 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Adapters.HomeFragmentRecyclerViewAdapter
 import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener
+import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
+import com.echoeyecodes.sinnerman.Paging.CommonListPagingListeners
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.RootBottomFragment
 import com.echoeyecodes.sinnerman.Utils.*
@@ -21,7 +22,7 @@ import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.HomeFragment
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
 
-class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener, HomeFragmentListener {
+class HomeFragment(private val primaryFragmentContext: PrimaryFragmentContext) : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener, CommonListPagingListeners {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: HomeFragmentRecyclerViewAdapter
     private lateinit var viewModel: HomeFragmentViewModel
@@ -34,7 +35,7 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
     }
 
     companion object {
-        fun newInstance(): HomeFragment = HomeFragment()
+        fun newInstance(primaryFragmentContext: PrimaryFragmentContext): HomeFragment = HomeFragment(primaryFragmentContext)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -44,14 +45,13 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         viewModel = ViewModelProvider(requireActivity()).get(HomeFragmentViewModel::class.java)
         swipeRefreshLayout = view.findViewById(R.id.home_swipe_refresh)
 
         recyclerView = view.findViewById(R.id.fragment_home_recycler_view)
 
         swipeRefreshLayout.setOnRefreshListener(this)
-
-        val videosItemCallback = VideosItemCallback.newInstance()
 
         adapter = HomeFragmentRecyclerViewAdapter(SealedClassDiffUtil(), requireContext(),this)
         linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -98,7 +98,7 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
 
     override fun onResume() {
         super.onResume()
-        mainActivityContext.setActiveBottomViewFragment(0)
+        primaryFragmentContext.setActiveBottomViewFragment(0)
     }
     override fun retry(){
         viewModel.retry()
@@ -108,9 +108,6 @@ class HomeFragment : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener,
 
     }
 
-    override fun onNetworkStateChanged(): NetworkState {
-        return NetworkState.ERROR
-    }
 
     override fun onRefresh() {
         viewModel.refresh()

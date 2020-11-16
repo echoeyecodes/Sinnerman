@@ -1,9 +1,7 @@
 package com.echoeyecodes.sinnerman.viewmodel;
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.echoeyecodes.sinnerman.Models.CommentModel
 import com.echoeyecodes.sinnerman.Models.CommentResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
@@ -38,11 +36,9 @@ class CommentActivityViewModel(application: Application) : CommonListPagingHandl
     }
 
      fun getComments() : LiveData<List<CommentResponseBody>>{
-         val mediatorLiveData = MediatorLiveData<List<CommentResponseBody>>()
-         mediatorLiveData.addSource(commentRepository.getCommentsFromDB(video_id)){
-             mediatorLiveData.postValue(it)
+         return Transformations.switchMap(commentRepository.getCommentsFromDB(video_id)) {
+             liveData { emit(it) }
          }
-         return mediatorLiveData
      }
 
     override suspend fun fetchList(): List<CommentResponseBody> {

@@ -3,24 +3,19 @@ package com.echoeyecodes.sinnerman;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+
+import com.echoeyecodes.sinnerman.Fragments.DrawerLayoutFragments.PrimaryFragment;
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext;
+import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext;
+
 import org.jetbrains.annotations.NotNull;
 
 public class CustomFragment extends Fragment {
-    public MainActivityContext mainActivityContext;
 
-    @Override
-    public void onAttach(@NonNull @NotNull Context context) {
-        super.onAttach(context);
+    public String TAG="";
 
-        mainActivityContext = (MainActivityContext) context;
-        if(!(mainActivityContext instanceof MainActivity)){
-            try {
-                throw new Exception("You need to implement Toggle Full Screen");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public String getTAG() {
+        return TAG;
     }
 
 }

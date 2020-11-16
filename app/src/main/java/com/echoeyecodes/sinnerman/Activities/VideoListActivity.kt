@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Adapters.HomeFragmentRecyclerViewAdapter
 import com.echoeyecodes.sinnerman.BuildConfig
+import com.echoeyecodes.sinnerman.CustomFragment
+import com.echoeyecodes.sinnerman.DrawerFragments
 import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment
 import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
@@ -61,13 +63,10 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
         viewModel.tag_id = key ?: ""
 
 
-
         swipeRefreshLayout = findViewById(R.id.home_swipe_refresh)
         recyclerView = findViewById(R.id.video_list_recycler_view)
 
         swipeRefreshLayout.setOnRefreshListener(this)
-
-        val videosItemCallback = VideosItemCallback.newInstance()
 
         adapter = HomeFragmentRecyclerViewAdapter(SealedClassDiffUtil(), this, this)
         linearLayoutManager = LinearLayoutManager(this)
@@ -114,12 +113,14 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
     override fun onItemsChanged() {
     }
 
-    override fun onNetworkStateChanged(): NetworkState {
-        return NetworkState.LOADING
-    }
 
     override fun onRefresh() {
         viewModel.refresh()
+    }
+
+
+    override fun openFragment(fragment: DrawerFragments) {
+
     }
 
     override fun navigateToVideos(video_url: String?) {
@@ -166,6 +167,10 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
 
     }
 
+    override fun onDrawerFragmentActive(fragments: DrawerFragments?) {
+
+    }
+
     private fun copyLinkToClipboard(link: String) {
         val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         val clipData = ClipData.newPlainText("Share link", link)
@@ -185,11 +190,4 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
         startActivity(intent)
     }
 
-    override fun openFragment(fragment: Fragment?, tag: String?) {
-
-    }
-
-    override fun setActiveBottomViewFragment(position: Int) {
-
-    }
 }

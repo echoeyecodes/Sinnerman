@@ -2,6 +2,8 @@ package com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.liveData
 import com.echoeyecodes.sinnerman.Models.UploadNotificationModel
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
 import com.echoeyecodes.sinnerman.Utils.Result
@@ -20,7 +22,9 @@ class NotificationViewModel(application: Application) : CommonListPagingHandler<
     }
 
     fun getNotifications():LiveData<List<UploadNotificationModel>>{
-        return notificationRepository.getNotificationsFromDB()
+        return Transformations.switchMap(notificationRepository.getNotificationsFromDB()) {
+            liveData { emit(it) }
+        }
     }
 
 

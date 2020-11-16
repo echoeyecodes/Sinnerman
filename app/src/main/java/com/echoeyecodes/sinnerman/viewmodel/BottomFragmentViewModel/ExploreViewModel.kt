@@ -1,4 +1,4 @@
-package com.echoeyecodes.sinnerman.viewmodel
+package com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
@@ -32,5 +32,5 @@ class ExploreViewModel(application: Application) : CommonListPagingHandler<Explo
     override suspend fun onDataReceived(result: List<ExploreResponseBody>) {
             super.onDataReceived(result)
             categories.postValue(ArrayList(result))
-        }
+    }
     }

@@ -170,10 +170,6 @@ private lateinit var comment_field : TextInputEditText
         commentActivityViewModel.retry()
     }
 
-    override fun onNetworkStateChanged(): NetworkState {
-        return NetworkState.LOADING
-    }
-
     override fun onItemsChanged() {
         checkListEmpty()
     }

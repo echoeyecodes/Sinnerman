@@ -1,4 +1,4 @@
-package com.echoeyecodes.sinnerman.BottomNavigationFragments
+package com.echoeyecodes.sinnerman.Fragments.BottomNavigationFragments
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,27 +7,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Activities.VideoListActivity
-import com.echoeyecodes.sinnerman.Adapters.ExploreAdapter
 import com.echoeyecodes.sinnerman.Adapters.PlaylistAdapter
 import com.echoeyecodes.sinnerman.Interface.ExploreFragmentContext
+import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext
 import com.echoeyecodes.sinnerman.MainActivity
 import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
-import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.RootBottomFragment
 import com.echoeyecodes.sinnerman.Utils.CustomScrollListener
 import com.echoeyecodes.sinnerman.Utils.Result
 import com.echoeyecodes.sinnerman.Utils.SealedClassDiffUtil
-import com.echoeyecodes.sinnerman.viewmodel.ExploreViewModel
-import com.echoeyecodes.sinnerman.viewmodel.NetworkState
+import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.ExploreViewModel
 
 
-class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefreshLayout.OnRefreshListener{
+class ExploreFragment(private val primaryFragmentContext: PrimaryFragmentContext) : RootBottomFragment(), ExploreFragmentContext, SwipeRefreshLayout.OnRefreshListener{
     private lateinit var recyclerView : RecyclerView
     private lateinit var linearLayoutManager : LinearLayoutManager
     private lateinit var exploreViewModel: ExploreViewModel
@@ -39,7 +36,7 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
     }
 
     companion object{
-        fun newInstance(): ExploreFragment = ExploreFragment()
+        fun newInstance(primaryFragmentContext: PrimaryFragmentContext): ExploreFragment = ExploreFragment(primaryFragmentContext)
     }
 
 
@@ -106,16 +103,13 @@ class ExploreFragment : RootBottomFragment(), ExploreFragmentContext, SwipeRefre
 
     override fun onResume() {
         super.onResume()
-        mainActivityContext.setActiveBottomViewFragment(1)
+        primaryFragmentContext.setActiveBottomViewFragment(1)
     }
 
     override fun retry(){
         exploreViewModel.retry()
     }
 
-    override fun onNetworkStateChanged(): NetworkState {
-        return NetworkState.LOADING
-    }
 
     override fun onItemsChanged() {
 

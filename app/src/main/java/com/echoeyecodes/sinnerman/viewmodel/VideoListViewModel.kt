@@ -8,7 +8,7 @@ import com.echoeyecodes.sinnerman.Paging.CommonListPagingHandler
 import com.echoeyecodes.sinnerman.Utils.Result
 import com.echoeyecodes.sinnerman.repository.VideoRepository
 
-class VideoListViewModel(application: Application) : CommonListPagingHandler<VideoResponseBody>(application)  {
+open class VideoListViewModel(application: Application) : CommonListPagingHandler<VideoResponseBody>(application)  {
 
     val videoRepository = VideoRepository(getApplication())
     var videos = MutableLiveData<List<VideoResponseBody>>()
@@ -21,10 +21,6 @@ class VideoListViewModel(application: Application) : CommonListPagingHandler<Vid
     override fun initialize() {
         videos.postValue(ArrayList())
         super.initialize()
-    }
-
-    fun getVideos(): LiveData<List<VideoResponseBody>> {
-        return videoRepository.getVideosFromDB()
     }
 
     override suspend fun fetchList(): List<VideoResponseBody> {

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.Interface.NotificationFragmentListener
+import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext
 import com.echoeyecodes.sinnerman.Models.UploadNotificationModel
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingViewHolder
 import com.echoeyecodes.sinnerman.R
@@ -23,7 +24,7 @@ import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import de.hdodenhof.circleimageview.CircleImageView
 import java.lang.Exception
 
-class NotificationsAdapter(private val context: Context, diffCallback: DiffUtil.ItemCallback<Result<UploadNotificationModel>>, private val mainActivityContext: MainActivityContext, private val notificationFragmentListener: NotificationFragmentListener) : ListAdapter<Result<UploadNotificationModel>, RecyclerView.ViewHolder>(diffCallback) {
+class NotificationsAdapter(private val context: Context, diffCallback: DiffUtil.ItemCallback<Result<UploadNotificationModel>>, private val primaryFragmentContext: PrimaryFragmentContext, private val notificationFragmentListener: NotificationFragmentListener) : ListAdapter<Result<UploadNotificationModel>, RecyclerView.ViewHolder>(diffCallback) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -74,7 +75,7 @@ class NotificationsAdapter(private val context: Context, diffCallback: DiffUtil.
                 Glide.with(context).load(Uri.parse(uploadNotificationModel.profile_url)).into(viewHolder.circleImageView)
                 viewHolder.message.text = uploadNotificationModel.message
                 viewHolder.timestamp.text = getInstance().convertToTimeDifference(uploadNotificationModel.timestamp)
-                viewHolder.linearLayout.setOnClickListener { v: View? -> mainActivityContext.navigateToVideos(uploadNotificationModel.video_id) }
+                viewHolder.linearLayout.setOnClickListener { primaryFragmentContext.navigateToVideos(uploadNotificationModel.video_id) }
 
             }
             else -> {
