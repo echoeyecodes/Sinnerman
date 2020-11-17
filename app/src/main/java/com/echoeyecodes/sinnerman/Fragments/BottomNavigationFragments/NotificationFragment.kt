@@ -48,7 +48,7 @@ class NotificationFragment(private val primaryFragmentContext: PrimaryFragmentCo
     override fun onViewCreated( view : View, savedInstanceState : Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        notificationViewModel = ViewModelProvider(requireActivity()).get(NotificationViewModel::class.java)
+        notificationViewModel = ViewModelProvider(this).get(NotificationViewModel::class.java)
 
         recyclerView = view.findViewById(R.id.fragment_notifications_recycler_view)
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh)
@@ -56,6 +56,7 @@ class NotificationFragment(private val primaryFragmentContext: PrimaryFragmentCo
 
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         adapter = NotificationsAdapter(requireContext(), SealedClassDiffUtil(), primaryFragmentContext, this)
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         recyclerView.addItemDecoration( CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)))
         recyclerView.adapter = adapter
 
@@ -105,17 +106,6 @@ class NotificationFragment(private val primaryFragmentContext: PrimaryFragmentCo
         }else{
             empty_container.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
-        }
-    }
-
-    inner class NotificationItemCallback : DiffUtil.ItemCallback<UploadNotificationModel>(){
-
-        override fun areItemsTheSame( oldItem : UploadNotificationModel, newItem : UploadNotificationModel) : Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem : UploadNotificationModel, newItem : UploadNotificationModel) : Boolean{
-            return oldItem.message == newItem.message
         }
     }
 

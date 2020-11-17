@@ -18,9 +18,12 @@ import com.google.android.material.button.MaterialButton
 import java.lang.Exception
 
 
-class PlaylistAdapter(private val exploreFragmentContext: ExploreFragmentContext, private val context:Context, private val navigateToMore: navigateToDestination, private val navigateToVideo: (String) -> Unit, itemCallback: DiffUtil.ItemCallback<Result<ExploreResponseBody>>) : ListAdapter<Result<ExploreResponseBody>, RecyclerView.ViewHolder>(itemCallback) {
+class PlaylistAdapter(private val exploreFragmentContext: ExploreFragmentContext, private val context:Context, private val navigateToMore: navigateToDestination, private val navigateToVideo: (String) -> Unit, itemCallback: DiffUtil.ItemCallback<Result<ExploreResponseBody>>) : PagerAdapter<ExploreResponseBody>(itemCallback) {
     private val videosItemCallback = VideosItemCallback.newInstance()
 
+    init {
+        stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(viewType == LOADING_LAYOUT){
             val view = LayoutInflater.from(parent.context).inflate(R.layout.paging_loading_layout, parent, false);
@@ -30,33 +33,10 @@ class PlaylistAdapter(private val exploreFragmentContext: ExploreFragmentContext
         return PlaylistViewHolder(view)
     }
 
-    companion object{
-        const val LOADING_LAYOUT = 0
-        const val NORMAL_LAYOUT = 1
-    }
-
-
-    override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is Result.Loading -> LOADING_LAYOUT
-            is Result.Error -> LOADING_LAYOUT
-            is Result.Success<*> -> NORMAL_LAYOUT
-            else -> throw Exception("Invalid network state")
-        }
-    }
-
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
+        super.onBindViewHolder(holder, position)
         when (getItem(position)) {
-            is Result.Loading -> {
-                val networkStateHolder = holder as CommonListPagingViewHolder
-                networkStateHolder.handleNetworkStateChanged(NetworkState.LOADING)
-            }
-            is Result.Error -> {
-                val networkStateHolder = holder as CommonListPagingViewHolder
-                networkStateHolder.handleNetworkStateChanged(NetworkState.ERROR)
-            }
             is Result.Success<ExploreResponseBody> -> {
                 val viewHolder = holder as PlaylistViewHolder
                 val exploreResponseBody = (getItem(position) as Result.Success<ExploreResponseBody>).data
@@ -67,11 +47,6 @@ class PlaylistAdapter(private val exploreFragmentContext: ExploreFragmentContext
                 adapter.submitList(exploreResponseBody.videos)
                 viewHolder.bindClickListener(exploreResponseBody.id, exploreResponseBody.name)
 
-                if (exploreResponseBody.videos.size > 3) {
-                    viewHolder.more_btn.visibility = View.VISIBLE
-                } else {
-                    viewHolder.more_btn.visibility = View.GONE
-                }
             }
             else -> {
             }

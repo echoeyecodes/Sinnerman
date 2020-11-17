@@ -1,6 +1,7 @@
 package com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.echoeyecodes.sinnerman.API.ApiUtils.ApiClient
 import com.echoeyecodes.sinnerman.API.DAO.VideosDao
@@ -33,4 +34,5 @@ class ExploreViewModel(application: Application) : CommonListPagingHandler<Explo
             super.onDataReceived(result)
             categories.postValue(ArrayList(result))
     }
+
     }

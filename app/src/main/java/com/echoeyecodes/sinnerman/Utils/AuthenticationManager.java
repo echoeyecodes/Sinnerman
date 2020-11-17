@@ -21,8 +21,22 @@ public class AuthenticationManager {
         }).start();
     }
 
-    private void startMainActivity(Context context){
+    public void deleteToken(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.shared_preference_key_file), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("user_token");
+        editor.commit();
+    }
+
+    public void startMainActivity(Context context){
         Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public void signOut(Context context){
+        deleteToken(context);
+        Intent intent = new Intent(context, SignUpActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }

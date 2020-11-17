@@ -35,6 +35,7 @@ class HomeFragment(private val primaryFragmentContext: PrimaryFragmentContext) :
     }
 
     companion object {
+        val LAYOUT_MANAGER_TAG="HOME_LAYOUT_MANAGER_TAG"
         fun newInstance(primaryFragmentContext: PrimaryFragmentContext): HomeFragment = HomeFragment(primaryFragmentContext)
     }
 
@@ -46,7 +47,7 @@ class HomeFragment(private val primaryFragmentContext: PrimaryFragmentContext) :
         super.onViewCreated(view, savedInstanceState)
 
 
-        viewModel = ViewModelProvider(requireActivity()).get(HomeFragmentViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(HomeFragmentViewModel::class.java)
         swipeRefreshLayout = view.findViewById(R.id.home_swipe_refresh)
 
         recyclerView = view.findViewById(R.id.fragment_home_recycler_view)
@@ -55,7 +56,6 @@ class HomeFragment(private val primaryFragmentContext: PrimaryFragmentContext) :
 
         adapter = HomeFragmentRecyclerViewAdapter(SealedClassDiffUtil(), requireContext(),this)
         linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = linearLayoutManager
 
         recyclerView.addItemDecoration(CustomItemDecoration(IntegerToDp.intToDp(15), IntegerToDp.intToDp(15)))
@@ -66,8 +66,8 @@ class HomeFragment(private val primaryFragmentContext: PrimaryFragmentContext) :
                 val currentState = viewModel.networkStatus.value
 
                 if(currentState == Result.Idle){
-                val items = videos.map { Result.Success(it) }
-                adapter.submitList(items)
+                    val items = videos.map { Result.Success(it) }
+                    adapter.submitList(items)
             }
         })
 
@@ -75,11 +75,11 @@ class HomeFragment(private val primaryFragmentContext: PrimaryFragmentContext) :
         viewModel.networkStatus.observe(viewLifecycleOwner, Observer<Result<VideoResponseBody>> { state ->
             when (state) {
                 is Result.Loading -> {
-                    val originalItems = ArrayList(viewModel.state.map { Result.Success(it) }) + Result.Loading
+                    val originalItems = viewModel.state.map { Result.Success(it) } + Result.Loading
                     adapter.submitList(originalItems)
                 }
                 is Result.Error -> {
-                    val originalItems = ArrayList(viewModel.state.map { Result.Success(it) }) + Result.Error
+                    val originalItems = viewModel.state.map { Result.Success(it) } + Result.Error
                     adapter.submitList(originalItems)
                 }
                 is Result.Refreshing -> swipeRefreshLayout.isRefreshing = true

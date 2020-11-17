@@ -13,6 +13,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Activities.VideoListActivity
 import com.echoeyecodes.sinnerman.Adapters.PlaylistAdapter
 import com.echoeyecodes.sinnerman.Interface.ExploreFragmentContext
+import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext
 import com.echoeyecodes.sinnerman.MainActivity
 import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
@@ -36,7 +37,7 @@ class ExploreFragment(private val primaryFragmentContext: PrimaryFragmentContext
     }
 
     companion object{
-        fun newInstance(primaryFragmentContext: PrimaryFragmentContext): ExploreFragment = ExploreFragment(primaryFragmentContext)
+        fun newInstance(primaryFragmentContext: PrimaryFragmentContext, mainActivityContext: MainActivityContext): ExploreFragment = ExploreFragment(primaryFragmentContext)
     }
 
 
@@ -52,7 +53,7 @@ class ExploreFragment(private val primaryFragmentContext: PrimaryFragmentContext
         swipeRefreshLayout = view.findViewById(R.id.explore_swipe_refresh)
 
         swipeRefreshLayout.setOnRefreshListener(this)
-        exploreViewModel = ViewModelProvider(requireActivity()).get(ExploreViewModel::class.java)
+        exploreViewModel = ViewModelProvider(this).get(ExploreViewModel::class.java)
 
 
         linearLayoutManager = LinearLayoutManager(context)
@@ -64,6 +65,8 @@ class ExploreFragment(private val primaryFragmentContext: PrimaryFragmentContext
                 navigateToMore =  this::navigateToVideoListActivity,
                 navigateToVideo = mainActivity::navigateToVideos,
                 itemCallback = SealedClassDiffUtil())
+
+        exploreAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
         recyclerView.adapter = exploreAdapter
 

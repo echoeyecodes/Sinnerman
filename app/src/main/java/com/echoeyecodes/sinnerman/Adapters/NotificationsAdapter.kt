@@ -24,8 +24,11 @@ import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import de.hdodenhof.circleimageview.CircleImageView
 import java.lang.Exception
 
-class NotificationsAdapter(private val context: Context, diffCallback: DiffUtil.ItemCallback<Result<UploadNotificationModel>>, private val primaryFragmentContext: PrimaryFragmentContext, private val notificationFragmentListener: NotificationFragmentListener) : ListAdapter<Result<UploadNotificationModel>, RecyclerView.ViewHolder>(diffCallback) {
+class NotificationsAdapter(private val context: Context, diffCallback: DiffUtil.ItemCallback<Result<UploadNotificationModel>>, private val primaryFragmentContext: PrimaryFragmentContext, private val notificationFragmentListener: NotificationFragmentListener) : PagerAdapter<UploadNotificationModel>(diffCallback) {
 
+    init {
+        stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if(viewType == ExploreAdapter.LOADING_LAYOUT){
@@ -41,32 +44,10 @@ class NotificationsAdapter(private val context: Context, diffCallback: DiffUtil.
         notificationFragmentListener.onItemsChanged()
     }
 
-    companion object{
-        const val LOADING_LAYOUT = 0
-        const val NORMAL_LAYOUT = 1
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is Result.Loading -> LOADING_LAYOUT
-            is Result.Error -> LOADING_LAYOUT
-            is Result.Success<*> -> NORMAL_LAYOUT
-            else -> throw Exception("Invalid network state")
-        }
-    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
-
+        super.onBindViewHolder(holder, position)
         when (getItem(position)) {
-            is Result.Loading -> {
-                val networkStateHolder = holder as CommonListPagingViewHolder
-                networkStateHolder.handleNetworkStateChanged(NetworkState.LOADING)
-            }
-            is Result.Error -> {
-                val networkStateHolder = holder as CommonListPagingViewHolder
-                networkStateHolder.handleNetworkStateChanged(NetworkState.ERROR)
-            }
             is Result.Success<UploadNotificationModel> -> {
                 val viewHolder = holder as RecentsViewHolder
                 val uploadNotificationModel = (getItem(position) as Result.Success<UploadNotificationModel>).data

@@ -1,6 +1,7 @@
 package com.echoeyecodes.sinnerman.Activities
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ class ActivityFragment(val activityContext:String) : DrawerFragments(), SwipeRef
     private lateinit var adapter: HomeFragmentRecyclerViewAdapter
     private lateinit var viewModel: ActivityFragmentViewModel
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var empty_container: LinearLayout
     private lateinit var linearLayoutManager: LinearLayoutManager
 
 
@@ -42,9 +44,11 @@ class ActivityFragment(val activityContext:String) : DrawerFragments(), SwipeRef
         mainActivityContext.onDrawerFragmentActive(this)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        empty_container = view.findViewById(R.id.empty_recycler_view_layout)
         relativeLayout = view.findViewById(R.id.video_list_activity_root)
         toolbar = view.findViewById(R.id.video_list_toolbar)
         toolbar.visibility = View.GONE
@@ -58,6 +62,7 @@ class ActivityFragment(val activityContext:String) : DrawerFragments(), SwipeRef
         swipeRefreshLayout.setOnRefreshListener(this)
 
         adapter = HomeFragmentRecyclerViewAdapter(SealedClassDiffUtil(), requireContext(), this)
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         linearLayoutManager = LinearLayoutManager(requireContext())
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = linearLayoutManager
@@ -91,6 +96,16 @@ class ActivityFragment(val activityContext:String) : DrawerFragments(), SwipeRef
         recyclerView.addOnScrollListener(CustomScrollListener(fetchMore = this::fetchMore))
     }
 
+    private fun checkListEmpty(){
+        if(adapter.itemCount == 0){
+            empty_container.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
+        }else{
+            empty_container.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+        }
+    }
+
     override fun onRefresh() {
         viewModel.refresh()
     }
@@ -100,7 +115,7 @@ class ActivityFragment(val activityContext:String) : DrawerFragments(), SwipeRef
     }
 
     override fun onItemsChanged() {
-
+        checkListEmpty()
     }
 
     private fun fetchMore(){

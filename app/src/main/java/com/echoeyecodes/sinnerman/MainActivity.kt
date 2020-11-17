@@ -1,14 +1,18 @@
 package com.echoeyecodes.sinnerman
 
 import android.annotation.SuppressLint
+import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -19,7 +23,7 @@ import com.bumptech.glide.Glide
 import com.echoeyecodes.sinnerman.Activities.ActivityFragment
 import com.echoeyecodes.sinnerman.Activities.ProfileActivity
 import com.echoeyecodes.sinnerman.Activities.VideoActivity
-import com.echoeyecodes.sinnerman.Fragments.CategoryBottomSheet
+import com.echoeyecodes.sinnerman.Fragments.PromotionBottomSheet
 import com.echoeyecodes.sinnerman.Fragments.DrawerLayoutFragments.PrimaryFragment
 import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
@@ -40,8 +44,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.system.exitProcess
 
-class MainActivity : AppCompatActivity(), MainActivityContext, FragmentManager.OnBackStackChangedListener {
+class MainActivity : AppCompatActivity(), MainActivityContext{
     private lateinit var mainActivityViewModel: MainActivityViewModel
     private var active_fragment: DrawerFragments? = null
     private lateinit var circleImageView: CircleImageView
@@ -117,46 +122,57 @@ class MainActivity : AppCompatActivity(), MainActivityContext, FragmentManager.O
         toolbar = findViewById(R.id.toolbar)
         toolbarTitle = findViewById(R.id.toolbar_title)
 
-        supportFragmentManager.addOnBackStackChangedListener(this)
-
         user_profile.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.END)
         }
 
         navigationView.setNavigationItemSelectedListener {
-                navigateToNavigationOptions(it.itemId)
-                it.isChecked = true
+                navigateToNavigationOptions(it)
                 true
         }
 
         val fragment = PrimaryFragment.getInstance()
-        openFragment(fragment)
+        openFragment(fragment, null)
     }
 
-    private fun navigateToNavigationOptions(id:Int){
+    private fun navigateToNavigationOptions(item: MenuItem){
         val fragment: DrawerFragments
-        when(id){
+        when(item.itemId){
             R.id.home_activity -> {
                 fragment = PrimaryFragment.getInstance()
-                if(active_fragment?.TAG != fragment.TAG)
-                openFragment(fragment)
+                if (active_fragment?.TAG != fragment.TAG)
+                    openFragment(fragment, item)
             }
             R.id.history -> {
                 fragment = ActivityFragment("history")
-                if(active_fragment?.TAG != fragment.TAG)
-                openFragment(fragment)
+                if (active_fragment?.TAG != fragment.TAG)
+                    openFragment(fragment, item)
             }
             R.id.favorites -> {
                 fragment = ActivityFragment("likes")
-                if(active_fragment?.TAG != fragment.TAG)
-                    openFragment(fragment)
+                if (active_fragment?.TAG != fragment.TAG)
+                    openFragment(fragment, item)
             }
-            R.id.watch_later -> {
-                fragment = ActivityFragment("later")
-                if(active_fragment?.TAG != fragment.TAG)
-                    openFragment(fragment)
+//            R.id.watch_later -> {
+//                fragment = ActivityFragment("later")
+//                if(active_fragment?.TAG != fragment.TAG)
+//                    openFragment(fragment, item)
+//            }
+            R.id.promotions -> {
+                drawerLayout.closeDrawers()
+                PromotionBottomSheet.newInstance().show(supportFragmentManager, "PROMOTION_BOTTOM_SHEET")
             }
-            else -> { }
+            R.id.info ->{
+                drawerLayout.closeDrawers()
+                openExternalLink("https://wa.link/fxbvha")
+            }
+            R.id.sign_out -> {
+                val authenticationManager = AuthenticationManager()
+                authenticationManager.signOut(this)
+            }
+            else -> {
+                item.isChecked =false
+            }
         }
 
         drawerLayout.closeDrawers()
@@ -171,20 +187,35 @@ class MainActivity : AppCompatActivity(), MainActivityContext, FragmentManager.O
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
     }
 
-    override fun openFragment(fragment: DrawerFragments) {
+    override fun openFragment(fragment: DrawerFragments, item: MenuItem?) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-
         fragmentTransaction.replace(R.id.drawer_fragment_container, fragment, fragment.TAG)
-        active_fragment = fragment
 
-        fragmentTransaction.addToBackStack(null)
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        active_fragment = fragment
         fragmentTransaction.commit()
+
+        item?.isChecked = true
     }
 
     override fun navigateToVideos(video_url: String) {
         val intent = Intent(this, VideoActivity::class.java)
         intent.putExtra("video_id", video_url)
         startActivity(intent)
+    }
+
+    override fun openExternalLink(link: String) {
+        val i = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        i.setPackage("com.android.chrome")
+        try {
+            startActivity(i)
+        } catch (e: ActivityNotFoundException) {
+            // Chrome is probably not installed
+            // Try with the default browser
+            i.setPackage(null)
+            startActivity(i)
+        }
     }
 
     override fun onOptionSelected(video: VideoResponseBody, position: Int) {
@@ -235,7 +266,7 @@ class MainActivity : AppCompatActivity(), MainActivityContext, FragmentManager.O
         CoroutineScope(Dispatchers.IO).launch {
             preferenceManager.setPreferences(category)
 
-            val fragment = supportFragmentManager.findFragmentByTag("CATEGORY_BOTTOM_SHEET") as CategoryBottomSheet?
+            val fragment = supportFragmentManager.findFragmentByTag("CATEGORY_BOTTOM_SHEET") as PromotionBottomSheet?
             fragment?.dismiss()
 
             runOnUiThread { restartActivity() }
@@ -266,20 +297,22 @@ class MainActivity : AppCompatActivity(), MainActivityContext, FragmentManager.O
             drawerLayout.closeDrawers()
             return
         }
-        if (supportFragmentManager.backStackEntryCount == 2 && active_fragment is PrimaryFragment) {
-            finish()
+        if(active_fragment is PrimaryFragment && (active_fragment as PrimaryFragment).childFragmentManager.backStackEntryCount > 1){
+            (active_fragment as PrimaryFragment).childFragmentManager.popBackStack()
         }else{
-            super.onBackPressed()
+            if (supportFragmentManager.backStackEntryCount == 0 && active_fragment is PrimaryFragment) {
+                finish()
+                exitProcess(0)
+            }else{
+                if(active_fragment !is PrimaryFragment){
+                    openFragment(PrimaryFragment.getInstance(), null)
+                    return
+                }
+                super.onBackPressed()
+            }
         }
     }
 
-    override fun onBackStackChanged() {
-        val fragments = supportFragmentManager.fragments
-        val fragment = fragments[fragments.size - 1] as CustomFragment
-        if (fragment is DrawerFragments) {
-            active_fragment = fragment
-        }
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -291,20 +324,23 @@ class MainActivity : AppCompatActivity(), MainActivityContext, FragmentManager.O
     @SuppressLint("SetTextI18n")
     override fun onDrawerFragmentActive(fragment: DrawerFragments) {
         when(fragment){
-            is PrimaryFragment -> toolbarTitle.text = "SinnermanTV"
+            is PrimaryFragment -> {
+                toolbarTitle.text = "SinnermanTV"
+                navigationView.menu.getItem(0).isChecked = true
+            }
             is ActivityFragment -> {
-            when (fragment.activityContext) {
-                "likes" -> {
-                    toolbarTitle.text="Liked Videos"
-                }
-                "history" -> {
-                    toolbarTitle.text="Watch History"
-                }
-                "later" -> {
-                    toolbarTitle.text="Watch Later"
+                when (fragment.activityContext) {
+                    "likes" -> {
+                        toolbarTitle.text = "Liked Videos"
+                    }
+                    "history" -> {
+                        toolbarTitle.text = "Watch History"
+                    }
+                    "later" -> {
+                        toolbarTitle.text = "Watch Later"
+                    }
                 }
             }
-        }
         }
     }
 

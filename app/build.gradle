@@ -33,7 +33,7 @@ android {
         applicationId "com.echoeyecodes.sinnerman"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 8
+        versionCode 9
         versionName "1.0"
         buildConfigField("String", "SINNERMAN_SERVER_API_KEY", credentialsProperties['SINNERMAN_SERVER_API_KEY'])
         buildConfigField("String", "APP_REDIRECT_URL", credentialsProperties['APP_REDIRECT_URL'])
@@ -116,7 +116,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha02'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.google.android.gms:play-services-auth:18.1.0'

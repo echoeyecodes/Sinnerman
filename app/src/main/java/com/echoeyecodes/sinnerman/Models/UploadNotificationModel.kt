@@ -10,5 +10,4 @@ data class UploadNotificationModel(@NonNull @PrimaryKey val id:String, val messa
                                    val profile_url: String,
                                    val thumbnail:String,
                                    var is_read:Boolean,
-                                   var video_id:String) {
-}
+                                   var video_id:String): PagerModel()

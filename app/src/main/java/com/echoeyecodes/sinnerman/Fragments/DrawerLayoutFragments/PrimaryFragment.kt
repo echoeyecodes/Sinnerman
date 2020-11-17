@@ -27,8 +27,26 @@ class PrimaryFragment : DrawerFragments(), BottomNavigationView.OnNavigationItem
         fun getInstance() = PrimaryFragment()
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(this)
+
+        childFragmentManager.addOnBackStackChangedListener(this)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_primary, container, false)
+        val view = inflater.inflate(R.layout.fragment_primary, container, false)
+
+        bottomNavigationView = view.findViewById(R.id.bottom_navigation_view)
+
+
+        if(active_fragment == null){
+            navigateToBottomFragment(HomeFragment.newInstance(this))
+        }else{
+            navigateToBottomFragment(active_fragment!!)
+        }
+        return view
     }
 
     override fun onResume() {
@@ -37,24 +55,9 @@ class PrimaryFragment : DrawerFragments(), BottomNavigationView.OnNavigationItem
     }
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        bottomNavigationView = view.findViewById(R.id.bottom_navigation_view)
-        bottomNavigationView.setOnNavigationItemSelectedListener(this)
-
-        parentFragmentManager.addOnBackStackChangedListener(this)
-
-        if(active_fragment == null){
-            navigateToBottomFragment(HomeFragment.newInstance(this))
-        }else{
-            navigateToBottomFragment(active_fragment!!)
-        }
-    }
-
     private fun navigateToBottomFragment(fragment: RootBottomFragment) {
-        val fragmentTransaction = parentFragmentManager.beginTransaction()
-        val existingFragment = parentFragmentManager.findFragmentByTag(fragment.getTAG()) as RootBottomFragment?
+        val fragmentTransaction = childFragmentManager.beginTransaction()
+        val existingFragment = childFragmentManager.findFragmentByTag(fragment.getTAG()) as RootBottomFragment?
         if (existingFragment != null) {
             fragmentTransaction.replace(R.id.bottom_navigation_fragment_container, existingFragment, existingFragment.TAG)
         } else {
@@ -83,7 +86,7 @@ class PrimaryFragment : DrawerFragments(), BottomNavigationView.OnNavigationItem
                 return true
             }
             R.id.action_explore -> {
-                fragment = ExploreFragment.newInstance(this)
+                fragment = ExploreFragment.newInstance(this, mainActivityContext)
                 if(active_fragment?.TAG != fragment.TAG)
                 openBottomFragment(fragment, fragment.getTAG())
                 return true
@@ -106,7 +109,7 @@ class PrimaryFragment : DrawerFragments(), BottomNavigationView.OnNavigationItem
     }
 
     override fun onBackStackChanged() {
-        val fragments = parentFragmentManager.fragments
+        val fragments = childFragmentManager.fragments
         val fragment = fragments[fragments.size - 1]
         if (fragment is RootBottomFragment) {
             active_fragment = fragment

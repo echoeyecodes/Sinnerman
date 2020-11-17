@@ -11,14 +11,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.echoeyecodes.sinnerman.Adapters.CategoryAdapter
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.R
+import com.google.android.material.button.MaterialButton
 
-class CategoryBottomSheet(private val position: Int) : BottomSheetDialogFragment() {
+class PromotionBottomSheet() : BottomSheetDialogFragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var mainActivityContext: MainActivityContext
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_category_bottom_sheet_list_dialog, container, false)
+        return inflater.inflate(R.layout.fragment_promotion_bottom_sheet, container, false)
     }
 
     override fun onAttach(context: Context) {
@@ -27,21 +28,17 @@ class CategoryBottomSheet(private val position: Int) : BottomSheetDialogFragment
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        recyclerView = view.findViewById(R.id.category_list)
-        val layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = layoutManager
-
-        val adapter = CategoryAdapter(requireContext(), position, mainActivityContext)
-        recyclerView.adapter = adapter
-
+        val button : MaterialButton = view.findViewById(R.id.reach_out_btn)
+        button.setOnClickListener{
+            mainActivityContext.openExternalLink("https://wa.link/4kgo0h")
+            dismiss()
+        }
     }
 
 
     companion object {
 
-        fun newInstance(position:Int): CategoryBottomSheet = CategoryBottomSheet(position)
+        fun newInstance(): PromotionBottomSheet = PromotionBottomSheet()
 
     }
 }

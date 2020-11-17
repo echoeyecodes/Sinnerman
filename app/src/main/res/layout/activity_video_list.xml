@@ -12,10 +12,43 @@
             android:layout_width="match_parent"
             android:layout_below="@+id/video_list_toolbar"
             android:layout_height="match_parent">
-    <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/video_list_recycler_view"
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/video_list_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <LinearLayout
+                android:id="@+id/empty_recycler_view_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="20dp"
+                android:visibility="gone"
+                android:gravity="center"
+                >
+                <ImageView
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:src="@drawable/ic_empty_video"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No videos to show. List is fucking empty!"
+                    style="@style/SemiBold"
+                    android:textAlignment="center"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_horizontal"/>
+
+            </LinearLayout>
+        </RelativeLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

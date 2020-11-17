@@ -1,10 +1,12 @@
 package com.echoeyecodes.sinnerman.Activities
 
+import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -119,7 +121,7 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
     }
 
 
-    override fun openFragment(fragment: DrawerFragments) {
+    override fun openFragment(fragment: DrawerFragments?, item: MenuItem?) {
 
     }
 
@@ -127,6 +129,20 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
         val intent = Intent(this, VideoActivity::class.java)
         intent.putExtra("video_id", video_url)
         startActivity(intent)
+    }
+
+    override fun openExternalLink(link: String) {
+        val i = Intent(Intent.ACTION_VIEW, Uri.parse(link))
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        i.setPackage("com.android.chrome")
+        try {
+            startActivity(i)
+        } catch (e: ActivityNotFoundException) {
+            // Chrome is probably not installed
+            // Try with the default browser
+            i.setPackage(null)
+            startActivity(i)
+        }
     }
 
     override fun onOptionSelected(video: VideoResponseBody, position: Int) {
