@@ -62,7 +62,6 @@ class PlaylistAdapter(private val exploreFragmentContext: ExploreFragmentContext
         val linearLayout: LinearLayout = itemView.findViewById(R.id.view_item);
 
         init {
-            recycler_view.setHasFixedSize(true)
             val snapHelper = PagerSnapHelper()
             snapHelper.attachToRecyclerView(recycler_view)
             val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)

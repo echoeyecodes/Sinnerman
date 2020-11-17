@@ -90,8 +90,6 @@ class ExploreAdapter(private val exploreFragmentContext: ExploreFragmentContext,
         val linearLayout: LinearLayout = itemView.findViewById(R.id.view_item);
 
         init {
-
-            recycler_view.setHasFixedSize(true)
             val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             recycler_view.layoutManager = linearLayoutManager
             recycler_view.addItemDecoration(CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15), IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)))
