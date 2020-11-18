@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_edit_24"
             android:padding="5dp"
-            android:tint="@color/grey"
+            style="@style/BackButtonGrey"
             android:visibility="gone"
             android:background="?attr/selectableItemBackgroundBorderless"
     />

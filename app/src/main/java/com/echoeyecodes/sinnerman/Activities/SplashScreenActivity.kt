@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.echoeyecodes.sinnerman.MainActivity
+import com.echoeyecodes.sinnerman.Utils.AuthenticationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -19,14 +20,25 @@ class SplashScreenActivity : AppCompatActivity() {
 
         hideSystemUI()
 
-        val intent = Intent(this, MainActivity::class.java)
+        val authenticationManager = AuthenticationManager()
 
+        val token = authenticationManager.checkToken(this)
+        if (token == null || token == "") {
+            authenticationManager.startAuthActivity(this)
+        } else {
+            val intent = Intent(this, MainActivity::class.java)
+            launchActivity(intent)
+        }
+    }
+
+    private fun launchActivity(intent: Intent){
         CoroutineScope(Dispatchers.Main).launch {
             delay(1500)
             startActivity(intent)
             finish()
         }
     }
+
 
 
     @SuppressLint("InlinedApi")

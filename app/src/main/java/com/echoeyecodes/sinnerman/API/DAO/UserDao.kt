@@ -11,7 +11,7 @@ import retrofit2.http.Part
 interface UserDao {
 
     @GET("api/v1/user/")
-    fun getCurrentUser(): Call<UserModel>
+    suspend fun getCurrentUser(): UserModel
 
     @Multipart
     @POST("api/v1/user/upload")

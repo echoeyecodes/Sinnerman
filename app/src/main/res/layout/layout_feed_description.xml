@@ -34,10 +34,9 @@
                 android:id="@+id/video_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/RegularText"
+                style="@style/RegularTextGrey"
                 android:textSize="12sp"
                 android:layout_marginVertical="2dp"
-                android:textColor="@color/grey"
                 android:text="Universal Studios ~ 216k views ~ 2 mins ago"
         />
     </LinearLayout>
@@ -48,7 +47,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_baseline_more_vert_24"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="@color/black"
+            style="@style/BackButton"
             android:paddingHorizontal="5dp"
     />
 </LinearLayout>

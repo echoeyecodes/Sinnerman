@@ -40,7 +40,7 @@
                 android:src="@drawable/ic_baseline_arrow_forward_24"
                 android:padding="10dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:tint="@color/black"
+                style="@style/BackButton"
                 />
         </LinearLayout>
 

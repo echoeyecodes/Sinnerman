@@ -15,6 +15,6 @@ public interface MainActivityContext {
     void navigateToVideos(String video_url);
     void openExternalLink(String link);
     void onOptionSelected(VideoResponseBody video, int position);
-    void onCategorySelected(int position);
+    void onThemeChange(boolean value);
     void onDrawerFragmentActive(DrawerFragments fragments);
 }

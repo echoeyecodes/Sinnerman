@@ -1,0 +1,161 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Sinnerman" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/google_blue_color_code</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:windowBackground">@color/dark</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/dark</item>
+        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogStyle</item>
+    </style>
+
+
+    <style name="SplashScreenTheme" parent = "Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen_background</item>
+    </style>
+
+    <style name="BottomSheetDialogStyle" parent="Theme.MaterialComponents.DayNight.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetDialog</item>
+    </style>
+
+    <style name="BottomSheetDialog" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/BottomSheetShapeAppearance</item>
+        <item name="background">@color/dark</item>
+    </style>
+
+    <style name="BottomSheetShapeAppearance" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">10dp</item>
+        <item name="cornerSizeTopRight">10dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <style name="DrawerStyle" parent="Widget.Design.NavigationView">
+        <item name="background">@color/dark</item>
+    </style>
+
+    <style name="CustomRoundedButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="backgroundTint">@color/colorPrimary</item>
+    </style>
+
+    <style name="CustomRoundedButtonTransparent" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="backgroundTint">@color/dark</item>
+        <item name="rippleColor">#1A000000</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TabLayoutStyle" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabIndicatorColor">@color/colorPrimary</item>
+        <item name="tabSelectedTextColor">@color/colorPrimary</item>
+        <item name="tabTextColor">@color/dark</item>
+        <item name="android:backgroundTint">@color/movie_primary_dark</item>
+    </style>
+
+    <style name="SearchFieldStyle">
+        <item name="android:editTextBackground">@null</item>
+    </style>
+
+    <style name="OutlineButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:backgroundTint">@color/dark</item>
+        <item name="android:fontFamily">@font/raleway_regular</item>
+    </style>
+
+    <style name="BottomNavigationStyle" parent="Widget.Design.BottomNavigationView">
+        <item name="itemIconTint">@color/bottom_navigation_view_selected_state_dark</item>
+        <item name="itemTextColor">@color/bottom_navigation_view_selected_state_dark</item>
+        <item name="backgroundTint">@color/dark</item>
+    </style>
+
+
+    <style name="BoldText" parent="Widget.MaterialComponents.TextView">
+        <item name="android:fontFamily">@font/raleway_bold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="RegularText" parent="Widget.MaterialComponents.TextView">
+        <item name="android:fontFamily">@font/raleway_regular</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="MediumText" parent="Widget.MaterialComponents.TextView">
+        <item name="android:fontFamily">@font/raleway_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="SemiBold" parent="Widget.MaterialComponents.TextView">
+        <item name="android:fontFamily">@font/raleway_semibold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="drawableTint">@color/white</item>
+    </style>
+
+
+    <style name="BoldTextGrey" parent="BoldText">
+        <item name="android:textColor">@color/light</item>
+    </style>
+
+    <style name="RegularTextGrey" parent="RegularText">
+        <item name="android:textColor">@color/light</item>
+    </style>
+
+    <style name="MediumTextGrey" parent="MediumText">
+        <item name="android:fontFamily">@font/raleway_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/light</item>
+    </style>
+
+    <style name="SemiBoldGrey" parent="SemiBold">
+        <item name="android:textColor">@color/light</item>
+    </style>
+
+
+    <style name="BoldTextDarkerGrey" parent="BoldText">
+        <item name="android:textColor">@color/brighter_light</item>
+    </style>
+
+    <style name="RegularTextDarkerGrey" parent="RegularText">
+        <item name="android:textColor">@color/brighter_light</item>
+    </style>
+
+    <style name="MediumTextDarkerGrey" parent="MediumText">
+        <item name="android:fontFamily">@font/raleway_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/brighter_light</item>
+    </style>
+
+    <style name="SemiBoldDarkerGrey" parent="SemiBold">
+        <item name="android:textColor">@color/brighter_light</item>
+    </style>
+
+    <style name="BackButton" parent="Widget.AppCompat.ImageButton">
+        <item name="tint">@color/white</item>
+    </style>
+
+    <style name="ImageViewStyle">
+        <item name="tint">@color/white</item>
+    </style>
+
+    <style name="CommentCardStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/comment_background_light</item>
+    </style>
+
+
+    <style name="FormEditTextStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">@color/light</item>
+        <item name="boxBackgroundColor">@color/dark</item>
+    </style>
+
+    <style name="BackButtonGrey" parent="Widget.AppCompat.ImageButton">
+        <item name="tint">@color/light</item>
+    </style>
+
+</resources>

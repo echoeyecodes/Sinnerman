@@ -30,6 +30,7 @@ class MoreOptionsFragment(private val video:VideoResponseBody) : BottomSheetDial
         mainActivityContext = context as MainActivityContext
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         recyclerView = view.findViewById(R.id.video_options_recycler_view)

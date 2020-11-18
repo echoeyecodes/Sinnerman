@@ -28,7 +28,7 @@ public class AuthUserManager {
             objectOutputStream.close();
 
 
-            context.getIsLoaded().postValue(true);
+            context.isLoaded().postValue(true);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -19,17 +19,9 @@ class VideoRepository(context: Context) {
     val preferenceManager = PreferenceManager(context)
 
 
-    private suspend fun getCategory() : String{
-        val category = runBlocking { preferenceManager.category.first() }
-        if(category == null){
-            preferenceManager.setPreferences("gaming")
-            return "gaming"
-        }
-        return category
-    }
 
     suspend fun getVideos(offset:String):List<VideoResponseBody>{
-        return apiClient.fetchVideos("10", offset, getCategory())
+        return apiClient.fetchVideos("10", offset)
     }
 
      fun deleteVideosFromDB(){
@@ -50,7 +42,7 @@ class VideoRepository(context: Context) {
 
     suspend fun fetchExplore(offset:String) : List<ExploreResponseBody>{
         return withContext(Dispatchers.IO){
-            apiClient.fetchExplore( "10", offset, getCategory())
+            apiClient.fetchExplore( "10", offset)
         }
     }
 
@@ -65,7 +57,7 @@ class VideoRepository(context: Context) {
     }
 
     suspend fun getVideoByTag(id: String, offset: String) : List<VideoResponseBody>{
-        return apiClient.fetchExploreItem(id, "10", offset, getCategory())
+        return apiClient.fetchExploreItem(id, "10", offset)
     }
 
     suspend fun getVideoActivity(id: String, offset: String) : List<VideoResponseBody>{

@@ -36,6 +36,12 @@
             <menu>
                 <group android:checkableBehavior="single">
                     <item
+                        android:id="@+id/theme"
+                        android:icon="@drawable/ic_lightbulb"
+                        android:iconTint="@color/black"
+                        android:checkable="false"
+                        android:title="Switch to Dark Mode" />
+                    <item
                         android:id="@+id/promotions"
                         android:icon="@drawable/ic_promotion"
                         android:iconTint="@color/black"

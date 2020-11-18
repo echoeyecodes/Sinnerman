@@ -77,11 +77,11 @@ class CommentsAdapter(private val context: Context, diffCallback: DiffUtil.ItemC
 
                 val (_, comment, createdAt) = commentResponseBody.comment
                 val (id, _, _, _, fullname, profile_url) = commentResponseBody.user
-                if (currentUser.id == id) {
-                    viewHolder.cardView.setCardBackgroundColor(Color.WHITE)
-                } else {
-                    viewHolder.cardView.setCardBackgroundColor(Color.rgb(241, 242, 246))
-                }
+//                if (currentUser.id == id) {
+//                    viewHolder.cardView.setCardBackgroundColor(Color.WHITE)
+//                } else {
+//                    viewHolder.cardView.setCardBackgroundColor(Color.rgb(241, 242, 246))
+//                }
 
                 viewHolder.comment_author.text = fullname
                 viewHolder.comment.text = comment

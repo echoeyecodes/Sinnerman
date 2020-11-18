@@ -179,7 +179,7 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
                 }
     }
 
-    override fun onCategorySelected(position: Int) {
+    override fun onThemeChange(value: Boolean) {
 
     }
 

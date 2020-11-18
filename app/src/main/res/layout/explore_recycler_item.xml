@@ -43,7 +43,6 @@
             style="@style/CustomRoundedButtonTransparent"
             android:layout_marginHorizontal="15dp"
             android:text="See More"
-            android:textColor="@color/black"
     />
         <include layout="@layout/layout_divider" />
 </LinearLayout>

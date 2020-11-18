@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:name=".ApplicationClass"
-        android:theme="@style/AppTheme">
+        android:theme="@style/Theme.Sinnerman">
         <activity android:name="com.echoeyecodes.sinnerman.Activities.SplashScreenActivity" android:theme="@style/SplashScreenTheme" android:configChanges="orientation|screenSize|screenLayout" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

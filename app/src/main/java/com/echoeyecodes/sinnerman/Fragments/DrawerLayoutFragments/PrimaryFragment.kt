@@ -14,7 +14,7 @@ import com.echoeyecodes.sinnerman.Fragments.BottomNavigationFragments.Notificati
 import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class PrimaryFragment : DrawerFragments(), BottomNavigationView.OnNavigationItemSelectedListener, PrimaryFragmentContext, FragmentManager.OnBackStackChangedListener{
+class PrimaryFragment() : DrawerFragments(), BottomNavigationView.OnNavigationItemSelectedListener, PrimaryFragmentContext, FragmentManager.OnBackStackChangedListener{
 
     private lateinit var bottomNavigationView: BottomNavigationView
     private var active_fragment: RootBottomFragment? = null

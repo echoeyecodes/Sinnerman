@@ -1,12 +1,10 @@
 package com.echoeyecodes.sinnerman
 
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Intent
+import android.content.*
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -14,15 +12,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import com.bumptech.glide.Glide
-import com.echoeyecodes.sinnerman.Activities.ActivityFragment
-import com.echoeyecodes.sinnerman.Activities.ProfileActivity
-import com.echoeyecodes.sinnerman.Activities.VideoActivity
+import com.echoeyecodes.sinnerman.Activities.*
 import com.echoeyecodes.sinnerman.Fragments.PromotionBottomSheet
 import com.echoeyecodes.sinnerman.Fragments.DrawerLayoutFragments.PrimaryFragment
 import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment
@@ -31,6 +29,7 @@ import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.Utils.AuthUserManager
 import com.echoeyecodes.sinnerman.Utils.AuthenticationManager
 import com.echoeyecodes.sinnerman.Utils.PreferenceManager
+import com.echoeyecodes.sinnerman.Utils.Result
 import com.echoeyecodes.sinnerman.viewmodel.MainActivityViewModel
 import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
@@ -42,6 +41,7 @@ import com.google.firebase.dynamiclinks.ShortDynamicLink
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.system.exitProcess
@@ -56,26 +56,35 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
     private lateinit var drawerUsername:TextView
     private lateinit var toolbar: LinearLayout
     private lateinit var user_profile: ImageView
-    private lateinit var preferenceManager: PreferenceManager
     private lateinit var navigationView: NavigationView
     private lateinit var drawerLayout:DrawerLayout
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mainActivityViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
-        val authenticationManager = AuthenticationManager()
-        val token = authenticationManager.checkToken(this)
-        if (token == null || token == "") {
-            authenticationManager.startAuthActivity(this)
-        } else {
-            beginActivity()
-        }
-        mainActivityViewModel.isLoaded.observe(this, Observer { value: Boolean ->
-            if (value) {
-                initUserData()
+
+        if (getCurrentTheme()) {
+            if(AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_NO){
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
-        })
+        } else {
+            if(AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_YES){
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            }
+        }
+
+        mainActivityViewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+
+
+        beginActivity()
+    }
+
+    private fun getCurrentTheme():Boolean{
+        val sharedPreferences = getSharedPreferences(
+                "theme_pref",
+                Context.MODE_PRIVATE
+        )
+        return sharedPreferences.getBoolean("theme", false)
     }
 
 
@@ -102,17 +111,14 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
     }
 
     private fun beginActivity() {
-        setContentView(R.layout.activity_main)
         initViews()
         initUserData()
         refreshUserData()
     }
 
     private fun initViews() {
-
-        preferenceManager = PreferenceManager(this)
+        setContentView(R.layout.activity_main)
         navigationView = findViewById(R.id.side_nav_view)
-
         drawerLayout = findViewById(R.id.main_drawer_layout)
         val headerView = navigationView.getHeaderView(0)
         drawerImage = headerView.findViewById(R.id.drawer_profile_image)
@@ -121,6 +127,13 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
         user_profile = findViewById(R.id.user_profile_btn)
         toolbar = findViewById(R.id.toolbar)
         toolbarTitle = findViewById(R.id.toolbar_title)
+
+
+        mainActivityViewModel.isLoaded.observe(this, Observer { value: Boolean ->
+            if (value) {
+                initUserData()
+            }
+        })
 
         user_profile.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.END)
@@ -131,9 +144,16 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
                 true
         }
 
+        if(getCurrentTheme()){
+            navigationView.menu.findItem(R.id.theme).title ="Switch to dark mode"
+        }else{
+            navigationView.menu.findItem(R.id.theme).title = "Switch to light mode"
+        }
         val fragment = PrimaryFragment.getInstance()
         openFragment(fragment, null)
     }
+
+
 
     private fun navigateToNavigationOptions(item: MenuItem){
         val fragment: DrawerFragments
@@ -144,12 +164,12 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
                     openFragment(fragment, item)
             }
             R.id.history -> {
-                fragment = ActivityFragment("history")
+                fragment = WatchHistoryFragment().newInstance("history")
                 if (active_fragment?.TAG != fragment.TAG)
                     openFragment(fragment, item)
             }
             R.id.favorites -> {
-                fragment = ActivityFragment("likes")
+                fragment = LikedVideosFragment().newInstance("likes")
                 if (active_fragment?.TAG != fragment.TAG)
                     openFragment(fragment, item)
             }
@@ -158,6 +178,12 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
 //                if(active_fragment?.TAG != fragment.TAG)
 //                    openFragment(fragment, item)
 //            }
+            R.id.theme -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val newTheme = mainActivityViewModel.preferenceManager.theme.first() ?: false
+                    onThemeChange(!newTheme)
+                }
+            }
             R.id.promotions -> {
                 drawerLayout.closeDrawers()
                 PromotionBottomSheet.newInstance().show(supportFragmentManager, "PROMOTION_BOTTOM_SHEET")
@@ -251,26 +277,21 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
     }
 
     private fun restartActivity(){
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
+        val newIntent = intent
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+        finish()
+        startActivity(newIntent)
     }
 
-    override fun onCategorySelected(position: Int) {
-        val category = if(position == 0){
-            "gaming"
-        }else{
-            "movies"
-        }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            preferenceManager.setPreferences(category)
-
-            val fragment = supportFragmentManager.findFragmentByTag("CATEGORY_BOTTOM_SHEET") as PromotionBottomSheet?
-            fragment?.dismiss()
-
-            runOnUiThread { restartActivity() }
-        }
+    override fun onThemeChange(value: Boolean) {
+        val sharedPreferences = getSharedPreferences(
+                "theme_pref",
+                Context.MODE_PRIVATE
+        )
+        val theme =  sharedPreferences.getBoolean("theme", false)
+        sharedPreferences.edit().putBoolean("theme", !theme).apply()
+        restartActivity()
     }
 
     private fun copyLinkToClipboard(link: String) {

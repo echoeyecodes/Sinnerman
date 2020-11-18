@@ -22,14 +22,18 @@ import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.HomeFragment
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
 
-class HomeFragment(private val primaryFragmentContext: PrimaryFragmentContext) : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener, CommonListPagingListeners {
+class HomeFragment() : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListener, CommonListPagingListeners {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: HomeFragmentRecyclerViewAdapter
     private lateinit var viewModel: HomeFragmentViewModel
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var primaryFragmentContext: PrimaryFragmentContext
+    lateinit var linearLayoutManager: LinearLayoutManager
 
 
+    constructor(primaryFragmentContext: PrimaryFragmentContext):this(){
+        this.primaryFragmentContext = primaryFragmentContext
+    }
     init {
         TAG = "HOME_FRAGMENT"
     }

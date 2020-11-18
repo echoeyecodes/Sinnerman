@@ -24,13 +24,22 @@ import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.Notification
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 
 
-class NotificationFragment(private val primaryFragmentContext: PrimaryFragmentContext) : RootBottomFragment(), NotificationFragmentListener, SwipeRefreshLayout.OnRefreshListener {
+class NotificationFragment() : RootBottomFragment(), NotificationFragmentListener, SwipeRefreshLayout.OnRefreshListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeRefreshLayout:SwipeRefreshLayout
     private lateinit var notificationViewModel: NotificationViewModel
     private lateinit var adapter: NotificationsAdapter
     private lateinit var empty_container: LinearLayout
-     init{
+
+    private lateinit var primaryFragmentContext: PrimaryFragmentContext
+
+
+    constructor(primaryFragmentContext: PrimaryFragmentContext):this(){
+        this.primaryFragmentContext = primaryFragmentContext
+    }
+
+
+    init{
          TAG ="NOTIFICATION_FRAGMENT"
      }
 

@@ -6,6 +6,7 @@ import androidx.datastore.preferences.createDataStore
 import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.emptyPreferences
 import androidx.datastore.preferences.preferencesKey
+import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 
@@ -13,13 +14,13 @@ class PreferenceManager(context: Context) {
     private val dataStore = context.createDataStore(name = "preference_manager")
 
     companion object{
-        val CATEGORY_TYPE = preferencesKey<String>("category")
+        val THEME_TYPE = preferencesKey<Boolean>("theme")
     }
 
-    suspend fun setPreferences(value:String){
-        dataStore.edit { preferences -> preferences[CATEGORY_TYPE] = value }
+    suspend fun setPreferences(value:Boolean){
+        dataStore.edit { preferences -> preferences[THEME_TYPE] = value }
     }
 
-    val category = dataStore.data.catch { emit(emptyPreferences()) }.map { preference -> preference[CATEGORY_TYPE] }
+    val theme = dataStore.data.catch { emit(emptyPreferences()) }.map { preference -> preference[THEME_TYPE] }
 
 }

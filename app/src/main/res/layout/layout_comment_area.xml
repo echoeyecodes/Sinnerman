@@ -37,7 +37,6 @@
             android:background="@null"
             android:gravity="center_vertical"
             android:hint="Enter comment..."
-            android:textColorHint="@color/grey"
             style="@style/RegularText"
             android:padding="5dp"
     >

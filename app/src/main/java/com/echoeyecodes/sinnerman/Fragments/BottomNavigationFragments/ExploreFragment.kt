@@ -25,12 +25,18 @@ import com.echoeyecodes.sinnerman.Utils.SealedClassDiffUtil
 import com.echoeyecodes.sinnerman.viewmodel.BottomFragmentViewModel.ExploreViewModel
 
 
-class ExploreFragment(private val primaryFragmentContext: PrimaryFragmentContext) : RootBottomFragment(), ExploreFragmentContext, SwipeRefreshLayout.OnRefreshListener{
+class ExploreFragment() : RootBottomFragment(), ExploreFragmentContext, SwipeRefreshLayout.OnRefreshListener{
     private lateinit var recyclerView : RecyclerView
     private lateinit var linearLayoutManager : LinearLayoutManager
     private lateinit var exploreViewModel: ExploreViewModel
     private lateinit var exploreAdapter : PlaylistAdapter
     private lateinit var swipeRefreshLayout : SwipeRefreshLayout
+    private lateinit var primaryFragmentContext: PrimaryFragmentContext
+
+
+    constructor(primaryFragmentContext: PrimaryFragmentContext):this(){
+        this.primaryFragmentContext = primaryFragmentContext
+    }
 
     init{
         TAG ="EXPLORE_FRAGMENT"

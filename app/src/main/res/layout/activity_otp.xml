@@ -24,11 +24,10 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                style="@style/RegularText"
+                style="@style/RegularTextGrey"
                 android:text="A six-digit verification pin has been sent to your email address. Type it below to complete your registration"
                 android:layout_marginHorizontal="20dp"
                 android:lineSpacingExtra="5dp"
-                android:textColor="@color/grey"
                 android:layout_marginVertical="10dp"
         />
 
