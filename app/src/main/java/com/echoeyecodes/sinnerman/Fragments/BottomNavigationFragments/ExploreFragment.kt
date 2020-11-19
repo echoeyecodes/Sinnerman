@@ -1,5 +1,6 @@
 package com.echoeyecodes.sinnerman.Fragments.BottomNavigationFragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,7 +15,6 @@ import com.echoeyecodes.sinnerman.Activities.VideoListActivity
 import com.echoeyecodes.sinnerman.Adapters.PlaylistAdapter
 import com.echoeyecodes.sinnerman.Interface.ExploreFragmentContext
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
-import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext
 import com.echoeyecodes.sinnerman.MainActivity
 import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
 import com.echoeyecodes.sinnerman.R
@@ -31,11 +31,13 @@ class ExploreFragment() : RootBottomFragment(), ExploreFragmentContext, SwipeRef
     private lateinit var exploreViewModel: ExploreViewModel
     private lateinit var exploreAdapter : PlaylistAdapter
     private lateinit var swipeRefreshLayout : SwipeRefreshLayout
-    private lateinit var primaryFragmentContext: PrimaryFragmentContext
+    private lateinit var mainActivityContext: MainActivityContext
 
 
-    constructor(primaryFragmentContext: PrimaryFragmentContext):this(){
-        this.primaryFragmentContext = primaryFragmentContext
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        mainActivityContext = context as MainActivityContext
     }
 
     init{
@@ -43,7 +45,7 @@ class ExploreFragment() : RootBottomFragment(), ExploreFragmentContext, SwipeRef
     }
 
     companion object{
-        fun newInstance(primaryFragmentContext: PrimaryFragmentContext, mainActivityContext: MainActivityContext): ExploreFragment = ExploreFragment(primaryFragmentContext)
+        fun newInstance(mainActivityContext: MainActivityContext): ExploreFragment = ExploreFragment()
     }
 
 
@@ -69,7 +71,7 @@ class ExploreFragment() : RootBottomFragment(), ExploreFragmentContext, SwipeRef
                 exploreFragmentContext = this,
                 context = requireContext(),
                 navigateToMore =  this::navigateToVideoListActivity,
-                navigateToVideo = mainActivity::navigateToVideos,
+                mainActivityContext = mainActivityContext,
                 itemCallback = SealedClassDiffUtil())
 
         exploreAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
@@ -112,7 +114,7 @@ class ExploreFragment() : RootBottomFragment(), ExploreFragmentContext, SwipeRef
 
     override fun onResume() {
         super.onResume()
-        primaryFragmentContext.setActiveBottomViewFragment(1)
+        mainActivityContext.setActiveBottomViewFragment(1)
     }
 
     override fun retry(){

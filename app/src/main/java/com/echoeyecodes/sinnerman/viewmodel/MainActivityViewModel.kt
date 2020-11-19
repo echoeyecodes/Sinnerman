@@ -34,8 +34,12 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
      fun updateCurrentUser(){
         CoroutineScope(Dispatchers.IO).launch {
-            val userModel = userDao.getCurrentUser()
-            setCurrentUser(userModel)
+            try{
+                val userModel = userDao.getCurrentUser()
+                setCurrentUser(userModel)
+            }catch (e:Exception){
+                e.printStackTrace()
+            }
         }
     }
 }

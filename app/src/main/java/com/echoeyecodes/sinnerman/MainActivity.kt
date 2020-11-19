@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (getCurrentTheme()) {
+        if (!getCurrentTheme()) {
             if(AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_NO){
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
@@ -145,9 +145,9 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
         }
 
         if(getCurrentTheme()){
-            navigationView.menu.findItem(R.id.theme).title ="Switch to dark mode"
+            navigationView.menu.findItem(R.id.theme).title ="Switch to light mode"
         }else{
-            navigationView.menu.findItem(R.id.theme).title = "Switch to light mode"
+            navigationView.menu.findItem(R.id.theme).title = "Switch to dark mode"
         }
         val fragment = PrimaryFragment.getInstance()
         openFragment(fragment, null)
@@ -190,7 +190,7 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
             }
             R.id.info ->{
                 drawerLayout.closeDrawers()
-                openExternalLink("https://wa.link/fxbvha")
+                openExternalLink(BuildConfig.INFO_REDIRECT_URL)
             }
             R.id.sign_out -> {
                 val authenticationManager = AuthenticationManager()
@@ -363,6 +363,16 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
                 }
             }
         }
+    }
+
+    override fun openBottomFragment(fragment: RootBottomFragment, tag: String) {
+        val primaryFragment = supportFragmentManager.findFragmentByTag(PrimaryFragment().TAG) as PrimaryFragment?
+        primaryFragment?.openBottomFragment(fragment, tag)
+    }
+
+    override fun setActiveBottomViewFragment(position: Int) {
+        val primaryFragment = supportFragmentManager.findFragmentByTag(PrimaryFragment().TAG) as PrimaryFragment?
+        primaryFragment?.setActiveBottomViewFragment(position)
     }
 
 }

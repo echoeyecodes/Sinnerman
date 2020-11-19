@@ -19,7 +19,7 @@ public class ApplicationClass extends Application {
         );
 
         boolean currentTheme =  sharedPreferences.getBoolean("theme", false);
-        if (currentTheme) {
+        if (!currentTheme) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);

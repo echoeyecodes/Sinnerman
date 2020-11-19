@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.echoeyecodes.sinnerman.BuildConfig
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.R
 import com.google.android.material.button.MaterialButton
@@ -28,7 +29,7 @@ class PromotionBottomSheet() : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val button : MaterialButton = view.findViewById(R.id.reach_out_btn)
         button.setOnClickListener{
-            mainActivityContext.openExternalLink("https://wa.link/4kgo0h")
+            mainActivityContext.openExternalLink(BuildConfig.PROMOTIONS_REDIRECT_URL)
             dismiss()
         }
     }

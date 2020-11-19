@@ -6,6 +6,7 @@
                                            android:layout_height="match_parent"
                                            android:clipToPadding="false"
                                            android:paddingBottom="@dimen/list_item_spacing_half"
+                                            style="@style/CustomBottomSheet"
                                            android:paddingTop="@dimen/list_item_spacing_half"
                                            tools:context=".Fragments.MoreOptionsFragment"
                                            tools:listitem="@layout/fragment_more_options_list_dialog_item"/>

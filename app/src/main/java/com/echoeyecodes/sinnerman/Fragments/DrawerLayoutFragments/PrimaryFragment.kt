@@ -1,7 +1,6 @@
 package com.echoeyecodes.sinnerman.Fragments.DrawerLayoutFragments;
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -86,7 +85,7 @@ class PrimaryFragment() : DrawerFragments(), BottomNavigationView.OnNavigationIt
                 return true
             }
             R.id.action_explore -> {
-                fragment = ExploreFragment.newInstance(this, mainActivityContext)
+                fragment = ExploreFragment.newInstance(mainActivityContext)
                 if(active_fragment?.TAG != fragment.TAG)
                 openBottomFragment(fragment, fragment.getTAG())
                 return true

@@ -38,7 +38,7 @@ abstract class CommonListPagingHandler<T : Any>(application: Application) : Andr
                 async { fetchData() }.await()
             }
         }else{
-            resetState()
+            networkStatus.postValue(networkStatus.value)
         }
     }
 
@@ -49,23 +49,23 @@ abstract class CommonListPagingHandler<T : Any>(application: Application) : Andr
 
     abstract suspend fun fetchList(): List<T>
 
-    suspend fun fetchData(){
+    private suspend fun fetchData(){
         isRunning = true
         try{
             val result = fetchList()
             state.addAll(result)
             onDataReceived(state)
-            if(result.isEmpty() || result.size < 5){
+            if(result.isEmpty()){
                 hasMore = false
             }
         }catch (error: IOException){
             networkStatus.postValue(Result.Error)
         }
         catch (error: HttpException){
-            Log.d("CARRR", error.message())
             networkStatus.postValue(Result.Error)
+        }finally {
+            isRunning = false
         }
-        isRunning = false
     }
 
     open suspend fun onDataReceived(result: List<T>){

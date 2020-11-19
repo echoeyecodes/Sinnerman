@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.*
 import com.echoeyecodes.sinnerman.Interface.ExploreFragmentContext
+import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.Models.ExploreResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingViewHolder
 import com.echoeyecodes.sinnerman.R
@@ -18,7 +19,7 @@ import com.google.android.material.button.MaterialButton
 import java.lang.Exception
 
 
-class PlaylistAdapter(private val exploreFragmentContext: ExploreFragmentContext, private val context:Context, private val navigateToMore: navigateToDestination, private val navigateToVideo: (String) -> Unit, itemCallback: DiffUtil.ItemCallback<Result<ExploreResponseBody>>) : PagerAdapter<ExploreResponseBody>(itemCallback) {
+class PlaylistAdapter(private val exploreFragmentContext: ExploreFragmentContext, private val context:Context, private val navigateToMore: navigateToDestination, private val mainActivityContext: MainActivityContext, itemCallback: DiffUtil.ItemCallback<Result<ExploreResponseBody>>) : PagerAdapter<ExploreResponseBody>(itemCallback) {
     private val videosItemCallback = VideosItemCallback.newInstance()
 
     init {
@@ -42,7 +43,7 @@ class PlaylistAdapter(private val exploreFragmentContext: ExploreFragmentContext
                 val exploreResponseBody = (getItem(position) as Result.Success<ExploreResponseBody>).data
 
                 viewHolder.recycler_header.text = exploreResponseBody.name
-                val adapter = PlaylistItemAdapter(videosItemCallback, context, navigateToVideo)
+                val adapter = PlaylistItemAdapter(videosItemCallback, context, mainActivityContext)
                 viewHolder.recycler_view.adapter = adapter
                 adapter.submitList(exploreResponseBody.videos)
                 viewHolder.bindClickListener(exploreResponseBody.id, exploreResponseBody.name)

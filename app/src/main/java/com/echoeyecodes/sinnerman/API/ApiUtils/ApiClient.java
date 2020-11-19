@@ -43,7 +43,10 @@ public class ApiClient{
             Request originalRequest = chain.request();
 
             String token = new AuthenticationManager().checkToken(context);
-            Request request = originalRequest.newBuilder().header("x-api-key", BuildConfig.SINNERMAN_SERVER_API_KEY).header("Content-Type", "application/json").header("token", token).build();
+            String version = BuildConfig.VERSION_NAME;
+            String versioncode = String.valueOf(BuildConfig.VERSION_CODE);
+            Request request = originalRequest.newBuilder().header("x-api-key", BuildConfig.SINNERMAN_SERVER_API_KEY).header("Content-Type", "application/json").header("token", token)
+                    .header("version", version).header("versioncode", versioncode).build();
 
             Response response = chain.proceed(request);
             if(response.code() == 401){

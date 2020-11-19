@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clipToPadding="false"
-    style="@style/BottomSheetDialogStyle"
     android:paddingTop="@dimen/list_item_spacing_half"
+    style="@style/CustomBottomSheet"
     android:paddingBottom="@dimen/list_item_spacing_half"
     tools:context=".Fragments.PromotionBottomSheet">
 

@@ -33,10 +33,12 @@ android {
         applicationId "com.echoeyecodes.sinnerman"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 10
-        versionName "1.0"
+        versionCode 12
+        versionName "1.1"
         buildConfigField("String", "SINNERMAN_SERVER_API_KEY", credentialsProperties['SINNERMAN_SERVER_API_KEY'])
         buildConfigField("String", "APP_REDIRECT_URL", credentialsProperties['APP_REDIRECT_URL'])
+        buildConfigField("String", "PROMOTIONS_REDIRECT_URL", credentialsProperties['PROMOTIONS_REDIRECT_URL'])
+        buildConfigField("String", "INFO_REDIRECT_URL", credentialsProperties['INFO_REDIRECT_URL'])
         kapt {
             arguments {
                 arg("room.schemaLocation", "$projectDir/schemas".toString())

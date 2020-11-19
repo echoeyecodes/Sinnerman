@@ -24,7 +24,7 @@ import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import de.hdodenhof.circleimageview.CircleImageView
 import java.lang.Exception
 
-class NotificationsAdapter(private val context: Context, diffCallback: DiffUtil.ItemCallback<Result<UploadNotificationModel>>, private val primaryFragmentContext: PrimaryFragmentContext, private val notificationFragmentListener: NotificationFragmentListener) : PagerAdapter<UploadNotificationModel>(diffCallback) {
+class NotificationsAdapter(private val context: Context, diffCallback: DiffUtil.ItemCallback<Result<UploadNotificationModel>>, private val primaryFragmentContext: MainActivityContext, private val notificationFragmentListener: NotificationFragmentListener) : PagerAdapter<UploadNotificationModel>(diffCallback) {
 
     init {
         stateRestorationPolicy = StateRestorationPolicy.PREVENT_WHEN_EMPTY

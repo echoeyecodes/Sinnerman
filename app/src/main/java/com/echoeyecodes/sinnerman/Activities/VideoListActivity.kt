@@ -15,15 +15,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.echoeyecodes.sinnerman.*
 import com.echoeyecodes.sinnerman.Adapters.HomeFragmentRecyclerViewAdapter
-import com.echoeyecodes.sinnerman.BuildConfig
-import com.echoeyecodes.sinnerman.CustomFragment
-import com.echoeyecodes.sinnerman.DrawerFragments
 import com.echoeyecodes.sinnerman.Fragments.ProgressDialogFragment
 import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener
 import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
-import com.echoeyecodes.sinnerman.R
 import com.echoeyecodes.sinnerman.Utils.*
 import com.echoeyecodes.sinnerman.viewmodel.NetworkState
 import com.echoeyecodes.sinnerman.viewmodel.VideoListViewModel
@@ -121,15 +118,16 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
     }
 
 
-    override fun openFragment(fragment: DrawerFragments?, item: MenuItem?) {
-
-    }
-
-    override fun navigateToVideos(video_url: String?) {
+    override fun navigateToVideos(video_url: String) {
         val intent = Intent(this, VideoActivity::class.java)
         intent.putExtra("video_id", video_url)
         startActivity(intent)
     }
+
+    override fun openFragment(fragment: DrawerFragments, item: MenuItem?) {
+
+    }
+
 
     override fun openExternalLink(link: String) {
         val i = Intent(Intent.ACTION_VIEW, Uri.parse(link))
@@ -183,9 +181,20 @@ class VideoListActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListe
 
     }
 
-    override fun onDrawerFragmentActive(fragments: DrawerFragments?) {
+    override fun onDrawerFragmentActive(fragments: DrawerFragments) {
 
     }
+
+
+    override fun openBottomFragment(fragment: RootBottomFragment, tag: String) {
+
+    }
+
+    override fun setActiveBottomViewFragment(position: Int) {
+
+    }
+
+
 
     private fun copyLinkToClipboard(link: String) {
         val clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager

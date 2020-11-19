@@ -1,5 +1,6 @@
 package com.echoeyecodes.sinnerman.Fragments.BottomNavigationFragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Adapters.HomeFragmentRecyclerViewAdapter
 import com.echoeyecodes.sinnerman.Interface.HomeFragmentListener
+import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext
 import com.echoeyecodes.sinnerman.Models.VideoResponseBody
 import com.echoeyecodes.sinnerman.Paging.CommonListPagingListeners
@@ -27,12 +29,14 @@ class HomeFragment() : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListene
     private lateinit var adapter: HomeFragmentRecyclerViewAdapter
     private lateinit var viewModel: HomeFragmentViewModel
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var primaryFragmentContext: PrimaryFragmentContext
     lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var mainActivityContext: MainActivityContext
 
 
-    constructor(primaryFragmentContext: PrimaryFragmentContext):this(){
-        this.primaryFragmentContext = primaryFragmentContext
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        mainActivityContext = context as MainActivityContext
     }
     init {
         TAG = "HOME_FRAGMENT"
@@ -40,7 +44,7 @@ class HomeFragment() : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListene
 
     companion object {
         val LAYOUT_MANAGER_TAG="HOME_LAYOUT_MANAGER_TAG"
-        fun newInstance(primaryFragmentContext: PrimaryFragmentContext): HomeFragment = HomeFragment(primaryFragmentContext)
+        fun newInstance(primaryFragmentContext: PrimaryFragmentContext): HomeFragment = HomeFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -102,7 +106,7 @@ class HomeFragment() : RootBottomFragment(), SwipeRefreshLayout.OnRefreshListene
 
     override fun onResume() {
         super.onResume()
-        primaryFragmentContext.setActiveBottomViewFragment(0)
+        mainActivityContext.setActiveBottomViewFragment(0)
     }
     override fun retry(){
         viewModel.retry()

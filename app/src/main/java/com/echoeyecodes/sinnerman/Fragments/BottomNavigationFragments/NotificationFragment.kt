@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.echoeyecodes.sinnerman.Adapters.NotificationsAdapter
+import com.echoeyecodes.sinnerman.Interface.MainActivityContext
 import com.echoeyecodes.sinnerman.Interface.NotificationFragmentListener
 import com.echoeyecodes.sinnerman.Interface.PrimaryFragmentContext
 import com.echoeyecodes.sinnerman.MainActivity
@@ -30,21 +31,21 @@ class NotificationFragment() : RootBottomFragment(), NotificationFragmentListene
     private lateinit var notificationViewModel: NotificationViewModel
     private lateinit var adapter: NotificationsAdapter
     private lateinit var empty_container: LinearLayout
+    private lateinit var mainActivityContext: MainActivityContext
 
-    private lateinit var primaryFragmentContext: PrimaryFragmentContext
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
 
-    constructor(primaryFragmentContext: PrimaryFragmentContext):this(){
-        this.primaryFragmentContext = primaryFragmentContext
+        mainActivityContext = context as MainActivityContext
     }
-
 
     init{
          TAG ="NOTIFICATION_FRAGMENT"
      }
 
     companion object{
-        fun newInstance(primaryFragmentContext: PrimaryFragmentContext): NotificationFragment = NotificationFragment(primaryFragmentContext)
+        fun newInstance(primaryFragmentContext: PrimaryFragmentContext): NotificationFragment = NotificationFragment()
     }
 
 
@@ -64,7 +65,7 @@ class NotificationFragment() : RootBottomFragment(), NotificationFragmentListene
         empty_container = view.findViewById(R.id.empty_recycler_view_layout);
 
         recyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        adapter = NotificationsAdapter(requireContext(), SealedClassDiffUtil(), primaryFragmentContext, this)
+        adapter = NotificationsAdapter(requireContext(), SealedClassDiffUtil(), mainActivityContext, this)
         adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         recyclerView.addItemDecoration( CustomItemDecoration(IntegerToDp.intToDp(10), IntegerToDp.intToDp(15)))
         recyclerView.adapter = adapter
@@ -120,7 +121,7 @@ class NotificationFragment() : RootBottomFragment(), NotificationFragmentListene
 
     override fun onResume() {
         super.onResume()
-        primaryFragmentContext.setActiveBottomViewFragment(2)
+        mainActivityContext.setActiveBottomViewFragment(2)
     }
 
     override fun retry() {

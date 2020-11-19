@@ -44,11 +44,10 @@ class HomeFragmentRecyclerViewAdapter(itemCallback: DiffUtil.ItemCallback<Result
             val view = LayoutInflater.from(parent.context).inflate(R.layout.paging_loading_layout, parent, false)
             return CommonListPagingViewHolder(view, homeFragmentListener)
         }
-        if(viewType == ADS_LAYOUT){
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_ad_banner, parent, false)
-            return AdsViewHolder(view)
-        }
         val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_feed_item, parent, false);
+        if(viewType == ADS_LAYOUT){
+            return HomeAdsViewHolder(view);
+        }
         return HomeFragmentRecyclerViewItemViewHolder(view);
     }
 
@@ -70,14 +69,15 @@ class HomeFragmentRecyclerViewAdapter(itemCallback: DiffUtil.ItemCallback<Result
             when(getItem(position)){
                 is Result.Success<*> ->{
                     val videoResponseBody = (getItem(position) as Result.Success<VideoResponseBody>).data
-                    if(holder !is AdsViewHolder){
-                        val viewHolder = holder as HomeFragmentRecyclerViewItemViewHolder
+                        val viewHolder = holder as BaseViewHolder
                         viewHolder.linearLayout.visibility = View.VISIBLE;
                         Glide.with(context).load(Uri.parse(videoResponseBody.video.thumbnail)).placeholder(ImageColorDrawable.getInstance()).into(viewHolder.imageView);
                         Glide.with(context).load(Uri.parse(videoResponseBody.user.profile_url)).placeholder(ImageColorDrawable.getInstance()).into(viewHolder.author_image);
 
-                        viewHolder.title.text = videoResponseBody.video.title;
-                        viewHolder.duration.text = DurationConverter.Companion.getInstance().convertToDuration(videoResponseBody.video.duration);
+                        viewHolder.title.text = videoResponseBody.video.title
+
+                    if(holder is HomeFragmentRecyclerViewItemViewHolder){
+                        viewHolder.duration.text = DurationConverter.getInstance().convertToDuration(videoResponseBody.video.duration);
                         val timestamp = TimestampConverter.getInstance ().convertToTimeDifference(videoResponseBody.video.createdAt);
                         viewHolder.author.text = videoResponseBody.user.username.plus(" \u2022 ").plus(videoResponseBody.video.views.toString()).plus(" views").plus(" \u2022 ").plus(timestamp)
 
@@ -90,6 +90,8 @@ class HomeFragmentRecyclerViewAdapter(itemCallback: DiffUtil.ItemCallback<Result
                             moreOptionsFragment.show(fragmentManager, "more_options_fragment");
                         }
                     }else{
+                        holder.duration.text = "PROMOTED AD"
+                        holder.author.text = videoResponseBody.video.description
                         Glide.with(context).load(Uri.parse(videoResponseBody.video.thumbnail)).into(holder.imageView)
                         holder.linearLayout.setOnClickListener { mainActivityContext.openExternalLink(videoResponseBody.video.video_url) }
                     }
@@ -99,24 +101,30 @@ class HomeFragmentRecyclerViewAdapter(itemCallback: DiffUtil.ItemCallback<Result
         }
 
 
-    inner class HomeFragmentRecyclerViewItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val imageView: ImageView = itemView.findViewById(R.id.video_thumbnail);
-            val author_image: CircleImageView = itemView.findViewById(R.id.author_image);
-            val title: TextView = itemView.findViewById(R.id.video_title);
-            val author: TextView = itemView.findViewById(R.id.video_author);
-            val cardView: CardView = itemView.findViewById(R.id.video_card_frame);
-            val options_btn: ImageView = itemView.findViewById(R.id.video_option_btn);
-            val linearLayout: LinearLayout = itemView.findViewById(R.id.video_item);
-            val duration: TextView = itemView.findViewById(R.id.video_duration);
-            val displayMetrics = Resources.getSystem().displayMetrics;
+    abstract class BaseViewHolder(view: View):RecyclerView.ViewHolder(view){
+        val imageView: ImageView = itemView.findViewById(R.id.video_thumbnail);
+        val author_image: CircleImageView = itemView.findViewById(R.id.author_image);
+        val title: TextView = itemView.findViewById(R.id.video_title);
+        val author: TextView = itemView.findViewById(R.id.video_author);
+        val cardView: CardView = itemView.findViewById(R.id.video_card_frame);
+        val options_btn: ImageView = itemView.findViewById(R.id.video_option_btn);
+        val linearLayout: LinearLayout = itemView.findViewById(R.id.video_item);
+        val duration: TextView = itemView.findViewById(R.id.video_duration);
+        val displayMetrics = Resources.getSystem().displayMetrics;
 
-
-            init {
-                val layoutParams = cardView.layoutParams as LinearLayout.LayoutParams
-                layoutParams.height = (displayMetrics.heightPixels / 3.5).toInt();
-                cardView.layoutParams = layoutParams;
-            }
-
-
+        init {
+            val layoutParams = cardView.layoutParams as LinearLayout.LayoutParams
+            layoutParams.height = (displayMetrics.heightPixels / 3.5).toInt();
+            cardView.layoutParams = layoutParams;
         }
+    }
+
+    inner class HomeFragmentRecyclerViewItemViewHolder(view: View) :BaseViewHolder(view)
+    inner class HomeAdsViewHolder(view: View) : BaseViewHolder(view) {
+
+        init {
+            options_btn.visibility = View.GONE
+        }
+    }
+
     }

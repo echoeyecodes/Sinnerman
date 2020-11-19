@@ -1,5 +1,6 @@
 package com.echoeyecodes.sinnerman.Utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -50,6 +51,8 @@ public class AuthenticationManager {
     public void startAuthActivity(Context context){
         Intent intent = new Intent(context, SignUpActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        Activity activity = (Activity) context;
+        activity.finish();
         context.startActivity(intent);
     }
 
