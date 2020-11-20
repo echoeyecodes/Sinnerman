@@ -25,6 +25,21 @@ class OtpViewModel(application: Application) : AuthViewModel(application) {
         }
     }
 
+
+      fun resendOtp() = CoroutineScope(Dispatchers.IO).launch{
+        val otpModel = OtpModel("", verification_response)
+
+        try {
+            requestStatusObserver.postValue(RequestStatus.LOADING)
+            authDao.resendOtp(otpModel)
+            requestStatusObserver.postValue(RequestStatus.NONE)
+        } catch (e : IOException) {
+            message = "Something went wrong with the request. Try again later"
+            //Internal Server error
+            requestStatusObserver.postValue(RequestStatus.ERROR)
+        }
+    }
+
     private suspend fun verify() = withContext(Dispatchers.IO){
         val otpModel = OtpModel(form_fields["otp"], verification_response)
         val call = authDao.verify(otpModel)

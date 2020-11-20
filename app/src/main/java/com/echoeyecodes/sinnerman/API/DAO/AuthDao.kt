@@ -17,4 +17,7 @@ interface AuthDao {
 
     @POST("api/v1/otp/verify")
     fun verify(@Body otpModel : OtpModel) : Call<ResponseBody>
+
+    @POST("api/v1/otp/")
+    suspend fun resendOtp(@Body otpModel : OtpModel) : ResponseBody
 }
