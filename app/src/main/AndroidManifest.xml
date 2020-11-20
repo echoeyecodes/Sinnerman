@@ -3,6 +3,7 @@
     package="com.echoeyecodes.sinnerman">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,6 +12,10 @@
         android:supportsRtl="true"
         android:name=".ApplicationClass"
         android:theme="@style/Theme.Sinnerman">
+        <service android:name=".services.NotificationService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            />
         <activity android:name="com.echoeyecodes.sinnerman.Activities.SplashScreenActivity" android:theme="@style/SplashScreenTheme" android:configChanges="orientation|screenSize|screenLayout" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

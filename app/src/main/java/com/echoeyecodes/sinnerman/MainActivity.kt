@@ -1,6 +1,8 @@
 package com.echoeyecodes.sinnerman
 
 import android.annotation.SuppressLint
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
 import android.content.*
 import android.net.Uri
 import android.os.Bundle
@@ -30,6 +32,7 @@ import com.echoeyecodes.sinnerman.Utils.AuthUserManager
 import com.echoeyecodes.sinnerman.Utils.AuthenticationManager
 import com.echoeyecodes.sinnerman.Utils.PreferenceManager
 import com.echoeyecodes.sinnerman.Utils.Result
+import com.echoeyecodes.sinnerman.services.NotificationService
 import com.echoeyecodes.sinnerman.viewmodel.MainActivityViewModel
 import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
@@ -53,12 +56,18 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
     private lateinit var drawerImage: CircleImageView
     private lateinit var toolbarTitle:TextView
     private lateinit var drawerName:TextView
+    private lateinit var jobScheduler:JobScheduler
     private lateinit var drawerUsername:TextView
     private lateinit var toolbar: LinearLayout
     private lateinit var user_profile: ImageView
     private lateinit var navigationView: NavigationView
     private lateinit var drawerLayout:DrawerLayout
 
+
+
+    companion object{
+        val JOB_ID=0
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -118,6 +127,8 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
 
     private fun initViews() {
         setContentView(R.layout.activity_main)
+
+        jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
         navigationView = findViewById(R.id.side_nav_view)
         drawerLayout = findViewById(R.id.main_drawer_layout)
         val headerView = navigationView.getHeaderView(0)
@@ -204,9 +215,20 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
         drawerLayout.closeDrawers()
     }
 
+    private fun startNotificationService(){
+        val service = ComponentName(packageName, NotificationService::class.java.name)
+        val jobBuilder = JobInfo.Builder(JOB_ID, service).setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY).setPersisted(true)
+        val jobInfo = jobBuilder.build()
+        jobScheduler.schedule(jobInfo)
+    }
+
     override fun onResume() {
         super.onResume()
         showSystemUI()
+        startNotificationService()
+//        Intent(this, NotificationService::class.java).also {
+//            startService(it)
+//        }
     }
 
     private fun showSystemUI() {
@@ -323,7 +345,6 @@ class MainActivity : AppCompatActivity(), MainActivityContext{
         }else{
             if (supportFragmentManager.backStackEntryCount == 0 && active_fragment is PrimaryFragment) {
                 finish()
-                exitProcess(0)
             }else{
                 if(active_fragment !is PrimaryFragment){
                     openFragment(PrimaryFragment.getInstance(), null)
