@@ -33,17 +33,9 @@ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>,
     private lateinit var moreOptionsFragment: MoreOptionsFragment
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        return when (viewType) {
-            R.layout.layout_feed_item -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_feed_item, parent, false)
-                ExplorePrimaryItemViewHolder(view)
-            }
-            else -> {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.layout_feed_item_secondary, parent, false)
-                ExploreSecondaryItemViewHolder(view)
-            }
+                return ExplorePrimaryItemViewHolder(view)
         }
-    }
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
@@ -54,13 +46,6 @@ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>,
         }
 
     }
-
-     override fun getItemViewType(position: Int): Int {
-        if(position == 0){
-            return R.layout.layout_feed_item
-        }
-         return R.layout.layout_feed_item_secondary
-     }
 
     abstract class BaseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         abstract fun bind(videoResponseBody: VideoResponseBody)
@@ -113,26 +98,4 @@ class ExploreItemAdapter(itemCallback: DiffUtil.ItemCallback<VideoResponseBody>,
         }
     }
 
-     inner class ExploreSecondaryItemViewHolder(itemView: View) : CustomViewHolder(itemView) {
-         val stats : TextView = itemView.findViewById(R.id.video_stats)
-         init {
-             val displayMetrics = Resources.getSystem().displayMetrics
-             val cardView : CardView = itemView.findViewById(R.id.video_card_frame)
-
-             val cardViewLayoutParams = cardView.layoutParams as LinearLayout.LayoutParams
-             cardViewLayoutParams.width = (displayMetrics.widthPixels /2.2).toInt()
-             cardViewLayoutParams.height = (displayMetrics.heightPixels / 6).toInt()
-
-             cardView.layoutParams = cardViewLayoutParams
-         }
-
-         @SuppressLint("SetTextI18n")
-         override fun bind(videoResponseBody: VideoResponseBody) {
-             super.bind(videoResponseBody)
-
-             val timestamp = TimestampConverter.getInstance().convertToTimeDifference(videoResponseBody.video.createdAt)
-             author.text = videoResponseBody.user.username
-             stats.text = videoResponseBody.video.views.toString() + " views" + " \u2022 " + timestamp
-         }
-     }
 }
