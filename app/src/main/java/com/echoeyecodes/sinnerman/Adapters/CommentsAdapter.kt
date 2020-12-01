@@ -88,21 +88,20 @@ class CommentsAdapter(private val context: Context, diffCallback: DiffUtil.ItemC
                 viewHolder.timestamp.text = TimestampConverter.getInstance().convertToTimeDifference(createdAt)
                 Glide.with(context).load(Uri.parse(profile_url)).placeholder(ImageColorDrawable.getInstance()).into(viewHolder.comment_author_image)
 
+                if(commentResponseBody.comment.status == 1){
+                    viewHolder.progressBar.visibility = View.VISIBLE;
+                }else{
+                    viewHolder.progressBar.visibility = View.GONE;
+                }
             }
             else -> {
             }
         }
 
-        //        if(commentModel.getStatus() == 1){
-//            holder.progressBar.setVisibility(View.VISIBLE);
-//        }else{
-//            holder.progressBar.setVisibility(View.GONE);
-//        }
-
     }
 
     class ViewHolder(itemView: View, commentActivityListener: CommentActivityListener?) : RecyclerView.ViewHolder(itemView) {
-        private val progressBar: ProgressBar = itemView.findViewById(R.id.comment_status_indicator)
+        val progressBar: ProgressBar = itemView.findViewById(R.id.comment_status_indicator)
         val comment_author: TextView = itemView.findViewById(R.id.comment_author_name)
         val comment: TextView = itemView.findViewById(R.id.comment)
         private val linearLayout: LinearLayout =itemView.findViewById(R.id.comment_item_container)
