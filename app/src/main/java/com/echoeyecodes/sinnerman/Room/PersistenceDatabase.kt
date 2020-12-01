@@ -21,8 +21,14 @@ abstract class PersistenceDatabase : RoomDatabase () {
     abstract fun uploadNotificationDao() : UploadNotificationDao
 
     companion object {
-        fun getInstance(context: Context) = Room.databaseBuilder(context.applicationContext, PersistenceDatabase::class.java, "persistence_db")
-                .fallbackToDestructiveMigration().build()
+        @Volatile
+        private var INSTANCE: PersistenceDatabase? = null
+        fun getInstance(context: Context) = INSTANCE ?: synchronized(this) {
+            val instance = Room.databaseBuilder(context.applicationContext, PersistenceDatabase::class.java, "persistence_db")
+                    .fallbackToDestructiveMigration().build()
+            INSTANCE = instance
+            return instance
+        }
     }
 
 }

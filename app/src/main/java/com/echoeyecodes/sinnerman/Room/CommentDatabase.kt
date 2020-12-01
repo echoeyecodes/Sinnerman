@@ -15,8 +15,14 @@ abstract class CommentDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
 
     companion object {
-        fun getInstance(context: Context) = Room.databaseBuilder(context.applicationContext, CommentDatabase::class.java, "comment_database")
-        .fallbackToDestructiveMigration().build()
+        @Volatile
+        private var INSTANCE: CommentDatabase? = null
+        fun getInstance(context: Context) = INSTANCE ?: synchronized(this) {
+            val instance =Room.databaseBuilder(context.applicationContext, CommentDatabase::class.java, "comment_database")
+                    .fallbackToDestructiveMigration().build()
+            INSTANCE = instance
+            return instance
+        }
     }
 
 }
